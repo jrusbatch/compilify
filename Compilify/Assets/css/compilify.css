@@ -86,9 +86,12 @@ h1 {
 }
 
 .CodeMirror-cursor {
-    color: #444;
-    -webkit-transition: opacity 0.325s ease-in-out;
-       -moz-transition: opacity 0.325s ease-in-out;
-         -o-transition: opacity 0.325s ease-in-out;
-            transition: opacity 0.325s ease-in-out;
+    -webkit-transition: opacity 0.300s ease-in-out;
+       -moz-transition: opacity 0.300s ease-in-out;
+         -o-transition: opacity 0.300s ease-in-out;
+            transition: opacity 0.300s ease-in-out;
+}
+
+.CodeMirror pre.CodeMirror-cursor {
+    border-left-color: #555;
 }
