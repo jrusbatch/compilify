@@ -18,11 +18,16 @@ namespace Compilify.Services
             engine.Execute("using System;", session);
             try
             {
-                if (!Validate(code)) return "Not implemeted";
+                if (!Validate(code))
+                {
+                    return "Not implemeted";
+                }
 
                 var result = engine.Execute(code, session);
                 if(result != null)
+                {
                     return result.ToString();
+                }
             }
             catch (Exception ex)
             {
@@ -46,8 +51,12 @@ namespace Compilify.Services
                 {
                     if (!ScanSyntax(syntaxNode.ChildNodes())) return false;
                 }
+
                 Console.WriteLine(syntaxNode.GetType());
-                if (syntaxNode is QualifiedNameSyntax || syntaxNode is InvocationExpressionSyntax && ((InvocationExpressionSyntax)syntaxNode).Expression is MemberAccessExpressionSyntax) return false;
+                if (syntaxNode is QualifiedNameSyntax || syntaxNode is InvocationExpressionSyntax && ((InvocationExpressionSyntax)syntaxNode).Expression is MemberAccessExpressionSyntax)
+                {
+                    return false;
+                }
             }
 
             return true;
