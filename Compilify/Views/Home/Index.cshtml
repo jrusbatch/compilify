@@ -28,7 +28,8 @@
                     
                     onChange: function(editor) {
 
-                        $.ajax('/compile', {
+                        $.ajax({
+                            url: '/compile',
                             type: 'POST',
                             cache: false,
                             contentType: 'application/json; charset=utf-8',
