@@ -1,6 +1,18 @@
 @{ ViewBag.Title = "Home"; }
 
-<textarea id="editor"></textarea>
+<div id="execute">
+    <div class="page-header">
+        <h1>define</h1>
+    </div>
+    <textarea class="editor"></textarea>
+</div>
+
+<div id="observe">
+    <div class="page-header">
+        <h1>observe</h1>
+    </div>
+    <textarea class="editor"></textarea>
+</div>
 
 <p id="result"></p>
 
@@ -22,25 +34,26 @@
                     dataType: 'json',
 
                     success: function( resp ) {
-                        $('#result').html(resp.data);
+                        Compilify.ResultPanel.setValue(resp.data || '');
                     }
                 });
             }, 500);
 
             $(function() {
-                var textarea = document.getElementById('editor');
+                var editor = $('#execute .editor')[0],
+                    results = $('#observe .editor')[0];
 
-                Compilify.Editor = CodeMirror.fromTextArea(textarea, {
+                Compilify.Editor = CodeMirror.fromTextArea(editor, {
                     indentUnit: 4,
                     lineNumbers: true,
-                    onChange: function() { },
-                    onKeyEvent: function(editor, key) {
-                        
+                    onKeyEvent: function( editor, key ) {
                         compile(editor.getValue());
-                        
                     }
                 });
-
+                
+                Compilify.ResultPanel = CodeMirror.fromTextArea(results, {
+                    readOnly: true
+                });
             });
     
         }).call(window, window.Compilify || {});

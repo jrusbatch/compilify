@@ -76,4 +76,11 @@ h1, h2, h3, h4, h5, h6 {
             transition: color 0.5s;
 }
 
+h1 {
+    font-weight: normal;
+}
 
+.page-header {
+    padding-bottom: 0;
+    border: none;
+}
