@@ -86,10 +86,10 @@ h1 {
 }
 
 .CodeMirror-cursor {
-    -webkit-transition: opacity 0.300s ease-in-out;
-       -moz-transition: opacity 0.300s ease-in-out;
-         -o-transition: opacity 0.300s ease-in-out;
-            transition: opacity 0.300s ease-in-out;
+    /*-webkit-transition: opacity 0.300s ease-out;
+       -moz-transition: opacity 0.300s ease-out;
+         -o-transition: opacity 0.300s ease-out;
+            transition: opacity 0.300s ease-out;*/
 }
 
 .CodeMirror pre.CodeMirror-cursor {

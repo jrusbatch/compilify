@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text;
 using System.Web.Mvc;
 using Roslyn.Compilers;
 using Roslyn.Scripting.CSharp;
@@ -9,6 +10,21 @@ namespace Compilify.Controllers
     {
         public ActionResult Index()
         {
+            var compiler = new ScriptEngine(new Assembly[0], new[] { "System" });
+            var builder = new StringBuilder();
+
+            builder.AppendLine("string Greet()");
+            builder.AppendLine("{");
+            builder.AppendLine("    return \"Hello, world!\";");
+            builder.AppendLine("}");
+            builder.AppendLine("");
+            builder.AppendLine("Greet();");
+
+            var code = builder.ToString();
+
+            ViewBag.Define = code;
+            ViewBag.Observe = compiler.Execute(code);
+
             return View();
         }
 
