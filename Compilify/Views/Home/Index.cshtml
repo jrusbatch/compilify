@@ -1,6 +1,6 @@
 @{ ViewBag.Title = "Home"; }
 
-<textarea id="editor" name="code"></textarea>
+<textarea id="editor"></textarea>
 
 <p id="result"></p>
 
@@ -9,7 +9,23 @@
         (function(Compilify) {
             var root = this,
                 $ = root.jQuery,
-                CodeMirror = root.CodeMirror;    
+                _ = root._,
+                CodeMirror = root.CodeMirror;
+            
+            var compile = _.debounce(function( text ) {
+                $.ajax({
+                    url: '/compile',
+                    type: 'POST',
+                    cache: false,
+                    contentType: 'application/json; charset=utf-8',
+                    data: root.JSON.stringify({ code: text }),
+                    dataType: 'json',
+
+                    success: function( resp ) {
+                        $('#result').html(resp.data);
+                    }
+                });
+            }, 500);
 
             $(function() {
                 var textarea = document.getElementById('editor');
@@ -17,22 +33,11 @@
                 Compilify.Editor = CodeMirror.fromTextArea(textarea, {
                     indentUnit: 4,
                     lineNumbers: true,
-                    
-                    onChange: function(editor) {
-
-                        $.ajax({
-                            url: '/compile',
-                            type: 'POST',
-                            cache: false,
-                            contentType: 'application/json; charset=utf-8',
-                            data: root.JSON.stringify({ code: editor.getValue() }),
-                            dataType: 'json',
+                    onChange: function() { },
+                    onKeyEvent: function(editor, key) {
                         
-                            success: function(resp) {
-                                $('#result').html(resp.data);
-                            }
-                        });
-
+                        compile(editor.getValue());
+                        
                     }
                 });
 

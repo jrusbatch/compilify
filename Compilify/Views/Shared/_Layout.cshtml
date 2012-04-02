@@ -10,30 +10,43 @@
 
     <link type="image/x-icon" rel="shortcut icon" href="/favicon.ico" />
     
-    <link type="text/css" rel="stylesheet" href="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/css")" />
+    <link type="text/css" rel="stylesheet" href="@Microsoft.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/css")" />
 </head>
 <body dir="ltr">
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
-            <div class="container">
-                @Html.ActionLink("Compilify", "Index", "Home", null, new { @class = "brand" })
-                <ul class="nav">
-                    <li class="active">
-                        @Html.ActionLink("Home", "Index", "Home")
+            <div class="container-fluid">
+                <a class="brand" href="@Url.Action("Index", "Home")">
+                    compilify<strong>.net</strong>
+                </a>
+                @*<ul class="nav">
+                    <li>
+                        <a href="#">create</a>
+                    </li>
+                    <li>
+                        <a href="#">update</a>
+                    </li>
+                    <li>
+                        <a href="#">share</a>
                     </li>
                 </ul>
+                <ul class="nav pull-right">
+                    <li>
+                        <a href="#">sign in</a>
+                    </li>
+                </ul>*@
             </div>
         </div>
     </div>
 
-    <div id="content" class="container">
+    <div id="content" class="container-fluid">
         @RenderBody()
     </div>
     
     @Html.Analytics()
     
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-    <script src="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/js")"></script>
+    <script src="@Microsoft.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/js")"></script>
     
     @RenderSection("PageScripts", false)
 </body>

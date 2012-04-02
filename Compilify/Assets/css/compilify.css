@@ -1,3 +1,79 @@
-﻿#content {
-    padding: 60px 0 0 0;
+﻿@font-face {
+    font-family: 'RobotoRegular';
+    src: url('../fonts/Roboto-Regular-webfont.eot');
+    src: url('../fonts/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/Roboto-Regular-webfont.woff') format('woff'),
+         url('../fonts/Roboto-Regular-webfont.ttf') format('truetype'),
+         url('../fonts/Roboto-Regular-webfont.svg#RobotoRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
+
+@font-face {
+    font-family: 'RobotoLight';
+    src: url('../fonts/Roboto-Light-webfont.eot');
+    src: url('../fonts/Roboto-Light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/Roboto-Light-webfont.woff') format('woff'),
+         url('../fonts/Roboto-Light-webfont.ttf') format('truetype'),
+         url('../fonts/Roboto-Light-webfont.svg#RobotoLight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-size: 14px;
+    padding-top: 80px;
+}
+
+body, 
+strong {
+    font-family: "Segoe UI", "Segoe WP", "Helvetica Neue", 'RobotoRegular', sans-serif;
+}
+
+/* Navbar 
+ *****************************************************************************/
+.navbar,
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Segoe UI Light", "Helvetica Neue", 'RobotoLight', "Segoe UI", "Segoe WP", sans-serif;
+}
+
+.navbar-inner {
+    color: #000;
+    background-color: #f1f1f1;
+    background-image: none;
+
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+       -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.navbar .brand 
+{
+    color: #444;
+    font-size: 30px;
+    padding-top: 16px;
+    padding-bottom: 24px;
+}
+
+.navbar .nav {
+    padding-top: 14px;
+}
+
+.navbar .nav > li > a:hover {
+    color: #339933;
+}
+
+.navbar .nav > li > a,
+.navbar .nav > li.active > a {
+    color: #444;
+    font-size: 20px;
+    background: none;
+    text-shadow: none;
+
+    -webkit-transition: color 0.5s;
+       -moz-transition: color 0.5s;
+         -o-transition: color 0.5s;
+            transition: color 0.5s;
+}
+
+

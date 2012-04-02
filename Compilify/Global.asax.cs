@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
-using System.Web.Optimization;
 using System.Web.Routing;
+using Microsoft.Web.Optimization;
 
 namespace Compilify
 {
@@ -40,12 +40,12 @@ namespace Compilify
 
         private static void RegisterBundles(BundleCollection bundles)
         {
-            var css = new Bundle("~/css", new CssMinify());
-            css.AddDirectory("~/assets/css", "*.css");
+            var css = new Bundle("~/css", typeof(CssMinify));
+            css.AddDirectory("~/assets/css", "*.css", false);
             bundles.Add(css);
 
-            var js = new Bundle("~/js", new JsMinify());
-            js.AddDirectory("~/assets/js", "*.js");
+            var js = new Bundle("~/js", typeof(JsMinify));
+            js.AddDirectory("~/assets/js", "*.js", false);
             bundles.Add(js);
         }
     }
