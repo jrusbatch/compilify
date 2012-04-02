@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Web.Mvc;
+using Roslyn.Compilers;
 using Roslyn.Scripting.CSharp;
 
 namespace Compilify.Controllers
@@ -16,7 +17,16 @@ namespace Compilify.Controllers
         {
             var compiler = new ScriptEngine(new Assembly[0], new[] { "System" });
 
-            dynamic result = compiler.Execute(code);
+            dynamic result;
+
+            try
+            {
+                result = compiler.Execute(code);
+            }
+            catch (CompilationErrorException ex)
+            {
+                return Json(new { data = ex.Message });
+            }
 
             return Json(new { data = result });
         }

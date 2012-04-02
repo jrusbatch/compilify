@@ -10,11 +10,41 @@
     </div>
 }
 
-<div id="result">
-    <p></p>
-</div>
+<p id="result"></p>
 
 @section PageScripts {
     <script>
+        (function(Compilify) {
+            var root = this,
+                $ = root.jQuery,
+                CodeMirror = root.CodeMirror;    
+
+            $(function() {
+                var textarea = document.getElementById('editor');
+
+                Compilify.Editor = CodeMirror.fromTextArea(textarea, {
+                    indentUnit: 4,
+                    lineNumbers: true,
+                    
+                    onChange: function(editor) {
+
+                        $.ajax('/compile', {
+                            type: 'POST',
+                            cache: false,
+                            contentType: 'application/json; charset=utf-8',
+                            data: root.JSON.stringify({ code: editor.getValue() }),
+                            dataType: 'json',
+                        
+                            success: function(resp) {
+                                $('#result').html(resp.data);
+                            }
+                        });
+
+                    }
+                });
+
+            });
+    
+        }).call(window, window.Compilify || {});
     </script>
 }

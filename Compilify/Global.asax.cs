@@ -26,10 +26,10 @@ namespace Compilify
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
+            routes.MapRoute(
+                name: "Compiler",
+                url: "Compile",
+                defaults: new { controller = "Home", action = "Compile" }
             );
 
             routes.MapRoute(
