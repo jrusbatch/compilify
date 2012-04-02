@@ -8,6 +8,15 @@ namespace Compilify
 {
     public class Application : HttpApplication
     {
+        protected void Application_Start()
+        {
+            MvcHandler.DisableMvcResponseHeader = true;
+
+            RegisterGlobalFilters(GlobalFilters.Filters);
+            RegisterRoutes(RouteTable.Routes);
+            RegisterBundles(BundleTable.Bundles);
+        }
+
         private static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
@@ -39,13 +48,6 @@ namespace Compilify
             var js = new Bundle("~/js", new JsMinify());
             js.AddDirectory("~/assets/js", "*.js");
             bundles.Add(js);
-        }
-
-        protected void Application_Start()
-        {
-            RegisterGlobalFilters(GlobalFilters.Filters);
-            RegisterRoutes(RouteTable.Routes);
-            RegisterBundles(BundleTable.Bundles);
         }
     }
 }
