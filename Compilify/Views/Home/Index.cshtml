@@ -1,0 +1,30 @@
+@{ ViewBag.Title = "Home"; }
+
+@using (Html.BeginForm("Compile", "Home"))
+{
+    <textarea id="editor" name="code"></textarea>
+    
+    <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Execute</button>
+        <button class="btn" type="reset">Reset</button>
+    </div>
+}
+
+<div id="result">
+    <p></p>
+</div>
+
+@section PageScripts {
+    <script>
+        (function($, CodeMirror, undefined) {
+            var root = this;
+
+            var textarea = document.getElementById('editor');
+
+            root.Editor = CodeMirror.fromTextArea(textarea, {
+                indentUnit: 4,
+                lineNumbers: true
+            });
+        }).call(window, jQuery, CodeMirror);
+    </script>
+}

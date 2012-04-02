@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+
+    <title>@ViewBag.Title - Compilify, a Roslyn-based Web Interface for the C# Compiler</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link type="image/x-icon" rel="shortcut icon" href="/favicon.ico" />
+    
+    <link type="text/css" rel="stylesheet" href="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/css")" />
+</head>
+<body dir="ltr">
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                @Html.ActionLink("Compilify", "Index", "Home", new { @class = "brand" })
+                <ul class="nav">
+                    <li class="active">
+                        @Html.ActionLink("Home", "Index", "Home")
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="content" class="container">
+        @RenderBody()
+    </div>
+    
+    <footer>
+        <p>&copy;@DateTime.UtcNow.Year Me</p>
+    </footer>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+    <script src="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/js")"></script>
+    
+    @RenderSection("PageScripts", false)
+</body>
+</html>
