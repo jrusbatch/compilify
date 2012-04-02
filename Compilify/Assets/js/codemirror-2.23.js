@@ -1682,9 +1682,11 @@ var CodeMirror = (function() {
     function restartBlink() {
       clearInterval(blinker);
       var on = true;
-      cursor.style.visibility = "";
+      //cursor.style.visibility = "";
+      cursor.style.opacity = 0;
       blinker = setInterval(function() {
-        cursor.style.visibility = (on = !on) ? "" : "hidden";
+        //cursor.style.visibility = (on = !on) ? "" : "hidden";
+        cursor.style.opacity = (on = !on) ? 1 : 0;
       }, 650);
     }
 
