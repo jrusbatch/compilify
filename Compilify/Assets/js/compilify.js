@@ -6,7 +6,7 @@
     };
 
     // Log all AJAX requests to Google Analytics
-    $.ajaxSend(function(event, jqXhr, options) {
+    $(this).ajaxSend(function(event, jqXhr, options) {
         var queue = _gaq;
         if (isArray(queue) && queue !== null) {
             queue.push(['_trackPageview', options.url]);
