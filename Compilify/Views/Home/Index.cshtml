@@ -1,14 +1,6 @@
 @{ ViewBag.Title = "Home"; }
 
-@using (Html.BeginForm("Compile", "Home"))
-{
-    <textarea id="editor" name="code"></textarea>
-    
-    <div class="form-actions">
-        <button class="btn btn-primary" type="submit">Execute</button>
-        <button class="btn" type="reset">Reset</button>
-    </div>
-}
+<textarea id="editor" name="code"></textarea>
 
 <p id="result"></p>
 
