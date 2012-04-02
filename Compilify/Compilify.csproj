@@ -147,6 +147,7 @@
     </Compile>
     <Compile Include="Infrastructure\Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ScriptExecuter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\css\bootstrap-2.0.2.css" />
