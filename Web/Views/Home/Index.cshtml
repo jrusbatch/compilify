@@ -48,6 +48,8 @@
                 var connection = $.connection('compile');
                 
                 connection.received(function(msg) {
+                    if (msg.sender !== connection.)
+
                     Compilify.Editor.setValue(msg.code || '');
                     Compilify.ResultPanel.setValue(msg.result || msg.error || '');
                 });

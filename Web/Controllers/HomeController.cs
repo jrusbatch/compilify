@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Web.Mvc;
 using Compilify.Web.Services;
 
@@ -9,7 +8,6 @@ namespace Compilify.Web.Controllers
     {
         public ActionResult Index()
         {
-            var compiler = new CodeExecuter();
             var builder = new StringBuilder();
 
             builder.AppendLine("string Greet()");
@@ -19,6 +17,7 @@ namespace Compilify.Web.Controllers
             builder.AppendLine("");
             builder.AppendLine("Greet();");
 
+            var compiler = new CodeExecuter();
             var code = builder.ToString();
 
             ViewBag.Define = code;

@@ -1,0 +1,36 @@
+﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+
+namespace Compilify.Web.Services
+{
+    public static class Base32Encoder
+    {
+        private const string Characters = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+        public static string Encode(int i)
+        {
+            if (i == 0)
+            {
+                return Characters[0].ToString(CultureInfo.InvariantCulture);
+            }
+
+            var @base = Characters.Length;
+            var slug = new Stack<char>(7);
+
+            while (i > 0)
+            {
+                slug.Push(Characters[i % @base]);
+                i /= @base;
+            }
+
+            return new string(slug.ToArray());
+        }
+
+        public static int Decode(string str)
+        {
+            var @base = Characters.Length;
+            return str.Aggregate(0, (current, c) => current * @base + Characters.IndexOf(c));
+        }
+    }
+}
