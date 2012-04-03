@@ -1,8 +1,7 @@
-﻿using System.Reflection;
-using System.Text;
+﻿using System.Text;
 using System.Web.Mvc;
+using Compilify.Services;
 using Roslyn.Compilers;
-using Roslyn.Scripting.CSharp;
 
 namespace Compilify.Controllers
 {
@@ -10,7 +9,7 @@ namespace Compilify.Controllers
     {
         public ActionResult Index()
         {
-            var compiler = new ScriptEngine(new Assembly[0], new[] { "System" });
+            var compiler = new ScriptExecuter();
             var builder = new StringBuilder();
 
             builder.AppendLine("string Greet()");
@@ -31,7 +30,7 @@ namespace Compilify.Controllers
         [HttpPost]
         public ActionResult Compile(string code)
         {
-            var compiler = new ScriptEngine(new Assembly[0], new[] { "System" });
+            var compiler = new ScriptExecuter();
 
             dynamic result;
 
