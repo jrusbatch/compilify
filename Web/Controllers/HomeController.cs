@@ -1,15 +1,15 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Web.Mvc;
 using Compilify.Web.Services;
-using Roslyn.Compilers;
 
 namespace Compilify.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : AsyncController
     {
         public ActionResult Index()
         {
-            var compiler = new ScriptExecuter();
+            var compiler = new CodeExecuter();
             var builder = new StringBuilder();
 
             builder.AppendLine("string Greet()");
@@ -30,7 +30,7 @@ namespace Compilify.Web.Controllers
         [HttpPost]
         public ActionResult Compile(string code)
         {
-            var compiler = new ScriptExecuter();
+            var compiler = new CodeExecuter();
 
             dynamic result;
 
@@ -38,9 +38,9 @@ namespace Compilify.Web.Controllers
             {
                 result = compiler.Execute(code);
             }
-            catch (CompilationErrorException ex)
+            catch (Exception ex)
             {
-                return Json(new { data = ex.Message });
+                return Json(new { data = ex.ToString() });
             }
 
             return Json(new { data = result });
