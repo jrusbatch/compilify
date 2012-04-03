@@ -11,11 +11,14 @@ namespace Compilify.Web
     {
         protected void Application_Start()
         {
+            ViewEngines.Engines.Clear();
+            ViewEngines.Engines.Add(new RazorViewEngine());
+
             MvcHandler.DisableMvcResponseHeader = true;
 
             RegisterGlobalFilters(GlobalFilters.Filters);
-            RegisterRoutes(RouteTable.Routes);
             RegisterBundles(BundleTable.Bundles);
+            RegisterRoutes(RouteTable.Routes);
         }
 
         private static void RegisterGlobalFilters(GlobalFilterCollection filters)
@@ -30,9 +33,15 @@ namespace Compilify.Web
             routes.MapConnection<CompilerConnection>("compile", "compile/{*operation}");
 
             routes.MapRoute(
-                name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                name: "Content",
+                url: "{slug}/{version}",
+                defaults: new { controller = "Content", action = "Show", version = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
+                name: "Root",
+                url: "",
+                defaults: new { controller = "Home", action = "Index" }
             );
         }
 

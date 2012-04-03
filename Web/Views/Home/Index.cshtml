@@ -48,16 +48,16 @@
                 var connection = $.connection('compile');
                 
                 connection.received(function(msg) {
-                    if (msg.sender !== connection.)
+                    if (msg.sender !== connection.id) {
+                        Compilify.Editor.setValue(msg.code || '');
+                    }
 
-                    Compilify.Editor.setValue(msg.code || '');
                     Compilify.ResultPanel.setValue(msg.result || msg.error || '');
                 });
 
                 var compile = _.debounce(function(sender, key) {
                     connection.send(sender.getValue());
                 }, 500);
-
 
                 // Set up editor
                 Compilify.Editor = CodeMirror.fromTextArea(editor, {
@@ -77,6 +77,8 @@
                 });
 
                 connection.start();
+
+                root.connection = connection;
             });
         }).call(window, window.Compilify || {});
     </script>

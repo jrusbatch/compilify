@@ -27,10 +27,16 @@ namespace Compilify.Web.Services
             return new string(slug.ToArray());
         }
 
-        public static int Decode(string str)
+        public static int? Decode(string str)
         {
+            if (string.IsNullOrEmpty(str))
+            {
+                return null;
+            }
+
             var @base = Characters.Length;
-            return str.Aggregate(0, (current, c) => current * @base + Characters.IndexOf(c));
+            return str.ToLowerInvariant()
+                      .Aggregate(0, (current, c) => current * @base + Characters.IndexOf(c));
         }
     }
 }
