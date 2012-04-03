@@ -30,10 +30,10 @@ namespace Compilify.Web.Services
 
         public object Execute(string code)
         {
-            //if (!Validator.Validate(code))
-            //{
-            //    return "Not implemented";
-            //}
+            if (!Validator.Validate(code))
+            {
+                return "Not implemented";
+            }
 
             var sandbox = CreateSandbox();
 
