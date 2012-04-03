@@ -30,11 +30,6 @@ namespace Compilify.Web.Services
 
         public object Execute(string code)
         {
-            if (!Validator.Validate(code))
-            {
-                return "Not implemented";
-            }
-
             var sandbox = CreateSandbox();
 
             const string entryPoint = 
@@ -56,11 +51,11 @@ namespace Compilify.Web.Services
             var namespaces = new[]
                              {
                                  "System", 
-                                 // "System.IO", 
-                                 // "System.Net", 
+                                 "System.IO", 
+                                 "System.Net", 
                                  "System.Linq", 
-                                 // "System.Threading", 
-                                 // "System.Threading.Tasks", 
+                                 "System.Threading", 
+                                 "System.Threading.Tasks", 
                                  "System.Text", 
                                  "System.Text.RegularExpressions", 
                                  "System.Collections.Generic"

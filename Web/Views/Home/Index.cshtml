@@ -21,39 +21,61 @@
                 $ = root.jQuery,
                 _ = root._,
                 CodeMirror = root.CodeMirror;
-            
-            var compile = _.debounce(function( text ) {
-                $.ajax({
-                    url: '/compile',
-                    type: 'POST',
-                    cache: false,
-                    contentType: 'application/json; charset=utf-8',
-                    data: root.JSON.stringify({ code: text }),
-                    dataType: 'json',
 
-                    success: function( resp ) {
-                        Compilify.ResultPanel.setValue(resp.data || '');
-                    }
-                });
-            }, 500);
+            
+//            var compile = _.debounce(function( text ) {
+//                connection.send(text);
+
+//                $.ajax({
+//                    url: '/compile',
+//                    type: 'POST',
+//                    cache: false,
+//                    contentType: 'application/json; charset=utf-8',
+//                    data: root.JSON.stringify({ code: text }),
+//                    dataType: 'json',
+
+//                    success: function( resp ) {
+//                        Compilify.ResultPanel.setValue(resp.data || '');
+//                    }
+//                });
+//            }, 500);
 
             $(function() {
                 var editor = $('#execute .js-editor')[0],
                     results = $('#observe .js-editor')[0];
+                
+                // Set up SignalR
+                var connection = $.connection('compile');
+                
+                connection.received(function(msg) {
+                    Compilify.Editor.setValue(msg.code || '');
+                    Compilify.ResultPanel.setValue(msg.result || msg.error || '');
+                });
 
+                var compile = _.debounce(function(sender, key) {
+                    connection.send(sender.getValue());
+                }, 500);
+
+
+                // Set up editor
                 Compilify.Editor = CodeMirror.fromTextArea(editor, {
                     indentUnit: 4,
                     lineNumbers: true,
-                    onKeyEvent: function( editor, key ) {
-                        compile(editor.getValue());
-                    }
+//                    onKeyEvent: function( editor, key ) {
+//                        compile(editor.getValue());
+//                    }
+                    
+                    onKeyEvent: compile
+                    
                 });
                 
                 Compilify.ResultPanel = CodeMirror.fromTextArea(results, {
-                    readOnly: true
+                    readOnly: true,
+                    lineWrapping: true
                 });
+
+                connection.start();
             });
-    
         }).call(window, window.Compilify || {});
     </script>
 }

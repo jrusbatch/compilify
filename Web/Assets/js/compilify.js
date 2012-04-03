@@ -1,17 +1,16 @@
-﻿(function(Compilify) {
-    var $ = this.jQuery;
-
-    var isArray = Array.isArray || function(obj) {
-        return toString.call(obj) == '[object Array]';
-    };
+﻿(function(Compilify, undefined) {
+    var root = this,
+        $ = root.jQuery;
 
     // Log all AJAX requests to Google Analytics
-    $(this).ajaxSend(function(event, jqXhr, options) {
-        var queue = _gaq;
-        if (isArray(queue) && queue !== null) {
-            queue.push(['_trackPageview', options.url]);
-        }
+    $(function() {
+        $('#content').ajaxSend(function(event, jqXhr, options) {
+            var gaq = root._gaq;
+            if (gaq) {
+                gaq.push(['_trackPageview', options.url]);
+            }
+        });
     });
-
-    this.Compilify = Compilify;
+    
+    root.Compilify = Compilify;
 }).call(window, window.Compilify || {});

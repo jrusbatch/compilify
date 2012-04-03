@@ -26,24 +26,5 @@ namespace Compilify.Web.Controllers
 
             return View();
         }
-
-        [HttpPost]
-        public ActionResult Compile(string code)
-        {
-            var compiler = new CodeExecuter();
-
-            dynamic result;
-
-            try
-            {
-                result = compiler.Execute(code);
-            }
-            catch (Exception ex)
-            {
-                return Json(new { data = ex.ToString() });
-            }
-
-            return Json(new { data = result });
-        }
     }
 }
