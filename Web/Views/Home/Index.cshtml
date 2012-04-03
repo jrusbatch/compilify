@@ -4,14 +4,14 @@
     <div class="page-header">
         <h1>define</h1>
     </div>
-    <textarea class="editor">@ViewBag.Define</textarea>
+    <textarea class="js-editor">@ViewBag.Define</textarea>
 </div>
 
 <div id="observe">
     <div class="page-header">
         <h1>observe</h1>
     </div>
-    <textarea class="editor">@ViewBag.Observe</textarea>
+    <textarea class="js-editor">@ViewBag.Observe</textarea>
 </div>
 
 @section PageScripts {
@@ -38,8 +38,8 @@
             }, 500);
 
             $(function() {
-                var editor = $('#execute .editor')[0],
-                    results = $('#observe .editor')[0];
+                var editor = $('#execute .js-editor')[0],
+                    results = $('#observe .js-editor')[0];
 
                 Compilify.Editor = CodeMirror.fromTextArea(editor, {
                     indentUnit: 4,

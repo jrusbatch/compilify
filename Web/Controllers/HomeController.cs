@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using System.Web.Mvc;
-using Compilify.Services;
+using Compilify.Web.Services;
 using Roslyn.Compilers;
 
-namespace Compilify.Controllers
+namespace Compilify.Web.Controllers
 {
     public class HomeController : Controller
     {

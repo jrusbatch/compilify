@@ -5,7 +5,7 @@ using Roslyn.Compilers.CSharp;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
-namespace Compilify.Services
+namespace Compilify.Web.Services
 {
     public class ScriptExecuter : MarshalByRefObject
     {

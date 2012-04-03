@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace Compilify.Infrastructure.Extensions
+namespace Compilify.Web.Infrastructure.Extensions
 {
     public static class HtmlHelperExtensions
     {

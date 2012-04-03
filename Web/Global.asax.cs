@@ -3,7 +3,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.Web.Optimization;
 
-namespace Compilify
+namespace Compilify.Web
 {
     public class Application : HttpApplication
     {

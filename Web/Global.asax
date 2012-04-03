@@ -1,1 +1,1 @@
-﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Compilify.Application" Language="C#" %>
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Compilify.Web.Application" Language="C#" %>
