@@ -150,8 +150,8 @@ CodeMirror.defineMode("clike", function(config, parserConfig) {
 
 (function() {
   function words(str) {
-    var obj = {}, words = str.split(" ");
-    for (var i = 0; i < words.length; ++i) obj[words[i]] = true;
+    var obj = {}, w = str.split(" ");
+    for (var i = 0, l = w.length; i < l; ++i) obj[w[i]] = true;
     return obj;
   }
   var cKeywords = "auto if break int case long char register continue return default short do sizeof " +

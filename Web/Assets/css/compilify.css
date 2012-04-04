@@ -86,6 +86,8 @@ h1 {
 }
 
 .CodeMirror {
+    font-family: 'Droid Sans Mono', monospace;
+    font-size: 13px;
     -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
        -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
@@ -93,8 +95,4 @@ h1 {
 
 .CodeMirror pre.CodeMirror-cursor {
     border-left-color: #555;
-}
-
-.CodeMirror .compilation-error {
-    background-color: red;
 }
