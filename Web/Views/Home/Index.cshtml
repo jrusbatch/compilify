@@ -1,25 +1,29 @@
 @{ ViewBag.Title = "Home"; }
 
-<div class="row-fluid">
-    <div class="span6">
-        <div id="define">
-            <div class="page-header">
-                <h1>define</h1>
-            </div>
-            <textarea class="js-editor">@ViewBag.Define</textarea>
-        </div>
-        
+<div id="define">
+    <div class="page-header">
+        <h1>define</h1>
     </div>
-    <div class="span6">
-        
-        <div id="observe">
-            <div class="page-header">
-                <h1>observe</h1>
-            </div>
-            <textarea class="js-editor">@ViewBag.Observe</textarea>
-        </div>
-
+    <textarea class="js-editor">@ViewBag.Define</textarea>
+</div>
+<div id="errors">
+    <div class="page-header">
+        <h1>errors</h1>
     </div>
+    <ul>
+        @if (ViewBag.Observe.Count == 0)
+        {
+            <li>No errors!</li>
+        }
+        else
+        {
+            foreach (var error in ViewBag.Observe)
+            {
+                <li>@error.Message</li>
+            }
+        }
+        
+    </ul>
 </div>
 
 
@@ -32,23 +36,32 @@
                 CodeMirror = root.CodeMirror;
             
             $(function() {
-                var editor = $('#define .js-editor')[0],
-                    // console = $('#execute .js-editor')[0],
-                    results = $('#observe .js-editor')[0];
+                var editor = $('#define .js-editor')[0];
                 
-                // Set up SignalR
-                var connection = $.connection('compile');
-                
-                connection.received(function(msg) {
-                    if (msg.sender !== connection.id) {
-                        Compilify.Editor.setValue(msg.code || '');
-                    }
+                var validate = _.debounce(function(sender, key) {
 
-                    Compilify.ResultPanel.setValue(msg.result || msg.error || '');
-                });
-
-                var compile = _.debounce(function(sender, key) {
-                    connection.send(sender.getValue());
+                    $.ajax('/home/validate', {
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ code: sender.getValue() }),
+                        success: function (msg) {
+                            var $list = $('#errors ul').detach().empty();
+                            
+                            if (msg.data.length === 0) {
+                                $list.append('<li>Build completed successfully.</li>');
+                            }
+                            else {
+                                for (var i in msg.data) {
+                                    var error = msg.data[i];
+                                    var start = error.Location.StartLinePosition;
+                                    var end = error.Location.EndLinePosition;
+                                    $list.append('<li>' + error.Message + '</li>');
+                                }
+                            }
+                            
+                            $('#errors').append($list);
+                        }
+                    });
                 }, 500);
 
                 // Set up editor
@@ -58,17 +71,9 @@
                     height: 'dynamic',
                     minHeight: '600px',
                     
-                    onKeyEvent: compile
+                    onKeyEvent: validate
                     
                 });
-                
-                Compilify.ResultPanel = CodeMirror.fromTextArea(results, {
-                    readOnly: true,
-                    height: '300px',
-                    lineWrapping: true
-                });
-
-                connection.start();
             });
         }).call(window, window.Compilify || {});
     </script>

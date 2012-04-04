@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Compilify.Web.Services;
-using Roslyn.Compilers.CSharp;
 
 namespace Compilify.Web.Controllers
 {
@@ -20,31 +19,47 @@ namespace Compilify.Web.Controllers
             builder.AppendLine("");
             builder.AppendLine("Greet();");
 
-            var compiler = new CodeExecuter();
+            var compiler = new CSharpCompiler();
             var code = builder.ToString();
 
             ViewBag.Define = code;
-            ViewBag.Observe = compiler.Execute(code);
+            ViewBag.Observe = compiler.GetCompilationErrors(code);
 
             return View();
         }
 
+        [HttpPost]
+        public ActionResult Compile(string code)
+        {
+            return Json(new { status = "ok" });
+        }
+
+        [HttpPost]
         public ActionResult Validate(string code)
         {
+            var compiler = new CSharpCompiler();
 
-            var tree = SyntaxTree.ParseCompilationUnit(code);
+            var errors = compiler.GetCompilationErrors(code)
+                                 .Select(x => new
+                                              {
+                                                  Severity = x.Info.Severity,
+                                                  Location = x.Location.GetLineSpan(false),
+                                                  Message = x.Info.GetMessage(CultureInfo.InvariantCulture)
+                                              })
+                                 .ToArray();
 
-            var result = tree.GetDiagnostics()
-                .Select(x => new
-                             {
-                                 Start = x.Location.SourceSpan.Start,
-                                 End = x.Location.GetLineSpan(false),
-                                 Message = x.Info.GetMessage(CultureInfo.InvariantCulture)
-                             })
-                .ToArray();
+            return Json(new { status = "ok", data = errors });
 
+            //var tree = SyntaxTree.ParseCompilationUnit(code);
 
-            return Json(new { status = "ok", data = result });
+            //var result = tree.GetDiagnostics()
+            //    .Select(x => new
+            //                 {
+            //                     Severity = x.Info.Severity,
+            //                     Location = x.Location.GetLineSpan(false),
+            //                     Message = x.Info.GetMessage(CultureInfo.InvariantCulture)
+            //                 })
+            //    .ToArray();
         }
     }
 }

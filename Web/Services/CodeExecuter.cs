@@ -14,7 +14,7 @@ namespace Compilify.Web.Services
 {
     public class CodeExecuter
     {
-        private static AppDomain CreateSandbox()
+        private static AppDomain CreateSandbox(string name)
         {
             var evidence = new Evidence();
             evidence.AddHostEvidence(new Zone(SecurityZone.Internet));
@@ -29,13 +29,18 @@ namespace Compilify.Web.Services
                             ApplicationBase = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
                         };
 
-            return AppDomain.CreateDomain("Sandbox", null, setup, permissions);
+            return AppDomain.CreateDomain(name, null, setup, permissions);
         }
 
         public object Execute(string code)
         {
-            var sandbox = CreateSandbox();
+            var sandbox = CreateSandbox("Sandbox");
 
+            // Load basic .NET assemblies into our sandbox
+            var system = sandbox.Load("System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+            var core = sandbox.Load("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+
+            var script = "public static object Eval() {" + code + "}";
             const string entryPoint = 
                 @"public class EntryPoint 
                   {
@@ -47,25 +52,20 @@ namespace Compilify.Web.Services
                       }
                   }";
 
-            var script = "public static object Eval() {" + code + "}";
-
-            var system = sandbox.Load("System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-            var core = sandbox.Load("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-
             var namespaces = new[]
                              {
                                  "System", 
                                  "System.IO", 
                                  "System.Net", 
                                  "System.Linq", 
-                                 "System.Threading", 
-                                 "System.Threading.Tasks", 
                                  "System.Text", 
                                  "System.Text.RegularExpressions", 
                                  "System.Collections.Generic"
                              };
 
-            var compilation = Compilation.Create("foo", new CompilationOptions(assemblyKind: AssemblyKind.ConsoleApplication, usings: ReadOnlyArray<string>.CreateFrom(namespaces)),
+            var options = new CompilationOptions(assemblyKind: AssemblyKind.ConsoleApplication, usings: ReadOnlyArray<string>.CreateFrom(namespaces));
+
+            var compilation = Compilation.Create("foo", options,
                 new[]
                 {
                     SyntaxTree.ParseCompilationUnit(entryPoint),
@@ -84,8 +84,7 @@ namespace Compilify.Web.Services
 
                 if (!emitResult.Success)
                 {
-                    var errors = emitResult.Diagnostics.Select(x => x.Info.GetMessage().Replace("Eval()", "<Factory>()").ToString(CultureInfo.InvariantCulture)).ToArray();
-
+                    var errors = emitResult.Diagnostics.Select(x => x.Info.GetMessage().Replace("Eval()", "<Factory>()")).ToArray();
                     return string.Join(", ", errors);
                 }
 
@@ -98,7 +97,7 @@ namespace Compilify.Web.Services
             }
 
             var loader = (ByteCodeLoader)Activator.CreateInstance(sandbox, typeof(ByteCodeLoader).Assembly.FullName, typeof(ByteCodeLoader).FullName).Unwrap();
-            
+
             object result = null;
             try
             {
@@ -126,7 +125,7 @@ namespace Compilify.Web.Services
             }
 
             AppDomain.Unload(sandbox);
-            
+
             if (result == null || string.IsNullOrEmpty(result.ToString()))
             {
                 result = "null";

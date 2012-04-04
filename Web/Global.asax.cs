@@ -1,9 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Compilify.Web.Infrastructure;
 using Microsoft.Web.Optimization;
-using SignalR.Hosting.AspNet.Routing;
 
 namespace Compilify.Web
 {
@@ -30,11 +28,15 @@ namespace Compilify.Web
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            routes.MapConnection<CompilerConnection>("compile", "compile/{*operation}");
-
             routes.MapRoute(
                 name: "Root",
                 url: "",
+                defaults: new { controller = "Home", action = "Index" }
+            );
+
+            routes.MapRoute(
+                name: "Default",
+                url: "{controller}/{action}",
                 defaults: new { controller = "Home", action = "Index" }
             );
         }
