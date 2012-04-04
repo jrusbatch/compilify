@@ -24,7 +24,11 @@ namespace Compilify.Web.Services
 
             permissions.AddPermission(security);
 
-            var setup = new AppDomainSetup { ApplicationBase = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) };
+            var setup = new AppDomainSetup
+                        {
+                            ApplicationBase = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                        };
+
             return AppDomain.CreateDomain("Sandbox", null, setup, permissions);
         }
 

@@ -1,18 +1,27 @@
 @{ ViewBag.Title = "Home"; }
 
-<div id="execute">
-    <div class="page-header">
-        <h1>define</h1>
+<div class="row-fluid">
+    <div class="span6">
+        <div id="define">
+            <div class="page-header">
+                <h1>define</h1>
+            </div>
+            <textarea class="js-editor">@ViewBag.Define</textarea>
+        </div>
+        
     </div>
-    <textarea class="js-editor">@ViewBag.Define</textarea>
+    <div class="span6">
+        
+        <div id="observe">
+            <div class="page-header">
+                <h1>observe</h1>
+            </div>
+            <textarea class="js-editor">@ViewBag.Observe</textarea>
+        </div>
+
+    </div>
 </div>
 
-<div id="observe">
-    <div class="page-header">
-        <h1>observe</h1>
-    </div>
-    <textarea class="js-editor">@ViewBag.Observe</textarea>
-</div>
 
 @section PageScripts {
     <script>
@@ -21,27 +30,10 @@
                 $ = root.jQuery,
                 _ = root._,
                 CodeMirror = root.CodeMirror;
-
             
-//            var compile = _.debounce(function( text ) {
-//                connection.send(text);
-
-//                $.ajax({
-//                    url: '/compile',
-//                    type: 'POST',
-//                    cache: false,
-//                    contentType: 'application/json; charset=utf-8',
-//                    data: root.JSON.stringify({ code: text }),
-//                    dataType: 'json',
-
-//                    success: function( resp ) {
-//                        Compilify.ResultPanel.setValue(resp.data || '');
-//                    }
-//                });
-//            }, 500);
-
             $(function() {
-                var editor = $('#execute .js-editor')[0],
+                var editor = $('#define .js-editor')[0],
+                    // console = $('#execute .js-editor')[0],
                     results = $('#observe .js-editor')[0];
                 
                 // Set up SignalR
@@ -63,9 +55,8 @@
                 Compilify.Editor = CodeMirror.fromTextArea(editor, {
                     indentUnit: 4,
                     lineNumbers: true,
-//                    onKeyEvent: function( editor, key ) {
-//                        compile(editor.getValue());
-//                    }
+                    height: 'dynamic',
+                    minHeight: '600px',
                     
                     onKeyEvent: compile
                     
@@ -73,12 +64,11 @@
                 
                 Compilify.ResultPanel = CodeMirror.fromTextArea(results, {
                     readOnly: true,
+                    height: '300px',
                     lineWrapping: true
                 });
 
                 connection.start();
-
-                root.connection = connection;
             });
         }).call(window, window.Compilify || {});
     </script>

@@ -33,12 +33,6 @@ namespace Compilify.Web
             routes.MapConnection<CompilerConnection>("compile", "compile/{*operation}");
 
             routes.MapRoute(
-                name: "Content",
-                url: "{slug}/{version}",
-                defaults: new { controller = "Content", action = "Show", version = UrlParameter.Optional }
-            );
-
-            routes.MapRoute(
                 name: "Root",
                 url: "",
                 defaults: new { controller = "Home", action = "Index" }
