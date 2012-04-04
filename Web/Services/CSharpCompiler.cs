@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
@@ -11,6 +10,8 @@ namespace Compilify.Web.Services
         public IEnumerable<Diagnostic> GetCompilationErrors(string code)
         {
             var errors = new List<Diagnostic>();
+
+            var tree = SyntaxTree.ParseCompilationUnit(code, options: new ParseOptions(kind: SourceCodeKind.Script));
 
             var mscorlib = Assembly.Load("mscorlib,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
             var system = Assembly.Load("System,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
@@ -27,12 +28,9 @@ namespace Compilify.Web.Services
                                  "System.Collections.Generic"
                              });
 
-            var compilation = Compilation.Create("foo", 
+            var compilation = Compilation.Create("foo",
                 new CompilationOptions(assemblyKind: AssemblyKind.DynamicallyLinkedLibrary, usings: namespaces),
-                new[]
-                {
-                    SyntaxTree.ParseCompilationUnit(code, options: new ParseOptions(languageVersion: LanguageVersion.CSharp6, kind: SourceCodeKind.Interactive))
-                },
+                new[] { tree },
                 new MetadataReference[]
                 { 
                     new AssemblyFileReference(mscorlib.Location),
@@ -40,15 +38,7 @@ namespace Compilify.Web.Services
                     new AssemblyFileReference(system.Location)
                 });
 
-            using (var output = new MemoryStream())
-            {
-                var emitResult = compilation.Emit(output);
-
-                if (!emitResult.Success)
-                {
-                    errors.AddRange(emitResult.Diagnostics);
-                }
-            }
+            errors.AddRange(compilation.GetDiagnostics());
 
             return errors;
         } 

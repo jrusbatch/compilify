@@ -85,13 +85,16 @@ h1 {
     border: none;
 }
 
-.CodeMirror-cursor {
-    /*-webkit-transition: opacity 0.300s ease-out;
-       -moz-transition: opacity 0.300s ease-out;
-         -o-transition: opacity 0.300s ease-out;
-            transition: opacity 0.300s ease-out;*/
+.CodeMirror {
+    -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+       -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
 .CodeMirror pre.CodeMirror-cursor {
     border-left-color: #555;
+}
+
+.CodeMirror .compilation-error {
+    background-color: red;
 }

@@ -1,3 +1,4 @@
+@using System.Globalization
 @{ ViewBag.Title = "Home"; }
 
 <div id="define">
@@ -19,7 +20,7 @@
         {
             foreach (var error in ViewBag.Observe)
             {
-                <li>@error.Message</li>
+                <li>@error.Info.GetMessage(CultureInfo.InvariantCulture)</li>
             }
         }
         
@@ -29,47 +30,45 @@
 
 @section PageScripts {
     <script>
+        "use strict";
+        
         (function(Compilify) {
             var root = this,
                 $ = root.jQuery,
                 _ = root._,
                 CodeMirror = root.CodeMirror;
             
+            var validate = _.debounce(function(sender, key) {
+                $.ajax('/home/validate', {
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ code: sender.getValue() }),
+                    success: function (msg) {
+                        var $list = $('#errors ul').detach().empty();
+
+                        if (msg.data.length === 0) {
+                            $list.append('<li>Build completed successfully.</li>');
+                        }
+                        else {
+                            for (var i in msg.data) {
+                                var error = msg.data[i];
+                                
+                                $list.append('<li>' + error.Message + '</li>');
+                            }
+                        }
+                            
+                        $('#errors').append($list);
+                    }
+                });
+            }, 500);
+
             $(function() {
                 var editor = $('#define .js-editor')[0];
-                
-                var validate = _.debounce(function(sender, key) {
-
-                    $.ajax('/home/validate', {
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ code: sender.getValue() }),
-                        success: function (msg) {
-                            var $list = $('#errors ul').detach().empty();
-                            
-                            if (msg.data.length === 0) {
-                                $list.append('<li>Build completed successfully.</li>');
-                            }
-                            else {
-                                for (var i in msg.data) {
-                                    var error = msg.data[i];
-                                    var start = error.Location.StartLinePosition;
-                                    var end = error.Location.EndLinePosition;
-                                    $list.append('<li>' + error.Message + '</li>');
-                                }
-                            }
-                            
-                            $('#errors').append($list);
-                        }
-                    });
-                }, 500);
 
                 // Set up editor
                 Compilify.Editor = CodeMirror.fromTextArea(editor, {
                     indentUnit: 4,
                     lineNumbers: true,
-                    height: 'dynamic',
-                    minHeight: '600px',
                     
                     onKeyEvent: validate
                     

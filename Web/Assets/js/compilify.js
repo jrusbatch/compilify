@@ -14,3 +14,4 @@
     
     root.Compilify = Compilify;
 }).call(window, window.Compilify || {});
+
