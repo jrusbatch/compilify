@@ -50,13 +50,25 @@ h1, h2, h3, h4, h5, h6 {
 .navbar .brand 
 {
     color: #444;
-    font-size: 30px;
+    /*font-size: 30px;*/
     padding-top: 16px;
     padding-bottom: 24px;
 }
 
+.navbar .brand h1 {
+    font-size: 36px;
+}
+
 .navbar .nav {
-    padding-top: 14px;
+    /*padding-top: 16px;*/
+}
+
+.navbar .nav li,
+.navbar .nav li a {
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 76px;
+    line-height: 76px;
 }
 
 .navbar .nav > li > a:hover {
