@@ -1,0 +1,29 @@
+
+Distilled: Compilify is like those, except with C#.
+
+Distilled: The goal is that you'll be able to write c# in that textbox and see any errors in real time. No need to build to see if it fails
+
+Distilled: eventually, I'd like to let you execute the code as you write it, but right now that's a bit of a security hazard
+
+Distilled: I basically set up the environment your code runs in to already have the most basic .NET libraries available to it.
+Distilled: It will tell you if it can't find a type that you're referencing, if you try to reference something outside those basic libraries.
+
+Distilled: But I can't let users upload their own libraries or anything. I don't trust those.
+Distilled: nah it throttles itself. It waits until you're done typing before hitting the server
+Distilled: At most it will only make a request every half second
+Distilled: But eventually
+Distilled: (this is the cool-er part, next to being able to execute the code you write in real time, which is also pretty cool)
+Distilled: Eventually, I want to allow more than one developer to work on a single piece of code concurrently. So if you make changes while I'm looking at the same code, I see your changes - and the effects that those changes have on the code's execution - in near real-time.
+Distilled: Like, in under a second.
+
+ParA: like
+ParA: if theres multiple puzzle pieces
+ParA: to the puzzle project
+ParA: so if in my piece i call a function you're writing
+ParA: and you update it
+ParA: it knows to alter what i see
+ParA: ?
+ParA: i think function is the word im looking for
+ParA: but again, idk what im talking about haha
+
+Distilled: yeah, and for if you're having trouble understanding why a piece of code isn't working or producing the expected results, I can help you and we can try different approaches and see what the results of the different approaches are together
