@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 using Compilify.Web.Models;
 using Compilify.Web.Services;
@@ -40,9 +39,9 @@ namespace Compilify.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Show(string slug, int version = 1)
+        public ActionResult Show(string slug, int version = 1)
         {
-            var content = await db.Get(slug, version);
+            var content = db.Get(slug, version);
             if (content == null)
             {
                 return HttpNotFound();
@@ -56,23 +55,22 @@ namespace Compilify.Web.Controllers
             var compiler = new CSharpCompiler();
 
             ViewBag.Define = content.Code;
-
-            ViewBag.Observe = await Task.Factory.StartNew(() => compiler.GetCompilationErrors(content.Code));
+            ViewBag.Observe = compiler.GetCompilationErrors(content.Code);
 
             return View("Index");
         }
 
         [HttpPost]
-        public async Task<ActionResult> Save(string slug, PageContent content)
+        public ActionResult Save(string slug, PageContent content)
         {
             if (slug == null)
             {
-                var id = (int)await urlCounter.Next();
+                var id = (int) urlCounter.Next();
                 slug = Base32Encoder.Encode(id);
                 content.Slug = slug;
             }
 
-            var result = await db.Save(slug, content);
+            var result = db.Save(slug, content);
 
             var url = result.Version > 1 
                       ? Url.Action("Show", new { slug = result.Slug, version = result.Version }) 

@@ -5,7 +5,8 @@ namespace Compilify.Web.Services
 {
     public interface ISequenceProvider
     {
-        Task<long> Next();
+        long Next();
+        Task<long> NextAsync();
     }
 
     public class SequenceProvider : ISequenceProvider
@@ -19,7 +20,12 @@ namespace Compilify.Web.Services
         private const string Key = "sequence:url";
         private readonly RedisConnection redis;
 
-        public Task<long> Next()
+        public long Next()
+        {
+            return redis.Wait(NextAsync());
+        }
+
+        public Task<long> NextAsync()
         {
             return redis.Strings.Increment(Db, Key);
         }
