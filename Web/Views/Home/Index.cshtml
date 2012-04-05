@@ -1,24 +1,26 @@
 @using System.Globalization
+@model Compilify.Web.Models.PageContent
+
 @{ ViewBag.Title = "Home"; }
 
 <div id="define">
     <div class="page-header">
         <h1>code <small><a class="js-save" href="#">save</a></small></h1>
     </div>
-    <textarea class="js-editor">@ViewBag.Define</textarea>
+    <textarea class="js-editor">@Model.Code</textarea>
 </div>
 <div id="errors">
     <div class="page-header">
         <h1>errors</h1>
     </div>
     <ul>
-        @if (ViewBag.Observe.Count == 0)
+        @if (Model.Errors == null || !Model.Errors.Any())
         {
             <li>No errors!</li>
         }
         else
         {
-            foreach (var error in ViewBag.Observe)
+            foreach (var error in Model.Errors.OrderBy(x => x.Location.GetLineSpan(false).StartLinePosition))
             {
                 <li>@error.Info.GetMessage(CultureInfo.InvariantCulture)</li>
             }

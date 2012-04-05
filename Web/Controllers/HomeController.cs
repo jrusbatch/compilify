@@ -20,6 +20,8 @@ namespace Compilify.Web.Controllers
 
         public ActionResult Index()
         {
+            var content = new PageContent();
+
             var builder = new StringBuilder();
 
             builder.AppendLine("string Greet()");
@@ -30,12 +32,10 @@ namespace Compilify.Web.Controllers
             builder.AppendLine("Greet();");
 
             var compiler = new CSharpCompiler();
-            var code = builder.ToString();
+            content.Code = builder.ToString();
 
-            ViewBag.Define = code;
-            ViewBag.Observe = compiler.GetCompilationErrors(code);
-
-            return View();
+            content.Errors = compiler.GetCompilationErrors(content.Code);
+            return View(content);
         }
 
         [HttpGet]
