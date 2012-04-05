@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using BookSleeve;
 using Compilify.Web.Models;
+using Raven.Client;
 
 namespace Compilify.Web.Services
 {
@@ -14,28 +15,32 @@ namespace Compilify.Web.Services
 
     public class PageContentRepository : IPageContentRepository
     {
-        public PageContentRepository(RedisConnection redisConnection)
+        public PageContentRepository(RedisConnection redisConnection, IDocumentSession documentSession)
         {
-            db = redisConnection;
+            redis = redisConnection;
+            db = documentSession;
         }
 
-        private readonly RedisConnection db;
+        private readonly RedisConnection redis;
+        private readonly IDocumentSession db;
 
         public async Task<PageContent> Get(string slug, int version = 1)
         {
             var key = string.Format(CultureInfo.InvariantCulture, "content:{0}:{1}", slug.ToLowerInvariant(), version);
-            var code = await db.Hashes.GetString(0, key, "Code");
+            var code = await redis.Hashes.GetString(0, key, "Code");
 
             return new PageContent { Code = code };
         }
 
         public async Task<PageContent> Save(string slug, PageContent content)
         {
-            var version = (int)await db.Strings.Increment(0, "sequence:content:" + slug);
+            var version = (int)await redis.Strings.Increment(0, "sequence:content:" + slug);
 
             var key = string.Format(CultureInfo.InvariantCulture, "content:{0}:{1}", slug, version);
 
-            if (await db.Hashes.Set(0, key, "Code", content.Code))
+
+
+            if (await redis.Hashes.Set(0, key, "Code", content.Code))
             {
                 content.Slug = slug;
                 content.Version = version;

@@ -8,6 +8,9 @@ using Autofac.Integration.Mvc;
 using BookSleeve;
 using Compilify.Web.Services;
 using Microsoft.Web.Optimization;
+using Raven.Abstractions.Data;
+using Raven.Client;
+using Raven.Client.Document;
 
 namespace Compilify.Web
 {
@@ -94,6 +97,28 @@ namespace Compilify.Web
                              })
                    .InstancePerHttpRequest()
                    .AsSelf();
+
+            builder.Register(x =>
+                             {
+                                 var parser = ConnectionStringParser<RavenConnectionStringOptions>.FromConnectionStringName("RavenDB");
+                                 parser.Parse();
+
+                                 var store = new DocumentStore
+                                             {
+                                                 ApiKey = parser.ConnectionStringOptions.ApiKey,
+                                                 Url = parser.ConnectionStringOptions.Url
+                                             };
+
+                                 store.Initialize();
+
+                                 return store;
+                             })
+                   .SingleInstance()
+                   .As<IDocumentStore>();
+
+            builder.RegisterType<DocumentSession>()
+                   .As<IDocumentSession>()
+                   .InstancePerHttpRequest();
 
             builder.Register(x => new SequenceProvider(x.Resolve<RedisConnection>()))
                    .AsImplementedInterfaces()
