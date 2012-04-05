@@ -39,10 +39,14 @@
                 CodeMirror = root.CodeMirror;
             
             var validate = _.debounce(function(sender, key) {
+                var currentSlug = window.location.
+
                 $.ajax('/home/validate', {
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({ code: sender.getValue() }),
+                    data: JSON.stringify({
+                         code: sender.getValue()
+                    }),
                     success: function (msg) {
                         var $list = $('#errors ul').detach().empty();
 

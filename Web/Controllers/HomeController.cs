@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using Compilify.Web.Models;
 using Compilify.Web.Services;
@@ -9,11 +10,13 @@ namespace Compilify.Web.Controllers
 {
     public class HomeController : AsyncController
     {
-        public HomeController(IPageContentRepository contentRepository)
+        public HomeController(ISequenceProvider sequenceProvider, IPageContentRepository contentRepository)
         {
+            urlCounter = sequenceProvider;
             db = contentRepository;
         }
 
+        private readonly ISequenceProvider urlCounter;
         private readonly IPageContentRepository db;
 
         public ActionResult Index()
@@ -37,9 +40,9 @@ namespace Compilify.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult Show(string slug, int version = 1)
+        public async Task<ActionResult> Show(string slug, int version = 1)
         {
-            var content = db.Get(slug, version);
+            var content = await db.Get(slug, version);
             if (content == null)
             {
                 return HttpNotFound();
@@ -51,26 +54,31 @@ namespace Compilify.Web.Controllers
             }
             
             var compiler = new CSharpCompiler();
+
             ViewBag.Define = content.Code;
-            ViewBag.Observe = compiler.GetCompilationErrors(content.Code);
+
+            ViewBag.Observe = await Task.Factory.StartNew(() => compiler.GetCompilationErrors(content.Code));
 
             return View("Index");
         }
 
         [HttpPost]
-        public ActionResult Save(PageContent content)
+        public async Task<ActionResult> Save(string slug, PageContent content)
         {
-            var result = db.Save(content);
+            if (slug == null)
+            {
+                var id = (int)await urlCounter.Next();
+                slug = Base32Encoder.Encode(id);
+                content.Slug = slug;
+            }
 
-            var url = Url.Action("Show", new { slug = result.Slug, version = result.Version });
+            var result = await db.Save(slug, content);
+
+            var url = result.Version > 1 
+                      ? Url.Action("Show", new { slug = result.Slug, version = result.Version }) 
+                      : Url.Action("Show", new { slug = result.Slug });
 
             return Json(new { status = "ok", data = new { slug = result.Slug, version = result.Version, url = url } });
-        }
-
-        [HttpPost]
-        public ActionResult Compile(string code)
-        {
-            return Json(new { status = "ok" });
         }
 
         [HttpPost]
@@ -88,17 +96,6 @@ namespace Compilify.Web.Controllers
                                  .ToArray();
 
             return Json(new { status = "ok", data = errors });
-
-            //var tree = SyntaxTree.ParseCompilationUnit(code);
-
-            //var result = tree.GetDiagnostics()
-            //    .Select(x => new
-            //                 {
-            //                     Severity = x.Info.Severity,
-            //                     Location = x.Location.GetLineSpan(false),
-            //                     Message = x.Info.GetMessage(CultureInfo.InvariantCulture)
-            //                 })
-            //    .ToArray();
         }
     }
 }

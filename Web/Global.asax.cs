@@ -1,4 +1,5 @@
 ﻿using System.Configuration;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -89,7 +90,6 @@ namespace Compilify.Web
                              {
                                  var conn = new RedisConnection(ConfigurationManager.AppSettings["REDISTOGO_URL"]);
                                  conn.Wait(conn.Open());
-
                                  return conn;
                              })
                    .InstancePerHttpRequest()
