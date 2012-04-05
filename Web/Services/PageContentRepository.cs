@@ -38,8 +38,6 @@ namespace Compilify.Web.Services
 
             var key = string.Format(CultureInfo.InvariantCulture, "content:{0}:{1}", slug, version);
 
-
-
             if (await redis.Hashes.Set(0, key, "Code", content.Code))
             {
                 content.Slug = slug;
