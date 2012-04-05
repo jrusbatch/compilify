@@ -37,14 +37,36 @@ namespace Compilify.Web
             routes.MapRoute(
                 name: "Root",
                 url: "",
-                defaults: new { controller = "Home", action = "Index" }
+                defaults: new { controller = "Home", action = "Index" },
+                constraints: new { httpMethod = new HttpMethodConstraint("GET") }
             );
 
             routes.MapRoute(
-                name: "Default",
-                url: "{controller}/{action}",
-                defaults: new { controller = "Home", action = "Index" }
+                name: "validate",
+                url: "validate",
+                defaults: new { controller = "Home", action = "Validate" },
+                constraints: new { httpMethod = new HttpMethodConstraint("POST") }
             );
+
+            routes.MapRoute(
+                name: "Save",
+                url: "{slug}",
+                defaults: new { controller = "Home", action = "Save", slug = UrlParameter.Optional },
+                constraints: new { httpMethod = new HttpMethodConstraint("POST") }
+            );
+
+            routes.MapRoute(
+                name: "Show",
+                url: "{slug}/{version}",
+                defaults: new { controller = "Home", action = "Show", version = UrlParameter.Optional },
+                constraints: new { httpMethod = new HttpMethodConstraint("GET") }
+            );
+
+            //routes.MapRoute(
+            //    name: "Default",
+            //    url: "{controller}/{action}",
+            //    defaults: new { controller = "Home", action = "Index" }
+            //);
         }
 
         private static void RegisterBundles(BundleCollection bundles)
@@ -62,13 +84,14 @@ namespace Compilify.Web
         {
             var assembly = typeof(Application).Assembly;
             var builder = new ContainerBuilder();
-            builder.RegisterControllers(assembly);
-            builder.RegisterModelBinders(assembly);
-            builder.RegisterModelBinderProvider();
-            builder.RegisterModule(new AutofacWebTypesModule());
-            builder.RegisterFilterProvider();
 
-            builder.Register(x => new RedisConnection(ConfigurationManager.AppSettings["REDISTOGO_URL"]))
+            builder.Register(x =>
+                             {
+                                 var conn = new RedisConnection(ConfigurationManager.AppSettings["REDISTOGO_URL"]);
+                                 conn.Wait(conn.Open());
+
+                                 return conn;
+                             })
                    .InstancePerHttpRequest()
                    .AsSelf();
 
@@ -76,6 +99,15 @@ namespace Compilify.Web
                    .AsImplementedInterfaces()
                    .InstancePerHttpRequest();
 
+            builder.RegisterType<PageContentRepository>()
+                   .AsImplementedInterfaces()
+                   .InstancePerHttpRequest();
+
+            builder.RegisterControllers(assembly);
+            builder.RegisterModelBinders(assembly);
+            builder.RegisterModelBinderProvider();
+            builder.RegisterModule(new AutofacWebTypesModule());
+            builder.RegisterFilterProvider();
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }

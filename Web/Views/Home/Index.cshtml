@@ -3,7 +3,7 @@
 
 <div id="define">
     <div class="page-header">
-        <h1>code</h1>
+        <h1>code <small><a class="js-save" href="#">save</a></small></h1>
     </div>
     <textarea class="js-editor">@ViewBag.Define</textarea>
 </div>
@@ -72,7 +72,20 @@
                     theme: 'neat',
                     mode: 'text/x-csharp',
                     onKeyEvent: validate
-                    
+                });
+
+                var saveAddress = window.location.pathname;
+
+                $('#define .js-save').on('click', function() {
+                    $.ajax(saveAddress, {
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ content: { Code: Compilify.Editor.getValue() } }),
+                        success: function(msg) {
+                            window.history.replaceState({ }, '', msg.data.url);
+                            saveAddress = '/' + msg.data.slug;
+                        }
+                    });
                 });
             });
         }).call(window, window.Compilify || {});

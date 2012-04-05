@@ -56,6 +56,9 @@
     <Reference Include="Microsoft.Web.Optimization, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Optimization.0.1\lib\net40\Microsoft.Web.Optimization.dll</HintPath>
     </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\packages\protobuf-net.2.0.0.480\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="Roslyn.Compilers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Roslyn.1.0.11014.5\lib\net40\Roslyn.Compilers.dll</HintPath>
     </Reference>
@@ -165,6 +168,7 @@
     <Compile Include="Services\CodeExecuter.cs" />
     <Compile Include="Services\Base32Encoder.cs" />
     <Compile Include="Services\CSharpCompiler.cs" />
+    <Compile Include="Services\PageContentRepository.cs" />
     <Compile Include="Services\SequenceProvider.cs" />
     <Compile Include="Services\Validator.cs" />
   </ItemGroup>

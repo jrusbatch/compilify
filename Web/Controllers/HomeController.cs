@@ -2,18 +2,19 @@
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using Compilify.Web.Models;
 using Compilify.Web.Services;
 
 namespace Compilify.Web.Controllers
 {
     public class HomeController : AsyncController
     {
-        public HomeController(ISequenceProvider sequenceProvider)
+        public HomeController(IPageContentRepository contentRepository)
         {
-            sequence = sequenceProvider;
+            db = contentRepository;
         }
 
-        private readonly ISequenceProvider sequence;
+        private readonly IPageContentRepository db;
 
         public ActionResult Index()
         {
@@ -35,11 +36,35 @@ namespace Compilify.Web.Controllers
             return View();
         }
 
-        public ActionResult Test()
+        [HttpGet]
+        public ActionResult Show(string slug, int version = 1)
         {
-            var next = (int)sequence.Next();
-            var slug = Base32Encoder.Encode(next);
-            return Json(slug, JsonRequestBehavior.AllowGet);
+            var content = db.Get(slug, version);
+            if (content == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (Request.IsAjaxRequest())
+            {
+                return Json(new { status = "ok", data = content }, JsonRequestBehavior.AllowGet);
+            }
+            
+            var compiler = new CSharpCompiler();
+            ViewBag.Define = content.Code;
+            ViewBag.Observe = compiler.GetCompilationErrors(content.Code);
+
+            return View("Index");
+        }
+
+        [HttpPost]
+        public ActionResult Save(PageContent content)
+        {
+            var result = db.Save(content);
+
+            var url = Url.Action("Show", new { slug = result.Slug, version = result.Version });
+
+            return Json(new { status = "ok", data = new { slug = result.Slug, version = result.Version, url = url } });
         }
 
         [HttpPost]
