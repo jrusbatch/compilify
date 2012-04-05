@@ -1,6 +1,11 @@
-﻿using System.Web;
+﻿using System.Configuration;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Autofac;
+using Autofac.Integration.Mvc;
+using BookSleeve;
+using Compilify.Web.Services;
 using Microsoft.Web.Optimization;
 
 namespace Compilify.Web
@@ -14,6 +19,7 @@ namespace Compilify.Web
 
             MvcHandler.DisableMvcResponseHeader = true;
 
+            ConfigureIoC();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterBundles(BundleTable.Bundles);
             RegisterRoutes(RouteTable.Routes);
@@ -50,6 +56,28 @@ namespace Compilify.Web
             var js = new Bundle("~/js", typeof(JsMinify));
             js.AddDirectory("~/assets/js", "*.js", false);
             bundles.Add(js);
+        }
+
+        private static void ConfigureIoC()
+        {
+            var assembly = typeof(Application).Assembly;
+            var builder = new ContainerBuilder();
+            builder.RegisterControllers(assembly);
+            builder.RegisterModelBinders(assembly);
+            builder.RegisterModelBinderProvider();
+            builder.RegisterModule(new AutofacWebTypesModule());
+            builder.RegisterFilterProvider();
+
+            builder.Register(x => new RedisConnection(ConfigurationManager.AppSettings["REDISTOGO_URL"]))
+                   .InstancePerHttpRequest()
+                   .AsSelf();
+
+            builder.Register(x => new SequenceProvider(x.Resolve<RedisConnection>()))
+                   .AsImplementedInterfaces()
+                   .InstancePerHttpRequest();
+
+            var container = builder.Build();
+            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }
     }
 }

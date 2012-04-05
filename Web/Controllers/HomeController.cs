@@ -2,13 +2,19 @@
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
-using BookSleeve;
 using Compilify.Web.Services;
 
 namespace Compilify.Web.Controllers
 {
     public class HomeController : AsyncController
     {
+        public HomeController(ISequenceProvider sequenceProvider)
+        {
+            sequence = sequenceProvider;
+        }
+
+        private readonly ISequenceProvider sequence;
+
         public ActionResult Index()
         {
             var builder = new StringBuilder();
@@ -27,6 +33,13 @@ namespace Compilify.Web.Controllers
             ViewBag.Observe = compiler.GetCompilationErrors(code);
 
             return View();
+        }
+
+        public ActionResult Test()
+        {
+            var next = (int)sequence.Next();
+            var slug = Base32Encoder.Encode(next);
+            return Json(slug, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

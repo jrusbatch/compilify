@@ -15,7 +15,7 @@ namespace Compilify.Web.Services
                 return Characters[0].ToString(CultureInfo.InvariantCulture);
             }
 
-            var @base = Characters.Length;
+            int @base = Characters.Length;
             var slug = new Stack<char>(7);
 
             while (i > 0)
