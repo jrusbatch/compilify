@@ -41,8 +41,6 @@
                 CodeMirror = root.CodeMirror;
             
             var validate = _.debounce(function(sender, key) {
-                var currentSlug = window.location.
-
                 $.ajax('/home/validate', {
                     type: 'POST',
                     contentType: 'application/json',
