@@ -44,6 +44,17 @@ namespace Compilify.Web
             );
 
             routes.MapLowercaseRoute(
+                name: "Update",
+                url: "{slug}/{version}",
+                defaults: new { controller = "Home", action = "Save", version = UrlParameter.Optional },
+                constraints: new
+                {
+                    httpMethod = new HttpMethodConstraint("POST"),
+                    slug = @"[a-z0-9]*"
+                }
+            );
+
+            routes.MapLowercaseRoute(
                 name: "Save",
                 url: "{slug}",
                 defaults: new { controller = "Home", action = "Save", slug = UrlParameter.Optional },
