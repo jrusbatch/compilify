@@ -20,13 +20,12 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
         {
             var connectionString = ConfigurationManager.AppSettings["REDISTOGO_URL"];
 
-            RedisConnection connection;
-#if !DEBUG
             var uri = new Uri(connectionString);
             var password = uri.UserInfo.Split(':').Last();
-            connection = new RedisConnection(uri.Host, uri.Port, password: password);
+#if !DEBUG
+            var connection = new RedisConnection(uri.Host, uri.Port, password: password);
 #else
-            connection = new RedisConnection(connectionString);
+            var connection = new RedisConnection(connectionString);
 #endif
             connection.Wait(connection.Open());
             return connection;
