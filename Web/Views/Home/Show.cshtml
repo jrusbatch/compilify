@@ -20,7 +20,7 @@
         }
         else
         {
-            foreach (var error in Model.Errors.OrderBy(x => x.Location.GetLineSpan(false).StartLinePosition))
+            foreach (var error in Model.Errors)
             {
                 <li>@error.Info.GetMessage(CultureInfo.InvariantCulture)</li>
             }
@@ -80,18 +80,16 @@
                     onKeyEvent: validate
                 });
 
-                var saveAddress = window.location.pathname;
-
                 $('#define .js-save').on('click', function() {
-                    $.ajax(saveAddress, {
+                    $.ajax(window.location.pathname, {
                         type: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify({ content: { Code: Compilify.Editor.getValue() } }),
                         success: function(msg) {
-                            window.history.replaceState({ }, '', msg.data.url);
-                            saveAddress = '/' + msg.data.slug;
+                            window.history.pushState({ }, '', msg.data.url);
                         }
                     });
+                    return false;
                 });
             });
         }).call(window, window.Compilify || {});

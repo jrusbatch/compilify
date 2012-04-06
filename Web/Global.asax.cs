@@ -5,8 +5,12 @@ using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
 using BookSleeve;
+using Compilify.Web.Models;
 using Compilify.Web.Services;
 using Microsoft.Web.Optimization;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.IdGenerators;
+using MongoDB.Driver;
 
 namespace Compilify.Web
 {
@@ -52,14 +56,22 @@ namespace Compilify.Web
                 name: "Save",
                 url: "{slug}",
                 defaults: new { controller = "Home", action = "Save", slug = UrlParameter.Optional },
-                constraints: new { httpMethod = new HttpMethodConstraint("POST") }
+                constraints: new
+                             {
+                                 httpMethod = new HttpMethodConstraint("POST"),
+                                 slug = @"[a-z0-9]*"
+                             }
             );
 
             routes.MapRoute(
                 name: "Show",
                 url: "{slug}/{version}",
                 defaults: new { controller = "Home", action = "Show", version = UrlParameter.Optional },
-                constraints: new { httpMethod = new HttpMethodConstraint("GET") }
+                constraints: new
+                             {
+                                 httpMethod = new HttpMethodConstraint("GET"),
+                                 slug = @"[a-z0-9]+"
+                             }
             );
 
             //routes.MapRoute(
@@ -90,6 +102,14 @@ namespace Compilify.Web
                                  var conn = new RedisConnection(ConfigurationManager.AppSettings["REDISTOGO_URL"]);
                                  conn.Wait(conn.Open());
                                  return conn;
+                             })
+                   .InstancePerHttpRequest()
+                   .AsSelf();
+
+            builder.Register(x =>
+                             {
+                                 var connectionString = ConfigurationManager.AppSettings["MONGOLAB_URI"];
+                                 return MongoDatabase.Create(connectionString);
                              })
                    .InstancePerHttpRequest()
                    .AsSelf();
