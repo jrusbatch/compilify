@@ -3,9 +3,19 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-
-    <title>@ViewBag.Title - Compilify, an interactive web interface for the .NET compiler</title>
     
+    @if (ViewBag.Title != null)
+    {
+        <title>@ViewBag.Title - compilify.net</title>
+    }
+    else
+    {
+        <title>Code, Collaborate, Build - compilify.net</title>
+    }
+    
+    
+
+    <meta name="author" value="Justin Rusbatch" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link type="image/x-icon" rel="shortcut icon" href="/favicon.ico" />

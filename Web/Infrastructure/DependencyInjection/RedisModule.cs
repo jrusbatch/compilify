@@ -25,7 +25,7 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
 #if !DEBUG
             var connection = new RedisConnection(uri.Host, uri.Port, password: password);
 #else
-            var connection = new RedisConnection(connectionString);
+            var connection = new RedisConnection(uri.Host);
 #endif
             connection.Wait(connection.Open());
             return connection;
