@@ -1,16 +1,7 @@
-﻿using System.Configuration;
-using System.Web;
+﻿using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Autofac;
-using Autofac.Integration.Mvc;
-using BookSleeve;
-using Compilify.Web.Models;
-using Compilify.Web.Services;
 using Microsoft.Web.Optimization;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.IdGenerators;
-using MongoDB.Driver;
 
 namespace Compilify.Web
 {
@@ -23,7 +14,6 @@ namespace Compilify.Web
 
             MvcHandler.DisableMvcResponseHeader = true;
 
-            ConfigureIoC();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterBundles(BundleTable.Bundles);
             RegisterRoutes(RouteTable.Routes);
@@ -73,62 +63,25 @@ namespace Compilify.Web
                                  slug = @"[a-z0-9]+"
                              }
             );
-
-            //routes.MapRoute(
-            //    name: "Default",
-            //    url: "{controller}/{action}",
-            //    defaults: new { controller = "Home", action = "Index" }
-            //);
         }
 
         private static void RegisterBundles(BundleCollection bundles)
         {
             var css = new Bundle("~/vendor/css", typeof(CssMinify));
-            css.AddDirectory("~/assets/css/vendor", "*.css", false);
+            css.AddFile("~/assets/css/vendor/bootstrap-2.0.2.css");
+            css.AddFile("~/assets/css/vendor/codemirror-2.23.css");
+            css.AddFile("~/assets/css/vendor/codemirror-neat-2.23.css");
             bundles.Add(css);
 
             var js = new Bundle("~/vendor/js", typeof(JsMinify));
-            js.AddDirectory("~/assets/js/vendor", "*.js", false);
+            js.AddFile("~/assets/js/vendor/json2.js");
+            js.AddFile("~/assets/js/vendor/underscore-1.3.1.js");
+            js.AddFile("~/assets/js/vendor/backbone-0.9.2.js");
+            js.AddFile("~/assets/js/vendor/bootstrap-2.0.2.js");
+            js.AddFile("~/assets/js/vendor/codemirror-2.23.js");
+            js.AddFile("~/assets/js/vendor/codemirror-clike-2.23.js");
+            js.AddFile("~/assets/js/vendor/jquery.signalr.js");
             bundles.Add(js);
-        }
-
-        private static void ConfigureIoC()
-        {
-            var assembly = typeof(Application).Assembly;
-            var builder = new ContainerBuilder();
-
-            builder.Register(x =>
-                             {
-                                 var conn = new RedisConnection(ConfigurationManager.AppSettings["REDISTOGO_URL"]);
-                                 conn.Wait(conn.Open());
-                                 return conn;
-                             })
-                   .InstancePerHttpRequest()
-                   .AsSelf();
-
-            builder.Register(x =>
-                             {
-                                 var connectionString = ConfigurationManager.AppSettings["MONGOLAB_URI"];
-                                 return MongoDatabase.Create(connectionString);
-                             })
-                   .InstancePerHttpRequest()
-                   .AsSelf();
-
-            builder.Register(x => new SequenceProvider(x.Resolve<RedisConnection>()))
-                   .AsImplementedInterfaces()
-                   .InstancePerHttpRequest();
-
-            builder.RegisterType<PageContentRepository>()
-                   .AsImplementedInterfaces()
-                   .InstancePerHttpRequest();
-
-            builder.RegisterControllers(assembly);
-            builder.RegisterModelBinders(assembly);
-            builder.RegisterModelBinderProvider();
-            builder.RegisterModule(new AutofacWebTypesModule());
-            builder.RegisterFilterProvider();
-            var container = builder.Build();
-            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }
     }
 }
