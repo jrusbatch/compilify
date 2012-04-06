@@ -20,7 +20,7 @@ namespace Compilify.Web.Controllers
 
         public ActionResult Index()
         {
-            var content = new PageContent();
+            var viewModel = new PageContentViewModel();
 
             var builder = new StringBuilder();
 
@@ -31,11 +31,13 @@ namespace Compilify.Web.Controllers
             builder.AppendLine("");
             builder.AppendLine("Greet();");
 
+            var code = builder.ToString();
             var compiler = new CSharpCompiler();
-            content.Code = builder.ToString();
 
-            content.Errors = compiler.GetCompilationErrors(content.Code);
-            return View(content);
+            viewModel.Content.Code = code;
+
+            ViewBag.Errors = compiler.GetCompilationErrors(code);
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -47,17 +49,19 @@ namespace Compilify.Web.Controllers
                 return HttpNotFound();
             }
 
+            var compiler = new CSharpCompiler();
+            var viewModel = new PageContentViewModel
+                            {
+                                Content = content, 
+                                Errors = compiler.GetCompilationErrors(content.Code)
+                            };
+
             if (Request.IsAjaxRequest())
             {
-                return Json(new { status = "ok", data = content }, JsonRequestBehavior.AllowGet);
+                return Json(new { status = "ok", data = viewModel }, JsonRequestBehavior.AllowGet);
             }
             
-            var compiler = new CSharpCompiler();
-
-            ViewBag.Define = content.Code;
-            ViewBag.Observe = compiler.GetCompilationErrors(content.Code);
-
-            return View("Index");
+            return View("Index", viewModel);
         }
 
         [HttpPost]
