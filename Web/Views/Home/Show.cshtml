@@ -1,24 +1,26 @@
 @using System.Globalization
+@model Compilify.Web.Models.PageContentViewModel
+
 @{ ViewBag.Title = "Home"; }
 
 <div id="define">
     <div class="page-header">
-        <h1>code</h1>
+        <h1>code <small><a class="js-save" href="#">save</a></small></h1>
     </div>
-    <textarea class="js-editor">@ViewBag.Define</textarea>
+    <textarea class="js-editor">@Model.Content.Code</textarea>
 </div>
 <div id="errors">
     <div class="page-header">
         <h1>errors</h1>
     </div>
     <ul>
-        @if (ViewBag.Observe.Count == 0)
+        @if (Model.Errors == null || !Model.Errors.Any())
         {
             <li>No errors!</li>
         }
         else
         {
-            foreach (var error in ViewBag.Observe)
+            foreach (var error in Model.Errors)
             {
                 <li>@error.Info.GetMessage(CultureInfo.InvariantCulture)</li>
             }
@@ -42,7 +44,9 @@
                 $.ajax('/home/validate', {
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({ code: sender.getValue() }),
+                    data: JSON.stringify({
+                         code: sender.getValue()
+                    }),
                     success: function (msg) {
                         var $list = $('#errors ul').detach().empty();
 
@@ -72,7 +76,18 @@
                     theme: 'neat',
                     mode: 'text/x-csharp',
                     onKeyEvent: validate
-                    
+                });
+
+                $('#define .js-save').on('click', function() {
+                    $.ajax(window.location.pathname, {
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ content: { Code: Compilify.Editor.getValue() } }),
+                        success: function(msg) {
+                            window.history.pushState({ }, '', msg.data.url);
+                        }
+                    });
+                    return false;
                 });
             });
         }).call(window, window.Compilify || {});

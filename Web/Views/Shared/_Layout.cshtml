@@ -13,9 +13,12 @@
     <link type="text/css" rel="stylesheet" 
           href="//fonts.googleapis.com/css?family=Droid+Sans+Mono" />
 
+    <link type="text/css" rel="stylesheet"
+          href="@Microsoft.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/vendor/css")" />
+
     <link type="text/css" rel="stylesheet" 
-          href="@Microsoft.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/css")" />
-    
+          href="@Url.Content("~/assets/css/compilify.css")" />
+          
     @Html.Analytics()
 </head>
 <body dir="ltr">
@@ -25,7 +28,15 @@
                 <a class="brand" href="@Url.Action("Index", "Home")">
                     <h1>compilify<strong>.net</strong></h1>
                 </a>
-                @*<ul class="nav pull-right">
+                @*<ul class="nav">
+                    <li>
+                        <a href="#">save</a>
+                    </li>
+                    <li>
+                        <a href="#">share</a>
+                    </li>
+                </ul>
+                <ul class="nav pull-right">
                     <li>
                         <a href="#">sign in</a>
                     </li>
@@ -39,7 +50,8 @@
     </div>
     
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-    <script src="@Microsoft.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/js")"></script>
+    <script src="@Microsoft.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/vendor/js")"></script>
+    <script src="@Url.Content("~/assets/js/compilify.js")"></script>
     
     @RenderSection("PageScripts", false)
 </body>
