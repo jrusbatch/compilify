@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-using System.Reflection;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.Mvc;
 using BookSleeve;

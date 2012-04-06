@@ -1,6 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Compilify.Web.Infrastructure.Extensions;
 using Microsoft.Web.Optimization;
 
 namespace Compilify.Web
@@ -28,21 +29,21 @@ namespace Compilify.Web
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            routes.MapRoute(
+            routes.MapLowercaseRoute(
                 name: "Root",
                 url: "",
                 defaults: new { controller = "Home", action = "Index" },
                 constraints: new { httpMethod = new HttpMethodConstraint("GET") }
             );
 
-            routes.MapRoute(
+            routes.MapLowercaseRoute(
                 name: "validate",
                 url: "validate",
                 defaults: new { controller = "Home", action = "Validate" },
                 constraints: new { httpMethod = new HttpMethodConstraint("POST") }
             );
 
-            routes.MapRoute(
+            routes.MapLowercaseRoute(
                 name: "Save",
                 url: "{slug}",
                 defaults: new { controller = "Home", action = "Save", slug = UrlParameter.Optional },
@@ -53,7 +54,7 @@ namespace Compilify.Web
                              }
             );
 
-            routes.MapRoute(
+            routes.MapLowercaseRoute(
                 name: "Show",
                 url: "{slug}/{version}",
                 defaults: new { controller = "Home", action = "Show", version = UrlParameter.Optional },
