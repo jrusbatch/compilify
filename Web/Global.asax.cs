@@ -83,12 +83,12 @@ namespace Compilify.Web
 
         private static void RegisterBundles(BundleCollection bundles)
         {
-            var css = new Bundle("~/css", typeof(CssMinify));
-            css.AddDirectory("~/assets/css", "*.css", false);
+            var css = new Bundle("~/vendor/css", typeof(CssMinify));
+            css.AddDirectory("~/assets/css/vendor", "*.css", false);
             bundles.Add(css);
 
-            var js = new Bundle("~/js", typeof(JsMinify));
-            js.AddDirectory("~/assets/js", "*.js", false);
+            var js = new Bundle("~/vendor/js", typeof(JsMinify));
+            js.AddDirectory("~/assets/js/vendor", "*.js", false);
             bundles.Add(js);
         }
 

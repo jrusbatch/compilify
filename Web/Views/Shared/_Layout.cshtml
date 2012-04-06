@@ -14,7 +14,10 @@
           href="//fonts.googleapis.com/css?family=Droid+Sans+Mono" />
 
     <link type="text/css" rel="stylesheet" 
-          href="@Microsoft.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/css")" />
+          href="@Microsoft.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/vendor/css")" />
+
+    <link type="text/css" rel="stylesheet" 
+          href="@Url.Content("~/assets/css/compilify.css")" />
 </head>
 <body dir="ltr">
     <div class="navbar navbar-fixed-top">
@@ -47,7 +50,8 @@
     @Html.Analytics()
     
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-    <script src="@Microsoft.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/js")"></script>
+    <script src="@Microsoft.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/vendor/js")"></script>
+    <script src="@Url.Content("~/assets/js/compilify.js")"></script>
     
     @RenderSection("PageScripts", false)
 </body>

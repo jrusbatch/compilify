@@ -183,20 +183,20 @@
     <Compile Include="Services\Validator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\css\bootstrap-2.0.2.css" />
-    <Content Include="Assets\css\codemirror-2.23.css" />
-    <Content Include="Assets\css\codemirror-neat-2.23.css" />
+    <Content Include="Assets\css\vendor\bootstrap-2.0.2.css" />
+    <Content Include="Assets\css\vendor\codemirror-2.23.css" />
+    <Content Include="Assets\css\vendor\codemirror-neat-2.23.css" />
     <Content Include="Assets\css\Compilify.css" />
     <Content Include="Assets\fonts\Roboto License.txt" />
     <Content Include="Assets\fonts\Roboto-Light-webfont.svg" />
     <Content Include="Assets\fonts\Roboto-Regular-webfont.svg" />
     <Content Include="Assets\img\glyphicons-halflings-white.png" />
     <Content Include="Assets\img\glyphicons-halflings.png" />
-    <Content Include="Assets\js\jquery.signalr.js" />
-    <Content Include="Assets\js\underscore-1.3.1.js" />
-    <Content Include="Assets\js\bootstrap-2.0.2.js" />
-    <Content Include="Assets\js\codemirror-clike-2.23.js" />
-    <Content Include="Assets\js\codemirror-2.23.js" />
+    <Content Include="Assets\js\vendor\jquery.signalr.js" />
+    <Content Include="Assets\js\vendor\underscore-1.3.1.js" />
+    <Content Include="Assets\js\vendor\bootstrap-2.0.2.js" />
+    <Content Include="Assets\js\vendor\codemirror-clike-2.23.js" />
+    <Content Include="Assets\js\vendor\codemirror-2.23.js" />
     <Content Include="Assets\js\Compilify.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
