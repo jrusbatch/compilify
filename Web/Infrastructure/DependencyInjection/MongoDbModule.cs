@@ -3,7 +3,7 @@ using Autofac;
 using Autofac.Integration.Mvc;
 using MongoDB.Driver;
 
-namespace Compilify.Web.Infrastructure.Modules
+namespace Compilify.Web.Infrastructure.DependencyInjection
 {
     public class MongoDbModule : Module
     {

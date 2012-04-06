@@ -175,9 +175,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Extensions\HtmlHelperExtensions.cs" />
-    <Compile Include="Infrastructure\Modules\MongoDbModule.cs" />
-    <Compile Include="Infrastructure\Modules\MvcModule.cs" />
-    <Compile Include="Infrastructure\Modules\RedisModule.cs" />
+    <Compile Include="Infrastructure\DependencyInjection\MongoDbModule.cs" />
+    <Compile Include="Infrastructure\DependencyInjection\MvcModule.cs" />
+    <Compile Include="Infrastructure\DependencyInjection\RedisModule.cs" />
+    <Compile Include="Infrastructure\Modules\CloakServerHeaderModule.cs" />
     <Compile Include="Models\PageContent.cs" />
     <Compile Include="Models\PageContentViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

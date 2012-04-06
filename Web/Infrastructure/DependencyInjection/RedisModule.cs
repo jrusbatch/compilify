@@ -3,7 +3,7 @@ using Autofac;
 using Autofac.Integration.Mvc;
 using BookSleeve;
 
-namespace Compilify.Web.Infrastructure.Modules
+namespace Compilify.Web.Infrastructure.DependencyInjection
 {
     public class RedisModule : Module
     {

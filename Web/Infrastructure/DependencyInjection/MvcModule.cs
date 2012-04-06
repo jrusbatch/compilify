@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using Autofac.Integration.Mvc;
 
-namespace Compilify.Web.Infrastructure.Modules
+namespace Compilify.Web.Infrastructure.DependencyInjection
 {
     public class MvcModule : Module
     {
