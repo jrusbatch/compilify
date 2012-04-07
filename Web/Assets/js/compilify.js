@@ -22,19 +22,8 @@
         });
     }
     
-    function execute(slug, version, callback) {
-        connection.send()
-
-//        $.ajax('/execute', {
-//            type: 'POST',
-//            contentType: 'application/json',
-//            data: JSON.stringify({ 'slug': slug, 'version': version}),
-//            success: function (msg) {
-//                if (_.isFunction(callback)) {
-//                    callback(msg);
-//                }
-//            }
-//        });
+    function execute(value, callback) {
+        connection.send(value);
     }
     
     var validate = _.debounce(function(sender) {
@@ -92,8 +81,7 @@
             // if (currentValue.toUpperCase() !== original) {
                 saveContent(currentValue, function(data) {
                     execute(currentValue, function (msg) {
-                        console.log(msg);
-                        //$('#results p').html(msg.data.Result);
+                        $('#results p').html(msg.data.Result);
                     });
                 });
             // }
@@ -101,15 +89,20 @@
             return false;
         });
 
-        connection = $.connection('execute');
+        connection = $.connection('/execute');
+        connection.logging = true;
+        
         connection.received(function(message) {
-            var data = JSON.stringify(message);
-            console.log(data);
+            if (message.status === "ok") {
+                if (message.data && message.data.Result) {
+                    $('#results p').html(message.data.Result);
+                }
+            }
         });
         
-        connection.error(function(e) {
-            console.error(e);
-        });
+//        connection.error(function(e) {
+//            console.error(e);
+//        });
 
         connection.start({ transport: 'auto' });
     });

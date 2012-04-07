@@ -10,15 +10,22 @@ namespace Compilify.Worker
     {
         public static int Main(string[] args)
         {
-            var program = new Program();
+            using (var connection = CreateConnection())
+            {
+                if (connection.State == RedisConnectionBase.ConnectionState.Shiny)
+                {
+                    connection.Wait(connection.Open());
+                }
 
-            SetConsoleCtrlHandler(program.OnConsoleCtrlCheck, true);
+                using (var program = new Program(connection))
+                {
+                    SetConsoleCtrlHandler(program.OnConsoleCtrlCheck, true);
+                    Console.ReadKey();
+                }
+            }
 
-
-            Console.ReadKey();
             return -1;
         }
-
 
         // A delegate type to be used as the handler routine
         // for SetConsoleCtrlHandler.

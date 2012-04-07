@@ -9,23 +9,18 @@ namespace Compilify.Worker
 {
     public sealed partial class Program : IDisposable
     {
-        public Program()
+        public Program(RedisConnection redisConnection)
         {
             worker = new Worker();
-            connection = CreateConnection();
+            connection = redisConnection;
 
-            connection.Open().ContinueWith(OnConnectionOpen);
+            channel = connection.GetOpenSubscriberChannel();
+            channel.Subscribe("workers:execute", OnMessageReceived);
         }
 
         private readonly Worker worker;
         private readonly RedisConnection connection;
-        private RedisSubscriberConnection channel;
-
-        private void OnConnectionOpen(Task task)
-        {
-            channel = connection.GetOpenSubscriberChannel();
-            channel.Subscribe("workers:execute", OnMessageReceived);
-        }
+        private readonly RedisSubscriberConnection channel;
 
         private void OnMessageReceived(string key, byte[] message)
         {
@@ -33,12 +28,21 @@ namespace Compilify.Worker
 
             Console.WriteLine(command.Code);
 
-            var result = worker.ProcessItem(command).GetBytes();
+            try
+            {
+                var result = worker.ProcessItem(command);
+                var response = result.GetBytes();
 
-            Console.WriteLine("Execution completed.");
+                Console.WriteLine("Execution completed.");
 
-            connection.Publish("workers:job-done", result)
-                .ContinueWith(x => Console.WriteLine("Message published to workers:job-done. ({0} subscribers)", x.Result));
+                connection.Publish("workers:job-done", response)
+                    .ContinueWith(x => Console.WriteLine("Message published to workers:job-done. ({0} subscribers)", x.Result));
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex);
+                Console.WriteLine();
+            }
         }
 
         public bool OnConsoleCtrlCheck(CtrlTypes ctrlType)

@@ -41,7 +41,9 @@ namespace Compilify.Services
 
             var script = "public static object Eval() {" + code + "}";
             const string entryPoint =
-                @"public class EntryPoint 
+                @"using System.Reflection;
+                  
+                  public class EntryPoint 
                   {
                       public static object Result { get; set; }
                       
@@ -68,6 +70,7 @@ namespace Compilify.Services
                 new[]
                 {
                     SyntaxTree.ParseCompilationUnit(entryPoint),
+                    // This is the syntax tree represented in the `Script` variable.
                     SyntaxTree.ParseCompilationUnit(script, options: new ParseOptions(kind: SourceCodeKind.Interactive))
                 },
                 new MetadataReference[] { 
@@ -113,7 +116,7 @@ namespace Compilify.Services
                                                      }
                                                  });
 
-                if (!task.Wait(6000))
+                if (!task.Wait(5000))
                 {
                     AppDomain.Unload(sandbox);
                     result = "[Execution timed out after 6 seconds]";
