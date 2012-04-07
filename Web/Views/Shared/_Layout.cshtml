@@ -4,14 +4,9 @@
 <head>
     <meta charset="utf-8" />
     
-    @if (ViewBag.Title != null)
-    {
-        <title>@ViewBag.Title - compilify.net</title>
-    }
-    else
-    {
-        <title>Code, Collaborate, Build - compilify.net</title>
-    }
+    <title>@(ViewBag.Title != null
+             ? ViewBag.Title + " - compilify.net"
+             : "Code, Collaborate, Compile - compilify.net")</title>
     
     <meta name="author" value="Justin Rusbatch" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,6 +55,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
     <script src="@Microsoft.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/vendor/js")"></script>
     <script src="@Url.Content("~/assets/js/compilify.js")"></script>
+    <script src="@Url.Content("~/assets/js/compilify.ajaxanalytics.js")"></script>
     
     @RenderSection("PageScripts", false)
 </body>

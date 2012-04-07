@@ -72,7 +72,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .navbar .nav > li > a:hover {
-    color: #339933;
+    color: #393;
 }
 
 .navbar .nav > li > a,
@@ -95,6 +95,10 @@ h1 {
 .page-header {
     padding-bottom: 0;
     border: none;
+}
+
+.page-header small a {
+    padding-left: 10px;
 }
 
 .CodeMirror {
