@@ -12,7 +12,11 @@ namespace Compilify.Web.Infrastructure.Modules
 
         private static void OnPreSendRequestHeaders(object sender, EventArgs e)
         {
-            HttpContext.Current.Response.Headers.Remove("Server");
+            var context = HttpContext.Current;
+            if (context != null && context.Response != null && context.Response.Headers != null)
+            {
+                context.Response.Headers.Remove("Server");
+            }
         }
 
         public void Dispose() { }

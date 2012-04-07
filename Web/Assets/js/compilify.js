@@ -4,7 +4,7 @@
         $ = root.jQuery,
         _ = root._,
         CodeMirror = root.CodeMirror,
-        original;
+        original, connection;
     
     function saveContent(value, callback) {
         $.ajax(window.location.pathname, {
@@ -23,16 +23,18 @@
     }
     
     function execute(slug, version, callback) {
-        $.ajax('/execute', {
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ 'slug': slug, 'version': version}),
-            success: function (msg) {
-                if (_.isFunction(callback)) {
-                    callback(msg);
-                }
-            }
-        });
+        connection.send()
+
+//        $.ajax('/execute', {
+//            type: 'POST',
+//            contentType: 'application/json',
+//            data: JSON.stringify({ 'slug': slug, 'version': version}),
+//            success: function (msg) {
+//                if (_.isFunction(callback)) {
+//                    callback(msg);
+//                }
+//            }
+//        });
     }
     
     var validate = _.debounce(function(sender) {
@@ -89,14 +91,27 @@
 
             // if (currentValue.toUpperCase() !== original) {
                 saveContent(currentValue, function(data) {
-                    execute(data.slug, data.version, function (msg) {
-                        $('#results p').html(msg.data.Result);
+                    execute(currentValue, function (msg) {
+                        console.log(msg);
+                        //$('#results p').html(msg.data.Result);
                     });
                 });
             // }
 
             return false;
         });
+
+        connection = $.connection('execute');
+        connection.received(function(message) {
+            var data = JSON.stringify(message);
+            console.log(data);
+        });
+        
+        connection.error(function(e) {
+            console.error(e);
+        });
+
+        connection.start({ transport: 'auto' });
     });
 }).call(window, window.Compilify || {});
 

@@ -1,4 +1,14 @@
-﻿/// <reference path="jquery-1.6.2.js" />
+﻿/*!
+* SignalR JavaScript Library v0.5
+* http://signalr.net/
+*
+* Copyright David Fowler and Damian Edwards 2012
+* Licensed under the MIT.
+* https://github.com/SignalR/SignalR/blob/master/LICENSE.md
+*
+*/
+
+/// <reference path="jquery-1.6.2.js" />
 (function ($, window) {
     /// <param name="$" type="jQuery" />
     "use strict";
@@ -65,6 +75,7 @@
                 this.logging = logging;
             }
         },
+        ajaxDataType: "json",
 
         logging: false,
 
@@ -76,7 +87,8 @@
             /// <param name="callback" type="Function">A callback function to execute when the connection has started</param>
             var connection = this,
                 config = {
-                    transport: "auto"
+                    transport: "auto",
+                    xdomain: false
                 },
                 initialize,
                 deferred = $.Deferred();
@@ -96,6 +108,7 @@
                     callback = config.callback;
                 }
             }
+            connection.ajaxDataType = config.xdomain ? "jsonp" : "json";
 
             $(connection).bind(events.onStart, function (e, data) {
                 if ($.type(callback) === "function") {
@@ -130,7 +143,7 @@
                     global: false,
                     type: "POST",
                     data: {},
-                    dataType: "json",
+                    dataType: connection.ajaxDataType,
                     error: function (error) {
                         $(connection).trigger(events.onError, [error]);
                         deferred.reject("SignalR: Error during negotiation request: " + error);
@@ -313,7 +326,7 @@
             return url + "&" + window.escape(connection.qs.toString());
         },
 
-        getUrl: function (connection, transport, reconnecting) {
+        getUrl: function (connection, transport, reconnecting, appendReconnectUrl) {
             /// <summary>Gets the url for making a GET based connect request</summary>
             var url = connection.url,
                 qs = "transport=" + transport + "&connectionId=" + window.escape(connection.id);
@@ -325,6 +338,10 @@
             if (!reconnecting) {
                 url = url + "/connect";
             } else {
+                if (appendReconnectUrl) {
+                    url = url + "/reconnect";
+                }
+
                 if (connection.messageId) {
                     qs += "&messageId=" + connection.messageId;
                 }
@@ -338,12 +355,13 @@
         },
 
         ajaxSend: function (connection, data) {
+
             var url = connection.url + "/send" + "?transport=" + connection.transport.name + "&connectionId=" + window.escape(connection.id);
             url = this.addQs(url, connection);
             $.ajax(url, {
                 global: false,
                 type: "POST",
-                dataType: "json",
+                dataType: connection.ajaxDataType,
                 data: {
                     data: data
                 },
@@ -353,7 +371,11 @@
                     }
                 },
                 error: function (errData, textStatus) {
-                    if (textStatus === "abort") {
+                    if (textStatus === "abort" ||
+                        (textStatus === "parsererror" && connection.ajaxDataType === "jsonp")) {
+                        // The parsererror happens for sends that don't return any data, and hence
+                        // don't write the jsonp callback to the response. This is harder to fix on the server
+                        // so just hack around it on the client for now.
                         return;
                     }
                     $(connection).trigger(events.onError, [errData]);
@@ -387,8 +409,14 @@
                         }
                     });
                 }
-                connection.messageId = data.MessageId;
-                connection.groups = data.TransportData.Groups;
+
+                if (data.MessageId) {
+                    connection.messageId = data.MessageId;
+                }
+
+                if (data.TransportData) {
+                    connection.groups = data.TransportData.Groups;
+                }
             }
         },
 
@@ -772,7 +800,7 @@
 
                         var messageId = instance.messageId,
                             connect = (messageId === null),
-                            url = transportLogic.getUrl(instance, that.name, !connect),
+                            url = transportLogic.getUrl(instance, that.name, !connect, raiseReconnect),
                             reconnectTimeOut = null,
                             reconnectFired = false;
 
@@ -781,7 +809,7 @@
 
                             type: "GET",
 
-                            dataType: "json",
+                            dataType: connection.ajaxDataType,
 
                             success: function (data) {
                                 var delay = 0,
@@ -796,7 +824,9 @@
                                 }
 
                                 transportLogic.processMessages(instance, data);
-                                if (data && $.type(data.TransportData.LongPollDelay) === "number") {
+                                if (data &&
+                                    data.TransportData &&
+                                    $.type(data.TransportData.LongPollDelay) === "number") {
                                     delay = data.TransportData.LongPollDelay;
                                 }
 

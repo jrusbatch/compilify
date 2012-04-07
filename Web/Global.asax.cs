@@ -1,8 +1,10 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Compilify.Web.EndPoints;
 using Compilify.Web.Infrastructure.Extensions;
 using Microsoft.Web.Optimization;
+using SignalR.Hosting.AspNet.Routing;
 
 namespace Compilify.Web
 {
@@ -43,12 +45,7 @@ namespace Compilify.Web
                 constraints: new { httpMethod = new HttpMethodConstraint("POST") }
             );
 
-            routes.MapLowercaseRoute(
-                name: "Execute",
-                url: "Execute",
-                defaults: new { controller = "Home", action = "Execute" },
-                constraints: new { httpMethod = new HttpMethodConstraint("POST") }
-            );
+            routes.MapConnection<ExecuteEndPoint>("execute", "execute/{*operation}");
 
             routes.MapLowercaseRoute(
                 name: "Update",

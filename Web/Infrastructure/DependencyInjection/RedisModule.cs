@@ -12,7 +12,8 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
         protected override void Load(ContainerBuilder builder)
         {
             builder.Register(CreateConnection)
-                .InstancePerHttpRequest()
+                // .InstancePerHttpRequest()
+                .SingleInstance()
                 .AsSelf();
         }
 

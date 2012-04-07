@@ -53,7 +53,8 @@ namespace Compilify.Web.Services
 
             if (content != null)
             {
-                redis.Lists.AddLast(0, "queue:executer", content.Code);
+                redis.Publish("workers:execute", content.Code);
+                // redis.Lists.AddLast(0, "queue:executer", content.Code);
             }
         }
 
