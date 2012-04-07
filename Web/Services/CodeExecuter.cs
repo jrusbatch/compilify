@@ -41,9 +41,10 @@ namespace Compilify.Web.Services
             var core = sandbox.Load("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 
             var script = "public static object Eval() {" + code + "}";
-            const string entryPoint = 
+            const string entryPoint =
                 @"public class EntryPoint 
                   {
+                      public static bool Thrown { get; set; }
                       public static object Result { get; set; }
                       
                       public static void Main()

@@ -2,9 +2,9 @@
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
+using BookSleeve;
 using Compilify.Web.Models;
 using Compilify.Web.Services;
 
@@ -107,6 +107,21 @@ namespace Compilify.Web.Controllers
 
             var url = Url.Action("Show", routeValues);
             return Json(new { status = "ok", data = new { slug = result.Slug, version = result.Version, url = url } });
+        }
+
+        [HttpPost]
+        public ActionResult Execute(string slug, int? version)
+        {
+            var executor = new CodeExecuter();
+
+            var content = db.GetVersion(slug, version ?? 1);
+
+            // if (content.Result != null)
+            // {
+                content.Result = executor.Execute(content.Code);
+            // }
+
+            return Json(new { status = "ok", data = content });
         }
 
         [HttpPost]

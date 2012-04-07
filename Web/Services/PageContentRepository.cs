@@ -45,6 +45,11 @@ namespace Compilify.Web.Services
                             .FirstOrDefault();
         }
 
+        public void QueueForCompilation(string slug, int version)
+        {
+            
+        }
+
         public PageContent Save(string slug, PageContent content)
         {
             //var key = string.Format(CultureInfo.InvariantCulture, "content:{0}:{1}", slug, version);
