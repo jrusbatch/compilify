@@ -36,6 +36,10 @@ h1, h2, h3, h4, h5, h6 {
     font-family: "Segoe UI Light", "Helvetica Neue", 'RobotoLight', "Segoe UI", "Segoe WP", sans-serif;
 }
 
+.navbar {
+    margin-bottom: 0;
+}
+
 .navbar-inner {
     color: #000;
     background-color: #f1f1f1;
@@ -46,8 +50,7 @@ h1, h2, h3, h4, h5, h6 {
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
-.navbar .brand 
-{
+.navbar .brand {
     color: #444;
     /*font-size: 30px;*/
     padding-top: 16px;
