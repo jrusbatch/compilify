@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BookSleeve;
+using Compilify.Services;
 using Compilify.Web.Models;
 using Compilify.Web.Services;
 
@@ -112,14 +112,9 @@ namespace Compilify.Web.Controllers
         [HttpPost]
         public ActionResult Execute(string slug, int? version)
         {
-            var executor = new CodeExecuter();
-
             var content = db.GetVersion(slug, version ?? 1);
 
-            // if (content.Result != null)
-            // {
-                content.Result = executor.Execute(content.Code);
-            // }
+            db.QueueForCompilation(content.Slug, content.Version);
 
             return Json(new { status = "ok", data = content });
         }

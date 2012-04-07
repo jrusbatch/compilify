@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 
-namespace Compilify.Web.Services
+namespace Compilify.Services
 {
     public class CodeExecuter
     {
@@ -44,7 +43,6 @@ namespace Compilify.Web.Services
             const string entryPoint =
                 @"public class EntryPoint 
                   {
-                      public static bool Thrown { get; set; }
                       public static object Result { get; set; }
                       
                       public static void Main()
@@ -104,6 +102,7 @@ namespace Compilify.Web.Services
             {
                 var task = Task.Factory.StartNew(() =>
                                                  {
+
                                                      try
                                                      {
                                                          result = loader.Run(compiledAssembly);
