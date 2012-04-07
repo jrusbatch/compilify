@@ -79,10 +79,11 @@ namespace Compilify.Web
 
         private static void RegisterBundles(BundleCollection bundles)
         {
-            var css = new Bundle("~/vendor/css", typeof(CssMinify));
+            var css = new Bundle("~/css", typeof(CssMinify));
             css.AddFile("~/assets/css/vendor/bootstrap-2.0.2.css");
             css.AddFile("~/assets/css/vendor/codemirror-2.23.css");
             css.AddFile("~/assets/css/vendor/codemirror-neat-2.23.css");
+            css.AddFile("~/assets/css/compilify.css");
             bundles.Add(css);
 
             var js = new Bundle("~/vendor/js", typeof(JsMinify));
