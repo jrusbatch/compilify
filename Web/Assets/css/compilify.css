@@ -22,7 +22,7 @@
 
 body {
     font-size: 14px;
-    padding-top: 80px;
+    /*padding-top: 80px;*/
 }
 
 body, 
@@ -109,6 +109,14 @@ h1 {
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
+
 .CodeMirror pre.CodeMirror-cursor {
     border-left-color: #555;
+}
+
+.CodeMirror-scroll {
+    height: auto;
+    min-height: 300px;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
