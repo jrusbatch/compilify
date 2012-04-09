@@ -21,9 +21,9 @@ namespace Compilify.Worker
                 ClientManager = CreateOpenRedisConnection();
                 Client = ClientManager.GetClient();
 
-                Task.Factory.StartNew(ProcessQueue, TokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                var task = Task.Factory.StartNew(ProcessQueue, TokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                 
-                Console.ReadKey();
+                task.Wait();
             }
             finally
             {
@@ -44,7 +44,7 @@ namespace Compilify.Worker
                 }
             }
 
-            return -1;
+            return -1; // Return a non-zero code so AppHarbor restarts the worker
         }
 
         private static CodeExecuter Executer;
@@ -52,33 +52,26 @@ namespace Compilify.Worker
         private static IRedisClientsManager ClientManager;
         private static IRedisClient Client;
 
-        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(10);
-
         private static void ProcessQueue()
         {
             while (true)
             {
+                var message = Client.BlockingDequeueItemFromList("queue:execute", null);
+                
                 if (TokenSource.Token.IsCancellationRequested)
                 {
-                    Console.WriteLine("Cancellation requested, exiting.");
                     break;
                 }
 
-                var message = Client.BlockingDequeueItemFromList("queue:execute", DefaultTimeout);
-
                 if (message != null)
                 {
-                    Console.WriteLine("Message received: {0}", message);
+                    var messageBytes = Convert.FromBase64String(message);
 
-                    var bytes = Convert.FromBase64String(message);
-
-                    var command = ExecuteCommand.Deserialize(bytes);
+                    var command = ExecuteCommand.Deserialize(messageBytes);
 
                     var result = Executer.Execute(command.Code);
 
                     var response = JsonConvert.SerializeObject(new { result = result });
-
-                    Console.WriteLine(response);
 
                     Client.PublishMessage("workers:job-done:" + command.ClientId, response);
                 }
@@ -99,28 +92,6 @@ namespace Compilify.Worker
 #endif
 
             return new BasicRedisClientManager(0, new[] { host });
-        }
-    }
-
-    public class PeonState
-    {
-        public PeonState(IRedisClient redisClient, CancellationToken cancellationToken)
-        {
-            client = redisClient;
-            token = cancellationToken;
-        }
-
-        private readonly IRedisClient client;
-        private readonly CancellationToken token;
-
-        public IRedisClient Client
-        {
-            get { return client; }
-        }
-
-        public CancellationToken CancellationToken
-        {
-            get { return token; }
         }
     }
 }
