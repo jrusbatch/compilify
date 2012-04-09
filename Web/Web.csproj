@@ -254,10 +254,6 @@
       <Project>{8F2EA92A-1519-482E-9808-DACB2CA67503}</Project>
       <Name>Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Worker\Worker.csproj">
-      <Project>{287C1B76-FE3E-4CD1-A95C-168E3143D6CC}</Project>
-      <Name>Worker</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
