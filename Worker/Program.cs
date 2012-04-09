@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Compilify.Services;
 using Newtonsoft.Json;
 using ServiceStack.Redis;
+using NLog;
 
 namespace Compilify.Worker
 {
@@ -13,6 +15,8 @@ namespace Compilify.Worker
     {
         public static int Main(string[] args)
         {
+            Logger.Info("Application started.");
+
             Executer = new CodeExecuter();
             TokenSource = new CancellationTokenSource();
 
@@ -44,8 +48,12 @@ namespace Compilify.Worker
                 }
             }
 
+            Logger.Info("Application ending.");
+
             return -1; // Return a non-zero code so AppHarbor restarts the worker
         }
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static CodeExecuter Executer;
         private static CancellationTokenSource TokenSource;
@@ -54,17 +62,22 @@ namespace Compilify.Worker
 
         private static void ProcessQueue()
         {
+            Logger.Info("ProcessQueue task started.");
+
             while (true)
             {
                 var message = Client.BlockingDequeueItemFromList("queue:execute", null);
                 
-                if (TokenSource.Token.IsCancellationRequested)
+                if (TokenSource.IsCancellationRequested)
                 {
+                    Logger.Info("ProcessQueue task cancelled.");
                     break;
                 }
 
                 if (message != null)
                 {
+                    Logger.Info("Message received.");
+
                     var messageBytes = Convert.FromBase64String(message);
 
                     var command = ExecuteCommand.Deserialize(messageBytes);
@@ -74,8 +87,12 @@ namespace Compilify.Worker
                     var response = JsonConvert.SerializeObject(new { result = result });
 
                     Client.PublishMessage("workers:job-done:" + command.ClientId, response);
+
+                    Logger.Info("Response published.");
                 }
             }
+
+            Logger.Info("ProcessQueue task ending.");
         }
 
         private static IRedisClientsManager CreateOpenRedisConnection()

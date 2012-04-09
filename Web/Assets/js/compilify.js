@@ -100,9 +100,9 @@
             }
         });
         
-//        connection.error(function(e) {
-//            console.error(e);
-//        });
+        connection.error(function(e) {
+            console.error(e);
+        });
 
         connection.start({ transport: 'auto' });
     });
