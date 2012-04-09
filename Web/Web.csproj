@@ -191,7 +191,6 @@
     <Compile Include="Infrastructure\DependencyInjection\RedisModule.cs" />
     <Compile Include="Infrastructure\Extensions\RouteCollectionExtensions.cs" />
     <Compile Include="Infrastructure\LowercaseRoute.cs" />
-    <Compile Include="Infrastructure\Modules\CloakServerHeaderModule.cs" />
     <Compile Include="Models\PageContent.cs" />
     <Compile Include="Models\PageContentViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

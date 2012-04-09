@@ -7,6 +7,7 @@ using System.Web.Routing;
 using BookSleeve;
 using Compilify.Web.EndPoints;
 using Compilify.Web.Infrastructure.Extensions;
+using Compilify.Web.Services;
 using Microsoft.Web.Optimization;
 using Newtonsoft.Json;
 using SignalR;
@@ -29,12 +30,19 @@ namespace Compilify.Web
             RegisterBundles(BundleTable.Bundles);
             RegisterRoutes(RouteTable.Routes);
 
-            Channel = (RedisSubscriberConnection)DependencyResolver.Current.GetService(typeof(RedisSubscriberConnection));
-            Channel.PatternSubscribe("workers:job-done:*", OnExecutionCompleted);
+            var gateway = (RedisConnectionGateway)DependencyResolver.Current.GetService(typeof(RedisConnectionGateway));
+            gateway.ConnectionReset += OnConnectionReset;
+            OnConnectionReset(null, null);
         }
 
-        private static RedisSubscriberConnection Channel;
-
+        private static void OnConnectionReset(object sender, EventArgs e)
+        {
+            var gateway = (RedisConnectionGateway)DependencyResolver.Current.GetService(typeof(RedisConnectionGateway));
+            var connection = gateway.GetConnection();
+            var channel = connection.GetOpenSubscriberChannel();
+            channel.PatternSubscribe("workers:job-done:*", OnExecutionCompleted);
+        }
+        
         private static void OnExecutionCompleted(string key, byte[] message)
         {
             var parts = key.Split(new[] { ':' });
