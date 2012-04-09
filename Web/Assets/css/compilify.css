@@ -42,8 +42,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .navbar-inner {
     color: #000;
-    background-color: #f1f1f1;
-    background-image: none;
+    filter: none;
+    background: #f1f1f1;
 
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
@@ -121,4 +121,51 @@ h1 {
     min-height: 300px;
     overflow-x: auto;
     overflow-y: hidden;
+}
+
+#define .editor-messages ul {
+    list-style: none;
+    margin-left: 0;
+}
+    
+#define .editor-messages .message {
+    padding: 5px 0 5px 25px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    color: white;
+        
+    -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+
+    opacity: .65;
+
+    -webkit-transition: opacity 0.15s ease-in;
+       -moz-transition: opacity 0.15s ease-in;
+         -o-transition: opacity 0.15s ease-in;
+            transition: opacity 0.15s ease-in;
+}
+    
+#define .editor-messages .message:hover {
+    opacity: 1;
+}
+    
+#define .editor-messages .message.success {
+    background-color: #339933;
+}
+    
+#define .editor-messages .message.warning {
+    background-color: #F09609;
+}
+    
+#define .editor-messages .message.error {
+    background-color: #E51400;
+}
+    
+#define .editor-messages .message.info {
+    background-color: #1BA1E2;
 }

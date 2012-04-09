@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using BookSleeve;
 using Compilify.Web.EndPoints;
 using Compilify.Web.Infrastructure.Extensions;
 using Compilify.Web.Services;
@@ -31,22 +28,23 @@ namespace Compilify.Web
             RegisterRoutes(RouteTable.Routes);
 
             var gateway = (RedisConnectionGateway)DependencyResolver.Current.GetService(typeof(RedisConnectionGateway));
-            gateway.ConnectionReset += OnConnectionReset;
-            OnConnectionReset(null, null);
-        }
-
-        private static void OnConnectionReset(object sender, EventArgs e)
-        {
-            var gateway = (RedisConnectionGateway)DependencyResolver.Current.GetService(typeof(RedisConnectionGateway));
             var connection = gateway.GetConnection();
             var channel = connection.GetOpenSubscriberChannel();
+
+            // The client's SignalR connection ID is the wildcard
             channel.PatternSubscribe("workers:job-done:*", OnExecutionCompleted);
         }
-        
+
+        /// <summary>
+        /// Handle messages received from workers through Redis.</summary>
+        /// <param name="key">
+        /// The name of the channel on which the message was received.</param>
+        /// <param name="message">
+        /// A JSON message.</param>
         private static void OnExecutionCompleted(string key, byte[] message)
         {
+            // Retrieve the client's connection ID from the key
             var parts = key.Split(new[] { ':' });
-
             var clientId = parts[parts.Length - 1];
 
             if (!string.IsNullOrEmpty(clientId))
@@ -54,11 +52,12 @@ namespace Compilify.Web
                 var connectionManager = AspNetHost.DependencyResolver.Resolve<IConnectionManager>();
                 var connection = connectionManager.GetConnection<ExecuteEndPoint>();
                 var data = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(message));
-                
+
+                // Forward the message to the user's browser with SignalR
                 connection.Broadcast(clientId, new { status = "ok", data = data });
             }
         }
-
+        
         private static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());

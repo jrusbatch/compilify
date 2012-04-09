@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using BookSleeve;
 
 namespace Compilify.Web.Services
 {
@@ -11,23 +10,23 @@ namespace Compilify.Web.Services
 
     public class SequenceProvider : ISequenceProvider
     {
-        public SequenceProvider(RedisConnection redisConnection)
+        public SequenceProvider(RedisConnectionGateway redisConnectionGateway)
         {
-            redis = redisConnection;
+            gateway = redisConnectionGateway;
         }
 
         private const int Db = 0;
         private const string Key = "sequence:url";
-        private readonly RedisConnection redis;
+        private readonly RedisConnectionGateway gateway;
 
         public long Next()
         {
-            return redis.Wait(NextAsync());
+            return gateway.GetConnection().Wait(NextAsync());
         }
 
         public Task<long> NextAsync()
         {
-            return redis.Strings.Increment(Db, Key);
+            return gateway.GetConnection().Strings.Increment(Db, Key);
         }
     }
 }

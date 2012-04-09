@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using BookSleeve;
+using Compilify.Web.Services;
 using SignalR;
 
 namespace Compilify.Web.EndPoints
@@ -12,7 +13,8 @@ namespace Compilify.Web.EndPoints
         /// Handle messages sent by the client.</summary>
         protected override Task OnReceivedAsync(string connectionId, string data)
         {
-            var redis = DependencyResolver.Current.GetService<RedisConnection>();
+            var gateway = DependencyResolver.Current.GetService<RedisConnectionGateway>();
+            var redis = gateway.GetConnection();
 
             if (redis.State != RedisConnectionBase.ConnectionState.Open)
             {

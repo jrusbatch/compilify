@@ -17,14 +17,14 @@ namespace Compilify.Web.Services
 
     public class PageContentRepository : IPageContentRepository
     {
-        public PageContentRepository(RedisConnection redisConnection, MongoDatabase mongoDatabase)
+        public PageContentRepository(RedisConnectionGateway redisConnectionGateway, MongoDatabase mongoDatabase)
         {
-            redis = redisConnection;
+            gateway = redisConnectionGateway;
             documents = mongoDatabase.GetCollection<PageContent>("content");
             documents.EnsureIndex("Slug", "Version");
         }
 
-        private readonly RedisConnection redis;
+        private readonly RedisConnectionGateway gateway;
         private readonly MongoCollection<PageContent> documents;
 
         public PageContent GetVersion(string slug, int version)
@@ -54,7 +54,7 @@ namespace Compilify.Web.Services
             //    content.Slug = slug;
             //    content.Version = version;
             //}
-
+            var redis = gateway.GetConnection();
             var version = (int)redis.Wait(redis.Strings.Increment(0, "sequence:content:" + slug));
 
             if (string.IsNullOrEmpty(content.Slug))

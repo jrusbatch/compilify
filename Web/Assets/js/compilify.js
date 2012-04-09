@@ -6,6 +6,12 @@
         CodeMirror = root.CodeMirror,
         original, connection;
     
+    if (typeof String.prototype.trim !== 'function') {
+        String.prototype.trim = function() {
+            return this.replace( /^\s+|\s+$/g , '');
+        };
+    }
+    
     function saveContent(value, callback) {
         $.ajax(window.location.pathname, {
             type: 'POST',
@@ -32,20 +38,20 @@
             contentType: 'application/json',
             data: JSON.stringify({ code: sender.getValue() }),
             success: function (msg) {
-                var $list = $('#errors ul').detach().empty(),
+                var $list = $('#define .editor-messages').detach().empty(),
                     hasErrors = msg.data.length > 0;
 
                 if (!hasErrors) {
-                    $list.append('<li>Build completed successfully.</li>');
+                    $list.append('<li class="message success">Build completed successfully.</li>');
                 }
                 else {
                     for (var i in msg.data) {
                         var error = msg.data[i];
-                        $list.append('<li>' + error.Message + '</li>');
+                        $list.append('<li class="message error">' + error.Message + '</li>');
                     }
                 }
                 
-                $('#errors').append($list);
+                $('#define .editor-messages').append($list);
             }
         });
     }, 500);

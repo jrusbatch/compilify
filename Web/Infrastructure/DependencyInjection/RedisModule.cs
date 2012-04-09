@@ -1,5 +1,4 @@
 using Autofac;
-using BookSleeve;
 using Compilify.Web.Services;
 
 namespace Compilify.Web.Infrastructure.DependencyInjection
@@ -10,14 +9,6 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
         {
             builder.Register(x => RedisConnectionGateway.Current)
                    .SingleInstance()
-                   .AsSelf();
-
-            builder.Register(x => x.Resolve<RedisConnectionGateway>().GetConnection())
-                   .ExternallyOwned()
-                   .AsSelf();
-
-            builder.Register(x => x.Resolve<RedisConnection>().GetOpenSubscriberChannel())
-                   .ExternallyOwned()
                    .AsSelf();
         }
     }
