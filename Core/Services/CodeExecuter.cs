@@ -36,7 +36,7 @@ namespace Compilify.Services
             if (!Validator.Validate(code))
             {
                 return "Not supported";
-            }
+            } 
 
             var sandbox = SecureAppDomainFactory.Create();
 
