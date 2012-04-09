@@ -3,7 +3,7 @@ using System.Reflection;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 
-namespace Compilify.Web.Services
+namespace Compilify.Services
 {
     public class CSharpCompiler
     {
@@ -11,7 +11,7 @@ namespace Compilify.Web.Services
         {
             var errors = new List<Diagnostic>();
 
-            var tree = SyntaxTree.ParseCompilationUnit(code, options: new ParseOptions(kind: SourceCodeKind.Script));
+            var tree = SyntaxTree.ParseCompilationUnit(code, options: new ParseOptions(kind: SourceCodeKind.Interactive));
 
             var mscorlib = Assembly.Load("mscorlib,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
             var system = Assembly.Load("System,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");

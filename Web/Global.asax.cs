@@ -1,8 +1,18 @@
-﻿using System.Web;
+﻿using System;
+using System.Linq;
+using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using BookSleeve;
+using Compilify.Web.EndPoints;
 using Compilify.Web.Infrastructure.Extensions;
 using Microsoft.Web.Optimization;
+using Newtonsoft.Json;
+using SignalR;
+using SignalR.Hosting.AspNet;
+using SignalR.Infrastructure;
+using SignalR.Hosting.AspNet.Routing;
 
 namespace Compilify.Web
 {
@@ -18,6 +28,27 @@ namespace Compilify.Web
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterBundles(BundleTable.Bundles);
             RegisterRoutes(RouteTable.Routes);
+
+            Channel = (RedisSubscriberConnection)DependencyResolver.Current.GetService(typeof(RedisSubscriberConnection));
+            Channel.PatternSubscribe("workers:job-done:*", OnExecutionCompleted);
+        }
+
+        private static RedisSubscriberConnection Channel;
+
+        private static void OnExecutionCompleted(string key, byte[] message)
+        {
+            var parts = key.Split(new[] { ':' });
+
+            var clientId = parts[parts.Length - 1];
+
+            if (!string.IsNullOrEmpty(clientId))
+            {
+                var connectionManager = AspNetHost.DependencyResolver.Resolve<IConnectionManager>();
+                var connection = connectionManager.GetConnection<ExecuteEndPoint>();
+                var data = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(message));
+                
+                connection.Broadcast(clientId, new { status = "ok", data = data });
+            }
         }
 
         private static void RegisterGlobalFilters(GlobalFilterCollection filters)
@@ -42,6 +73,8 @@ namespace Compilify.Web
                 defaults: new { controller = "Home", action = "Validate" },
                 constraints: new { httpMethod = new HttpMethodConstraint("POST") }
             );
+
+            routes.MapConnection<ExecuteEndPoint>("execute", "execute/{*operation}");
 
             routes.MapLowercaseRoute(
                 name: "Update",

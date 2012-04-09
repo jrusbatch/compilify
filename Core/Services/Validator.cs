@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Roslyn.Compilers.CSharp;
 
-namespace Compilify.Web.Services
+namespace Compilify.Services
 {
     public static class Validator
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Compilify.Web.Services
+namespace Compilify.Services
 {
     public sealed class ByteCodeLoader : MarshalByRefObject
     {

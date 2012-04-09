@@ -11,12 +11,16 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(CreateConnection)
-                .InstancePerHttpRequest()
+            builder.Register(x => CreateConnection())
+                .SingleInstance()
+                .AsSelf();
+
+            builder.Register(x => x.Resolve<RedisConnection>().GetOpenSubscriberChannel())
+                .SingleInstance()
                 .AsSelf();
         }
 
-        private static RedisConnection CreateConnection(IComponentContext context)
+        private static RedisConnection CreateConnection()
         {
             var connectionString = ConfigurationManager.AppSettings["REDISTOGO_URL"];
 
