@@ -38,7 +38,7 @@
             contentType: 'application/json',
             data: JSON.stringify({ code: sender.getValue() }),
             success: function (msg) {
-                var $list = $('#define .editor-messages').detach().empty(),
+                var $list = $('#define .editor-messages ul').detach().empty(),
                     hasErrors = msg.data.length > 0;
 
                 if (!hasErrors) {

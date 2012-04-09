@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Net.Sockets;
@@ -16,8 +15,6 @@ namespace Compilify.Web.Services
         private RedisConnectionGateway()
         {
             connection = CreateConnection();
-
-            connection.Closed += OnConnectionClosed;
         }
 
         private const string RedisConnectionFailed = "Redis connection failed.";
@@ -26,8 +23,6 @@ namespace Compilify.Web.Services
 
         private static readonly object syncLock = new object();
         private static readonly object syncConnectionLock = new object();
-
-        public event EventHandler ConnectionReset;
 
         public static RedisConnectionGateway Current
         {
@@ -67,25 +62,6 @@ namespace Compilify.Web.Services
             {
                 throw new RedisConnectionException(RedisConnectionFailed, ex);
             }
-        }
-
-        private void OnConnectionClosed(object sender, EventArgs e)
-        {
-            lock (syncConnectionLock)
-            {
-                // Not sure if this is necessary
-                connection.Closed -= OnConnectionClosed;
-                connection.Dispose();
-
-                connection = CreateConnection();
-
-                ConnectionReset(this, new EventArgs());
-            }
-        }
-
-        public RedisSubscriberConnection GetSubscriberConnection()
-        {
-            return GetConnection().GetOpenSubscriberChannel();
         }
 
         public RedisConnection GetConnection()

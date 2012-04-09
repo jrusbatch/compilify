@@ -1,7 +1,11 @@
-﻿using System.Text;
+﻿using System;
+using System.Configuration;
+using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using BookSleeve;
 using Compilify.Web.EndPoints;
 using Compilify.Web.Infrastructure.Extensions;
 using Compilify.Web.Services;
@@ -27,12 +31,37 @@ namespace Compilify.Web
             RegisterBundles(BundleTable.Bundles);
             RegisterRoutes(RouteTable.Routes);
 
-            var gateway = (RedisConnectionGateway)DependencyResolver.Current.GetService(typeof(RedisConnectionGateway));
-            var connection = gateway.GetConnection();
-            var channel = connection.GetOpenSubscriberChannel();
+            Gateway = DependencyResolver.Current.GetService<RedisConnectionGateway>();
 
-            // The client's SignalR connection ID is the wildcard
-            channel.PatternSubscribe("workers:job-done:*", OnExecutionCompleted);
+            OnChannelClosed(null, null);
+        }
+        
+        protected void Application_End()
+        {
+            if (Channel != null && Channel.State < RedisConnectionBase.ConnectionState.Closing)
+            {
+                Channel.PatternUnsubscribe("workers:job-done:*");
+                Channel.Closed -= OnChannelClosed;
+                Channel.Close(true);
+            }
+        }
+
+        private static RedisConnectionGateway Gateway;
+        private static RedisSubscriberConnection Channel;
+
+        private static void OnChannelClosed(object sender, EventArgs e)
+        {
+            if (Channel != null)
+            {
+                Channel.Closed -= OnChannelClosed;
+                Channel.Dispose();
+                Channel = null;
+            }
+
+            Channel = Gateway.GetConnection().GetOpenSubscriberChannel();
+            Channel.Closed += OnChannelClosed;
+
+            Channel.PatternSubscribe("workers:job-done:*", OnExecutionCompleted);
         }
 
         /// <summary>
