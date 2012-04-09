@@ -17,7 +17,7 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
                    .AsSelf();
 
             builder.Register(x => x.Resolve<RedisConnection>().GetOpenSubscriberChannel())
-                   .SingleInstance()
+                   .ExternallyOwned()
                    .AsSelf();
         }
     }
