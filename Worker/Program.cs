@@ -87,7 +87,7 @@ namespace Compilify.Worker
 
         private static IRedisClientsManager CreateOpenRedisConnection()
         {
-            var connectionString = ConfigurationManager.AppSettings["REDISTOGO_URL"] ?? "redis://localhost";
+            var connectionString = ConfigurationManager.AppSettings["REDISTOGO_URL"] ?? "redis://localhost:6379";
 
             var uri = new Uri(connectionString);
             var password = uri.UserInfo.Split(':').LastOrDefault();
