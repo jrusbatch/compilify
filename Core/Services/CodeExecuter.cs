@@ -21,18 +21,23 @@ namespace Compilify.Services
                 "System.Collections.Generic"
             };
 
-        private const string EntryPoint = @"public class EntryPoint 
-                                            {
-                                                public static object Result { get; set; }
+        public const string EntryPoint = @"public class EntryPoint 
+                                           {
+                                               public static object Result { get; set; }
                       
-                                                public static void Main()
-                                                {
-                                                    Result = Script.Eval();
-                                                }
-                                            }";
+                                               public static void Main()
+                                               {
+                                                   Result = Script.Eval();
+                                               }
+                                           }";
 
         public object Execute(string code)
         {
+            if (!Validator.Validate(code))
+            {
+                return "Not supported";
+            }
+
             var sandbox = SecureAppDomainFactory.Create();
 
             // Load basic .NET assemblies into our sandbox

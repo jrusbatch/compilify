@@ -11,7 +11,8 @@ namespace Compilify.Services
         {
             var errors = new List<Diagnostic>();
 
-            var tree = SyntaxTree.ParseCompilationUnit(code, options: new ParseOptions(kind: SourceCodeKind.Interactive));
+            var script = "public static object Eval() {" + code + "}";
+            var tree = SyntaxTree.ParseCompilationUnit(script, options: new ParseOptions(kind: SourceCodeKind.Interactive));
 
             var mscorlib = Assembly.Load("mscorlib,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
             var system = Assembly.Load("System,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
@@ -30,7 +31,7 @@ namespace Compilify.Services
 
             var compilation = Compilation.Create("foo",
                 new CompilationOptions(assemblyKind: AssemblyKind.DynamicallyLinkedLibrary, usings: namespaces),
-                new[] { tree },
+                new[] { SyntaxTree.ParseCompilationUnit(CodeExecuter.EntryPoint), tree },
                 new MetadataReference[]
                 { 
                     new AssemblyFileReference(mscorlib.Location),

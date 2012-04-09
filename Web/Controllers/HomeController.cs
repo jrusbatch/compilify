@@ -25,21 +25,12 @@ namespace Compilify.Web.Controllers
         {
             var viewModel = new PageContentViewModel();
 
-            var builder = new StringBuilder();
-
-            builder.AppendLine("string Greet()");
-            builder.AppendLine("{");
-            builder.AppendLine("    return \"Hello, world!\";");
-            builder.AppendLine("}");
-            builder.AppendLine("");
-            builder.AppendLine("Greet();");
-
-            var code = builder.ToString();
+            var code = "return \"Hello, world!\";";
             var compiler = new CSharpCompiler();
 
             viewModel.Content.Code = code;
 
-            ViewBag.Errors = compiler.GetCompilationErrors(code);
+            viewModel.Errors = compiler.GetCompilationErrors(code);
             return View("Show", viewModel);
         }
 
