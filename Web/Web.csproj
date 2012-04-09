@@ -197,6 +197,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Base32Encoder.cs" />
     <Compile Include="Services\PageContentRepository.cs" />
+    <Compile Include="Services\RedisConnectionException.cs" />
+    <Compile Include="Services\RedisConnectionGateway.cs" />
     <Compile Include="Services\SequenceProvider.cs" />
   </ItemGroup>
   <ItemGroup>

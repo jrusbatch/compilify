@@ -81,10 +81,10 @@ namespace Compilify.Web
                 url: "{slug}/{version}",
                 defaults: new { controller = "Home", action = "Save", version = UrlParameter.Optional },
                 constraints: new
-                {
-                    httpMethod = new HttpMethodConstraint("POST"),
-                    slug = @"[a-z0-9]*"
-                }
+                             {
+                                 httpMethod = new HttpMethodConstraint("POST"),
+                                 slug = @"[a-z0-9]*"
+                             }
             );
 
             routes.MapLowercaseRoute(
