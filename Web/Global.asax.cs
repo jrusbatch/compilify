@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -6,6 +8,7 @@ using BookSleeve;
 using Compilify.Web.EndPoints;
 using Compilify.Web.Infrastructure.Extensions;
 using Microsoft.Web.Optimization;
+using Newtonsoft.Json;
 using SignalR;
 using SignalR.Hosting.AspNet;
 using SignalR.Infrastructure;
@@ -27,28 +30,24 @@ namespace Compilify.Web
             RegisterRoutes(RouteTable.Routes);
 
             Channel = (RedisSubscriberConnection)DependencyResolver.Current.GetService(typeof(RedisSubscriberConnection));
-            Channel.Subscribe("workers:job-done", OnExecutionCompleted);
+            Channel.PatternSubscribe("workers:job-done:*", OnExecutionCompleted);
         }
 
         private static RedisSubscriberConnection Channel;
 
         private static void OnExecutionCompleted(string key, byte[] message)
         {
-            var command = ExecuteCommand.Deserialize(message);
-            if (!string.IsNullOrEmpty(command.ClientId))
+            var parts = key.Split(new[] { ':' });
+
+            var clientId = parts[parts.Length - 1];
+
+            if (!string.IsNullOrEmpty(clientId))
             {
                 var connectionManager = AspNetHost.DependencyResolver.Resolve<IConnectionManager>();
                 var connection = connectionManager.GetConnection<ExecuteEndPoint>();
-
-                connection.Broadcast(command.ClientId, new { status = "ok", data = command });
-            }
-        }
-
-        protected void Application_End()
-        {
-            if (Channel != null)
-            {
-                Channel.Dispose();
+                var data = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(message));
+                
+                connection.Broadcast(clientId, new { status = "ok", data = data });
             }
         }
 

@@ -1,10 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Security;
-using System.Security.Permissions;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
@@ -13,70 +9,52 @@ namespace Compilify.Services
 {
     public class CodeExecuter
     {
-        private static AppDomain CreateSandbox(string name)
-        {
-            var evidence = new Evidence();
-            evidence.AddHostEvidence(new Zone(SecurityZone.Internet));
+        private static readonly string[] Namespaces =
+            new[]
+            {
+                "System", 
+                "System.IO", 
+                "System.Net", 
+                "System.Linq", 
+                "System.Text", 
+                "System.Text.RegularExpressions", 
+                "System.Collections.Generic"
+            };
 
-            var permissions = SecurityManager.GetStandardSandbox(evidence);
-            var security = new SecurityPermission(SecurityPermissionFlag.Execution);
-
-            permissions.AddPermission(security);
-
-            var setup = new AppDomainSetup
-                        {
-                            ApplicationBase = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
-                        };
-
-            return AppDomain.CreateDomain(name, null, setup, permissions);
-        }
+        private const string EntryPoint = @"public class EntryPoint 
+                                            {
+                                                public static object Result { get; set; }
+                      
+                                                public static void Main()
+                                                {
+                                                    Result = Script.Eval();
+                                                }
+                                            }";
 
         public object Execute(string code)
         {
-            var sandbox = CreateSandbox("Sandbox");
+            var sandbox = SecureAppDomainFactory.Create();
 
             // Load basic .NET assemblies into our sandbox
-            var system = sandbox.Load("System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-            var core = sandbox.Load("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+            var mscorlib = sandbox.Load("mscorlib,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
+            var system = sandbox.Load("System,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
+            var core = sandbox.Load("System.Core,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
 
             var script = "public static object Eval() {" + code + "}";
-            const string entryPoint =
-                @"using System.Reflection;
-                  
-                  public class EntryPoint 
-                  {
-                      public static object Result { get; set; }
-                      
-                      public static void Main()
-                      {
-                          Result = Script.Eval();
-                      }
-                  }";
-
-            var namespaces = new[]
-                             {
-                                 "System", 
-                                 "System.IO", 
-                                 "System.Net", 
-                                 "System.Linq", 
-                                 "System.Text", 
-                                 "System.Text.RegularExpressions", 
-                                 "System.Collections.Generic"
-                             };
-
-            var options = new CompilationOptions(assemblyKind: AssemblyKind.ConsoleApplication, usings: ReadOnlyArray<string>.CreateFrom(namespaces));
+            
+            var options = new CompilationOptions(assemblyKind: AssemblyKind.ConsoleApplication, usings: ReadOnlyArray<string>.CreateFrom(Namespaces));
 
             var compilation = Compilation.Create("foo", options,
                 new[]
                 {
-                    SyntaxTree.ParseCompilationUnit(entryPoint),
+                    SyntaxTree.ParseCompilationUnit(EntryPoint),
                     // This is the syntax tree represented in the `Script` variable.
                     SyntaxTree.ParseCompilationUnit(script, options: new ParseOptions(kind: SourceCodeKind.Interactive))
                 },
                 new MetadataReference[] { 
-                    new AssemblyFileReference(typeof(object).Assembly.Location),
                     new AssemblyFileReference(core.Location), 
-                    new AssemblyFileReference(system.Location)
+                    new AssemblyFileReference(system.Location),
+                    new AssemblyFileReference(mscorlib.Location)
                 });
 
             byte[] compiledAssembly;
@@ -100,35 +78,40 @@ namespace Compilify.Services
 
             var loader = (ByteCodeLoader)Activator.CreateInstance(sandbox, typeof(ByteCodeLoader).Assembly.FullName, typeof(ByteCodeLoader).FullName).Unwrap();
 
+            bool unloaded = false;
             object result = null;
+            var timeout = TimeSpan.FromSeconds(5);
             try
             {
                 var task = Task.Factory.StartNew(() =>
                                                  {
-
                                                      try
                                                      {
                                                          result = loader.Run(compiledAssembly);
                                                      }
                                                      catch (Exception ex)
                                                      {
-                                                         result = ex.ToString();
+                                                         result = ex;
                                                      }
-                                                 });
+                                                 }, TaskCreationOptions.PreferFairness);
 
-                if (!task.Wait(5000))
+                if (!task.Wait(timeout))
                 {
                     AppDomain.Unload(sandbox);
-                    result = "[Execution timed out after 6 seconds]";
+                    unloaded = true;
+                    result = "[Execution timed out after 5 seconds]";
                 }
             }
             catch (Exception ex)
             {
-                result = ex.ToString();
+                result = ex;
             }
-
-            AppDomain.Unload(sandbox);
-
+            
+            if (!unloaded)
+            {
+                AppDomain.Unload(sandbox);
+            }
+            
             if (result == null || string.IsNullOrEmpty(result.ToString()))
             {
                 result = "null";

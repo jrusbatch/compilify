@@ -110,16 +110,6 @@ namespace Compilify.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Execute(string slug, int? version)
-        {
-            var content = db.GetVersion(slug, version ?? 1);
-
-            db.QueueForCompilation(content.Slug, content.Version);
-
-            return Json(new { status = "ok", data = content });
-        }
-
-        [HttpPost]
         public ActionResult Validate(string code)
         {
             var compiler = new CSharpCompiler();

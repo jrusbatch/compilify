@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Configuration;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using BookSleeve;
@@ -22,9 +20,9 @@ namespace Compilify.Web.EndPoints
                                 Code = data
                             };
 
-            var message = command.GetBytes();
+            var message = Convert.ToBase64String(command.GetBytes());
 
-            redis.Publish("workers:execute", message);
+            redis.Lists.AddLast(0, "queue:execute", message);
 
             return Send(new { status = "ok" });
         }

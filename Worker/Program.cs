@@ -1,86 +1,126 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
-using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
-using BookSleeve;
+using Compilify.Services;
+using Newtonsoft.Json;
+using ServiceStack.Redis;
 
 namespace Compilify.Worker
 {
-    public sealed partial class Program : IDisposable
+    public sealed class Program
     {
-        public Program(RedisConnection redisConnection)
+        public static int Main(string[] args)
         {
-            worker = new Worker();
-            connection = redisConnection;
-
-            channel = connection.GetOpenSubscriberChannel();
-            channel.Subscribe("workers:execute", OnMessageReceived);
-        }
-
-        private readonly Worker worker;
-        private readonly RedisConnection connection;
-        private readonly RedisSubscriberConnection channel;
-
-        private void OnMessageReceived(string key, byte[] message)
-        {
-            var command = ExecuteCommand.Deserialize(message);
-
-            Console.WriteLine(command.Code);
+            Executer = new CodeExecuter();
+            TokenSource = new CancellationTokenSource();
 
             try
             {
-                var result = worker.ProcessItem(command);
-                var response = result.GetBytes();
+                ClientManager = CreateOpenRedisConnection();
+                Client = ClientManager.GetClient();
 
-                Console.WriteLine("Execution completed.");
-
-                connection.Publish("workers:job-done", response)
-                    .ContinueWith(x => Console.WriteLine("Message published to workers:job-done. ({0} subscribers)", x.Result));
+                Task.Factory.StartNew(ProcessQueue, TokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                
+                Console.ReadKey();
             }
-            catch (Exception ex)
+            finally
             {
-                Console.Write(ex);
-                Console.WriteLine();
+                if (TokenSource != null)
+                {
+                    TokenSource.Cancel();
+                    TokenSource.Dispose();
+                }
+
+                if (Client != null)
+                {
+                    Client.Dispose();
+                }
+
+                if (ClientManager != null)
+                {
+                    ClientManager.Dispose();
+                }
             }
+
+            return -1;
         }
 
-        public bool OnConsoleCtrlCheck(CtrlTypes ctrlType)
-        {
-            var isClosing = false;
+        private static CodeExecuter Executer;
+        private static CancellationTokenSource TokenSource;
+        private static IRedisClientsManager ClientManager;
+        private static IRedisClient Client;
 
-            switch (ctrlType)
+        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(10);
+
+        private static void ProcessQueue()
+        {
+            while (true)
             {
-                case CtrlTypes.CTRL_C_EVENT:
-                case CtrlTypes.CTRL_BREAK_EVENT:
-                case CtrlTypes.CTRL_CLOSE_EVENT:
-                case CtrlTypes.CTRL_LOGOFF_EVENT:
-                case CtrlTypes.CTRL_SHUTDOWN_EVENT:
-                    Console.WriteLine("Application is shutting down!");
-                    isClosing = true;
+                if (TokenSource.Token.IsCancellationRequested)
+                {
+                    Console.WriteLine("Cancellation requested, exiting.");
                     break;
-            }
+                }
 
-            if (isClosing)
-            {
-                Dispose();
-            }
+                var message = Client.BlockingDequeueItemFromList("queue:execute", DefaultTimeout);
 
-            return true;
+                if (message != null)
+                {
+                    Console.WriteLine("Message received: {0}", message);
+
+                    var bytes = Convert.FromBase64String(message);
+
+                    var command = ExecuteCommand.Deserialize(bytes);
+
+                    var result = Executer.Execute(command.Code);
+
+                    var response = JsonConvert.SerializeObject(new { result = result });
+
+                    Console.WriteLine(response);
+
+                    Client.PublishMessage("workers:job-done:" + command.ClientId, response);
+                }
+            }
         }
 
-        public void Dispose()
+        private static IRedisClientsManager CreateOpenRedisConnection()
         {
-            if (channel != null)
-            {
-                channel.Unsubscribe("workers:execute");
-                channel.Dispose();
-            }
+            var connectionString = ConfigurationManager.AppSettings["REDISTOGO_URL"] ?? "redis://localhost";
 
-            if (connection != null)
-            {
-                connection.Dispose();
-            }
+            var uri = new Uri(connectionString);
+            var password = uri.UserInfo.Split(':').LastOrDefault();
+
+#if !DEBUG
+            var host = string.Format("{0}@{1}:{2}", password ?? string.Empty, uri.Host, uri.Port);
+#else
+            var host = uri.Host;
+#endif
+
+            return new BasicRedisClientManager(0, new[] { host });
+        }
+    }
+
+    public class PeonState
+    {
+        public PeonState(IRedisClient redisClient, CancellationToken cancellationToken)
+        {
+            client = redisClient;
+            token = cancellationToken;
+        }
+
+        private readonly IRedisClient client;
+        private readonly CancellationToken token;
+
+        public IRedisClient Client
+        {
+            get { return client; }
+        }
+
+        public CancellationToken CancellationToken
+        {
+            get { return token; }
         }
     }
 }

@@ -12,8 +12,6 @@ namespace Compilify.Web.Services
 
         PageContent GetLatestVersion(string slug);
 
-        void QueueForCompilation(string slug, int version);
-
         PageContent Save(string slug, PageContent content);
     }
 
@@ -45,17 +43,6 @@ namespace Compilify.Web.Services
             return documents.Find(Query.EQ("Slug", slug))
                             .SetSortOrder(SortBy.Descending("Version"))
                             .FirstOrDefault();
-        }
-
-        public void QueueForCompilation(string slug, int version)
-        {
-            var content = GetVersion(slug, version);
-
-            if (content != null)
-            {
-                redis.Publish("workers:execute", content.Code);
-                // redis.Lists.AddLast(0, "queue:executer", content.Code);
-            }
         }
 
         public PageContent Save(string slug, PageContent content)

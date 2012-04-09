@@ -88,14 +88,14 @@
 
             return false;
         });
-
+        
         connection = $.connection('/execute');
         connection.logging = true;
         
         connection.received(function(message) {
             if (message.status === "ok") {
-                if (message.data && message.data.Result) {
-                    $('#results p').html(message.data.Result);
+                if (message.data && !_.isUndefined(message.data.result)) {
+                    $('#results p').html(message.data.result.toString());
                 }
             }
         });
