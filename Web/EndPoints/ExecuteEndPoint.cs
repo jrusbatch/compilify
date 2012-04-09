@@ -14,6 +14,11 @@ namespace Compilify.Web.EndPoints
         {
             var redis = DependencyResolver.Current.GetService<RedisConnection>();
 
+            if (redis.State != RedisConnectionBase.ConnectionState.Open)
+            {
+                throw new InvalidOperationException("RedisConnection state is " + redis.State);
+            }
+
             var command = new ExecuteCommand
                             {
                                 ClientId = connectionId,
