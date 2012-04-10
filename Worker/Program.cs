@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Configuration;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,12 +25,18 @@ namespace Compilify.Worker
             {
                 ClientManager = CreateOpenRedisConnection();
                 Client = ClientManager.GetClient();
-
+                
                 var task = Task.Factory.StartNew(ProcessQueue, TokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 
                 task.ContinueWith(OnTaskFaulted, TaskContinuationOptions.OnlyOnFaulted);
 
-                task.Wait();
+                task.Wait(TokenSource.Token);
+
+                Logger.Debug("Task finished.");
+            }
+            catch (RedisException ex)
+            {
+                Logger.ErrorException("An error occured while attempting to access Redis.", ex);
             }
             finally
             {
@@ -69,15 +74,11 @@ namespace Compilify.Worker
             {
                 Logger.ErrorException("An unhandled exception occurred in the worker process.", exception);
             }
-
-            Environment.Exit(-1);
         }
 
         private static void OnTaskFaulted(Task task)
         {
             Logger.ErrorException("An exception occured in the worker task.", task.Exception);
-
-            Environment.Exit(-1);
         }
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -97,7 +98,7 @@ namespace Compilify.Worker
                 
                 if (TokenSource.IsCancellationRequested)
                 {
-                    Logger.Debug("ProcessQueue task cancelled.");
+                    Logger.Error("ProcessQueue task cancelled.");
                     break;
                 }
 
