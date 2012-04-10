@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Roslyn.Compilers.CSharp;
 
 namespace Compilify.Web.Models
 {
@@ -8,10 +7,10 @@ namespace Compilify.Web.Models
         public PageContentViewModel()
         {
             Content = new PageContent();
-            Errors = new List<Diagnostic>();
+            Errors = new List<string>();
         }
 
         public PageContent Content { get; set; }
-        public IEnumerable<Diagnostic> Errors { get; set; } 
+        public IEnumerable<string> Errors { get; set; } 
     }
 }

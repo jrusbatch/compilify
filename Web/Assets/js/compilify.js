@@ -47,7 +47,7 @@
                 else {
                     for (var i in msg.data) {
                         var error = msg.data[i];
-                        $list.append('<li class="message error">' + error.Message + '</li>');
+                        $list.append('<li class="message error">' + error + '</li>');
                     }
                 }
                 

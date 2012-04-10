@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
@@ -7,9 +8,9 @@ namespace Compilify.Services
 {
     public class CSharpCompiler
     {
-        public IEnumerable<Diagnostic> GetCompilationErrors(string code)
+        public IEnumerable<string> GetCompilationErrors(string code)
         {
-            var errors = new List<Diagnostic>();
+            var errors = new List<string>();
 
             var script = "public static object Eval() {" + code + "}";
             var tree = SyntaxTree.ParseCompilationUnit(script, options: new ParseOptions(kind: SourceCodeKind.Interactive));
@@ -39,7 +40,7 @@ namespace Compilify.Services
                     new AssemblyFileReference(system.Location)
                 });
 
-            errors.AddRange(compilation.GetDiagnostics());
+            errors.AddRange(compilation.GetDiagnostics().Select(x => x.Info.GetMessage().Replace("Eval()", "<Factory>()")));
 
             return errors;
         } 

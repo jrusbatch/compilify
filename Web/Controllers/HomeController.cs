@@ -106,12 +106,6 @@ namespace Compilify.Web.Controllers
             var compiler = new CSharpCompiler();
 
             var errors = compiler.GetCompilationErrors(code)
-                                 .Select(x => new
-                                              {
-                                                  Severity = x.Info.Severity,
-                                                  Location = x.Location.GetLineSpan(false),
-                                                  Message = x.Info.GetMessage(CultureInfo.InvariantCulture)
-                                              })
                                  .ToArray();
 
             return Json(new { status = "ok", data = errors });
