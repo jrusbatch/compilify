@@ -45,6 +45,10 @@ h1, h2, h3, h4, h5, h6 {
     filter: none;
     background: #f1f1f1;
 
+    -webkit-border-radius: 0;
+       -moz-border-radius: 0;
+            border-radius: 0;
+
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
        -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
