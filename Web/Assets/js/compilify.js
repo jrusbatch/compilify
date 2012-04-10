@@ -4,7 +4,7 @@ if (typeof String.prototype.trim !== 'function') {
         return this.replace(/^\s+|\s+$/g, '');
     };
 }
-    
+
 (function(Compilify) {
     var root = this,
         $ = root.jQuery,

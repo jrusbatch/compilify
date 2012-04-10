@@ -200,7 +200,6 @@
     <Compile Include="Services\PageContentRepository.cs" />
     <Compile Include="Services\RedisConnectionException.cs" />
     <Compile Include="Services\RedisConnectionGateway.cs" />
-    <Compile Include="Services\SequenceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\css\vendor\bootstrap-2.0.2.css" />

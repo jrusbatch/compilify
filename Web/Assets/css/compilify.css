@@ -56,17 +56,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .navbar .brand {
     color: #444;
-    /*font-size: 30px;*/
     padding-top: 16px;
     padding-bottom: 24px;
 }
 
 .navbar .brand h1 {
     font-size: 36px;
-}
-
-.navbar .nav {
-    /*padding-top: 16px;*/
 }
 
 .navbar .nav li,
