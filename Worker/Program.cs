@@ -17,6 +17,8 @@ namespace Compilify.Worker
         {
             Logger.Info("Application started.");
 
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledApplicationException;
+
             Executer = new CodeExecuter();
             TokenSource = new CancellationTokenSource();
 
@@ -26,7 +28,9 @@ namespace Compilify.Worker
                 Client = ClientManager.GetClient();
 
                 var task = Task.Factory.StartNew(ProcessQueue, TokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-                
+
+                task.ContinueWith(OnTaskFaulted, TaskContinuationOptions.OnlyOnFaulted);
+
                 task.Wait();
             }
             finally
@@ -53,6 +57,29 @@ namespace Compilify.Worker
             return -1; // Return a non-zero code so AppHarbor restarts the worker
         }
 
+        public static void OnUnhandledApplicationException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var exception = e.ExceptionObject as Exception;
+
+            if (e.IsTerminating)
+            {
+                Logger.FatalException("An unhandled exception is causing the worker to terminate.", exception);
+            }
+            else
+            {
+                Logger.ErrorException("An unhandled exception occurred in the worker process.", exception);
+            }
+
+            Environment.Exit(-1);
+        }
+
+        private static void OnTaskFaulted(Task task)
+        {
+            Logger.ErrorException("An exception occured in the worker task.", task.Exception);
+
+            Environment.Exit(-1);
+        }
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static CodeExecuter Executer;
@@ -62,7 +89,7 @@ namespace Compilify.Worker
 
         private static void ProcessQueue()
         {
-            Logger.Info("ProcessQueue task started.");
+            Logger.Debug("ProcessQueue task started.");
 
             while (true)
             {
@@ -70,13 +97,13 @@ namespace Compilify.Worker
                 
                 if (TokenSource.IsCancellationRequested)
                 {
-                    Logger.Info("ProcessQueue task cancelled.");
+                    Logger.Debug("ProcessQueue task cancelled.");
                     break;
                 }
 
                 if (message != null)
                 {
-                    Logger.Info("Message received.");
+                    Logger.Debug("Message received.");
 
                     var messageBytes = Convert.FromBase64String(message);
 
@@ -88,11 +115,11 @@ namespace Compilify.Worker
 
                     Client.PublishMessage("workers:job-done:" + command.ClientId, response);
 
-                    Logger.Info("Response published.");
+                    Logger.Debug("Response published.");
                 }
             }
 
-            Logger.Info("ProcessQueue task ending.");
+            Logger.Debug("ProcessQueue task ending.");
         }
 
         private static IRedisClientsManager CreateOpenRedisConnection()
@@ -108,7 +135,7 @@ namespace Compilify.Worker
             var host = uri.Host;
 #endif
 
-            return new BasicRedisClientManager(0, new[] { host });
+            return new PooledRedisClientManager(0, new[] { host });
         }
     }
 }
