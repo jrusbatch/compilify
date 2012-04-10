@@ -49,19 +49,12 @@ namespace Compilify.Web.Services
             var uri = new Uri(connectionString);
             var password = uri.UserInfo.Split(':').LastOrDefault();
 
-            try
+            if (password != null)
             {
-                if (password != null)
-                {
-                    return new RedisConnection(uri.Host, uri.Port, password: password, syncTimeout: 5000, ioTimeout: 5000);
-                }
+                return new RedisConnection(uri.Host, uri.Port, password: password, syncTimeout: 5000, ioTimeout: 5000);
+            }
 
-                return new RedisConnection(uri.Host, uri.Port, syncTimeout: 5000, ioTimeout: 5000);
-            }
-            catch (RedisException ex)
-            {
-                throw new RedisConnectionException(RedisConnectionFailed, ex);
-            }
+            return new RedisConnection(uri.Host, uri.Port, syncTimeout: 5000, ioTimeout: 5000);
         }
 
         public RedisConnection GetConnection()

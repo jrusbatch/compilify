@@ -1,22 +1,23 @@
 ﻿
+if (typeof String.prototype.trim !== 'function') {
+    String.prototype.trim = function() {
+        return this.replace(/^\s+|\s+$/g, '');
+    };
+}
+    
 (function(Compilify) {
     var root = this,
         $ = root.jQuery,
         _ = root._,
         CodeMirror = root.CodeMirror,
+        isConnected = false,
         original, connection;
-    
-    if (typeof String.prototype.trim !== 'function') {
-        String.prototype.trim = function() {
-            return this.replace( /^\s+|\s+$/g , '');
-        };
-    }
     
     function saveContent(value, callback) {
         $.ajax(window.location.pathname, {
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ content: { Code: value } }),
+            data: JSON.stringify({ post: { Content: value } }),
             success: function(msg) {
                 root.history.pushState({ }, '', msg.data.url);
                 original = value.toUpperCase();
@@ -29,6 +30,10 @@
     }
     
     function execute(value, callback) {
+        if (!isConnected) {
+            connection.start();
+        }
+
         connection.send(value);
     }
     

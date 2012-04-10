@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Compilify.Models;
 using Compilify.Services;
 using Compilify.Web.Models;
 using Compilify.Web.Services;
@@ -12,23 +13,21 @@ namespace Compilify.Web.Controllers
 {
     public class HomeController : AsyncController
     {
-        public HomeController(ISequenceProvider sequenceProvider, IPageContentRepository contentRepository)
+        public HomeController(IPostRepository contentRepository)
         {
-            urlCounter = sequenceProvider;
             db = contentRepository;
         }
 
-        private readonly ISequenceProvider urlCounter;
-        private readonly IPageContentRepository db;
+        private readonly IPostRepository db;
 
         public ActionResult Index()
         {
-            var viewModel = new PageContentViewModel();
+            var viewModel = new PostViewModel();
 
-            var code = "return \"Hello, world!\";";
+            const string code = "return \"Hello, world!\";";
             var compiler = new CSharpCompiler();
 
-            viewModel.Content.Code = code;
+            viewModel.Post.Content = code;
 
             viewModel.Errors = compiler.GetCompilationErrors(code);
             return View("Show", viewModel);
@@ -43,7 +42,7 @@ namespace Compilify.Web.Controllers
         public ActionResult Show(string slug, string version)
         {
             int versionNumber;
-            PageContent content = null;
+            Post content = null;
             if (string.IsNullOrEmpty(version))
             {
                 content = db.GetVersion(slug, 1);
@@ -63,10 +62,10 @@ namespace Compilify.Web.Controllers
             }
 
             var compiler = new CSharpCompiler();
-            var viewModel = new PageContentViewModel
+            var viewModel = new PostViewModel
                             {
-                                Content = content, 
-                                Errors = compiler.GetCompilationErrors(content.Code)
+                                Post = content, 
+                                Errors = compiler.GetCompilationErrors(content.Content)
                             };
 
             if (Request.IsAjaxRequest())
@@ -78,16 +77,8 @@ namespace Compilify.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Save(string slug, PageContent content)
-        {
-            if (slug == null)
-            {
-                var id = (int) urlCounter.Next();
-                slug = Base32Encoder.Encode(id);
-                content.Slug = slug;
-            }
-
-            var result = db.Save(slug, content);
+        public ActionResult Save(string slug, Post post) {
+            var result = db.Save(slug, post);
 
             var routeValues = new RouteValueDictionary { { "slug", result.Slug } };
 

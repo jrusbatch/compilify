@@ -1,11 +1,12 @@
 ﻿using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.Mvc;
+using Compilify.Web;
 using Compilify.Web.Infrastructure.DependencyInjection;
 using Compilify.Web.Services;
 using WebActivator;
 
-[assembly: PreApplicationStartMethod(typeof(Compilify.Web.DependencyInjection), "Initialize")]
+[assembly: PreApplicationStartMethod(typeof(DependencyInjection), "Initialize")]
 
 namespace Compilify.Web
 {
@@ -19,11 +20,7 @@ namespace Compilify.Web
             builder.RegisterModule(new RedisModule());
             builder.RegisterModule(new MvcModule());
             
-            builder.Register(x => new SequenceProvider(x.Resolve<RedisConnectionGateway>()))
-                   .AsImplementedInterfaces()
-                   .InstancePerHttpRequest();
-
-            builder.RegisterType<PageContentRepository>()
+            builder.RegisterType<PostRepository>()
                    .AsImplementedInterfaces()
                    .InstancePerHttpRequest();
 

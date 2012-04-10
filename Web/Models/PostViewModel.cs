@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
+using Compilify.Models;
 
 namespace Compilify.Web.Models
 {
-    public class PageContentViewModel
+    public class PostViewModel
     {
-        public PageContentViewModel()
+        public PostViewModel()
         {
-            Content = new PageContent();
+            Post = new Post();
             Errors = new List<string>();
         }
 
-        public PageContent Content { get; set; }
+        public Post Post { get; set; }
         public IEnumerable<string> Errors { get; set; } 
     }
 }

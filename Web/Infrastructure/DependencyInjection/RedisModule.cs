@@ -10,6 +10,9 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
             builder.Register(x => RedisConnectionGateway.Current)
                    .SingleInstance()
                    .AsSelf();
+
+            builder.Register(x => x.Resolve<RedisConnectionGateway>().GetConnection())
+                   .ExternallyOwned();
         }
     }
 }

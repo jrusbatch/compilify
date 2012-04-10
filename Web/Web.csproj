@@ -180,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\DependencyInjection.cs" />
+    <Compile Include="App_Start\MongoDbInitializer.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="EndPoints\ExecuteEndPoint.cs" />
     <Compile Include="Global.asax.cs">
@@ -191,8 +192,9 @@
     <Compile Include="Infrastructure\DependencyInjection\RedisModule.cs" />
     <Compile Include="Infrastructure\Extensions\RouteCollectionExtensions.cs" />
     <Compile Include="Infrastructure\LowercaseRoute.cs" />
-    <Compile Include="Models\PageContent.cs" />
-    <Compile Include="Models\PageContentViewModel.cs" />
+    <Compile Include="Infrastructure\TaskAsyncHelper.cs" />
+    <Compile Include="Models\Envelope.cs" />
+    <Compile Include="Models\PostViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Base32Encoder.cs" />
     <Compile Include="Services\PageContentRepository.cs" />

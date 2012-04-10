@@ -1,5 +1,5 @@
 @using System.Globalization
-@model Compilify.Web.Models.PageContentViewModel
+@model Compilify.Web.Models.PostViewModel
 
 @{ var hasErrors = Model.Errors != null && Model.Errors.Any(); }
 
@@ -11,13 +11,11 @@
                 <a class="js-save" href="#">save</a> 
                 <a class="js-execute" href="#">run</a>
             </small>
-            <small>
-            </small>
         </h1>
     </div>
 
     <div class="editor">
-        <textarea>@Model.Content.Code</textarea>
+        <textarea>@Model.Post.Content</textarea>
     </div>
 
     <div class="messages">
