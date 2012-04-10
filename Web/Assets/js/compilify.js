@@ -38,7 +38,7 @@
             contentType: 'application/json',
             data: JSON.stringify({ code: sender.getValue() }),
             success: function (msg) {
-                var $list = $('#define .editor-messages ul').detach().empty(),
+                var $list = $('#define .messages ul').detach().empty(),
                     hasErrors = msg.data.length > 0;
 
                 if (!hasErrors) {
@@ -51,13 +51,13 @@
                     }
                 }
                 
-                $('#define .editor-messages').append($list);
+                $('#define .messages').append($list);
             }
         });
     }, 500);
 
     $(function() {
-        var editor = $('#define .js-editor')[0];
+        var editor = $('#define .editor textarea')[0];
 
         original = editor.innerHTML.trim().toUpperCase();
 

@@ -15,9 +15,12 @@
             </small>
         </h1>
     </div>
-    <textarea class="js-editor">@Model.Content.Code</textarea>
-    
-    <div class="editor-messages">
+
+    <div class="editor">
+        <textarea>@Model.Content.Code</textarea>
+    </div>
+
+    <div class="messages">
         <ul>
             @if (!hasErrors)
             {

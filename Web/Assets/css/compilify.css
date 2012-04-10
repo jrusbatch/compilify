@@ -106,11 +106,13 @@ h1 {
 .CodeMirror {
     font-family: 'Droid Sans Mono', monospace;
     font-size: 13px;
+}
+
+.editor {
     -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
        -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
-
 
 .CodeMirror pre.CodeMirror-cursor {
     border-left-color: #555;
@@ -123,12 +125,12 @@ h1 {
     overflow-y: hidden;
 }
 
-#define .editor-messages ul {
+#define .messages ul {
     list-style: none;
     margin-left: 0;
 }
-    
-#define .editor-messages .message {
+
+#define .messages .message {
     padding: 5px 0 5px 25px;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -142,30 +144,30 @@ h1 {
     -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
 
-    opacity: .65;
+    opacity: .4;
 
     -webkit-transition: opacity 0.15s ease-in;
        -moz-transition: opacity 0.15s ease-in;
          -o-transition: opacity 0.15s ease-in;
             transition: opacity 0.15s ease-in;
 }
-    
-#define .editor-messages .message:hover {
+
+#define .messages .message:hover {
     opacity: 1;
 }
     
-#define .editor-messages .message.success {
+#define .messages .success {
     background-color: #339933;
 }
     
-#define .editor-messages .message.warning {
+#define .messages .warning {
     background-color: #F09609;
 }
     
-#define .editor-messages .message.error {
+#define .messages .error {
     background-color: #E51400;
 }
     
-#define .editor-messages .message.info {
+#define .messages .info {
     background-color: #1BA1E2;
 }
