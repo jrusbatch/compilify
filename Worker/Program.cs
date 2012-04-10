@@ -114,9 +114,9 @@ namespace Compilify.Worker
 
                     var response = JsonConvert.SerializeObject(new { result = result });
 
-                    Client.PublishMessage("workers:job-done:" + command.ClientId, response);
+                    var listeners = Client.PublishMessage("workers:job-done:" + command.ClientId, response);
 
-                    Logger.Debug("Response published.");
+                    Logger.Debug("Response published to " + listeners + " listeners.");
                 }
             }
 
