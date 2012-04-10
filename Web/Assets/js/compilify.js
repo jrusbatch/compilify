@@ -70,7 +70,6 @@
             onChange: validate
         });
         
-  
         $('#define .js-save').on('click', function() {
             var currentValue = Compilify.Editor.getValue().trim();
             
