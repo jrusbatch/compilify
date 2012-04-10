@@ -83,10 +83,10 @@ h1, h2, h3, h4, h5, h6 {
     background: none;
     text-shadow: none;
 
-    -webkit-transition: color 0.5s;
-       -moz-transition: color 0.5s;
-         -o-transition: color 0.5s;
-            transition: color 0.5s;
+    -webkit-transition: color 0.25s;
+       -moz-transition: color 0.25s;
+         -o-transition: color 0.25s;
+            transition: color 0.25s;
 }
 
 h1 {

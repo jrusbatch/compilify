@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Compilify.Models {
 
     public class Post {
+
+        public Post() {
+            Tags = new HashSet<string>();
+        }
 
         public string Id { get; set; }
 
@@ -19,19 +24,12 @@ namespace Compilify.Models {
         /// The post content.</summary>
         public string Content { get; set; }
 
+        public HashSet<string> Tags { get; protected set; }
+
         /// <summary>
         /// The UTC date and time that the post was first persisted to the 
         /// data store.</summary>
         public DateTime? Created { get; set; }
-    }
-
-    public class Incrementor {
-
-        public string Id { get; set; }
-
-        public string Name { get; set; }
-
-        public int Current { get; set; }
 
     }
 }

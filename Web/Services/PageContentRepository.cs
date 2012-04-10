@@ -65,6 +65,7 @@ namespace Compilify.Web.Services
                 slug = Base32Encoder.Encode(sequence.Current);
             }
 
+            content.Tags.Add("Test");
             content.Slug = slug;
 
             content.Version = db.GetCollection<Post>("posts")
