@@ -4,94 +4,40 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using BookSleeve;
 using Compilify.Web.EndPoints;
 using Compilify.Web.Infrastructure.Extensions;
 using Compilify.Web.Services;
-using Newtonsoft.Json;
-using SignalR;
+using SignalR.Configuration;
 using SignalR.Hosting.AspNet;
-using SignalR.Infrastructure;
 using SignalR.Hosting.AspNet.Routing;
+using SignalR.Infrastructure;
 
-namespace Compilify.Web
-{
-    public class Application : HttpApplication
-    {
-        protected void Application_Start()
-        {
+namespace Compilify.Web {
+
+    public class Application : HttpApplication {
+        
+        private static JobDoneMessageRelay MessageRelay;
+
+        protected void Application_Start() {
             ViewEngines.Engines.Clear();
             ViewEngines.Engines.Add(new RazorViewEngine());
 
             MvcHandler.DisableMvcResponseHeader = true;
+            
+            var configuration = AspNetHost.DependencyResolver.Resolve<IConfigurationManager>();
+            configuration.ReconnectionTimeout = TimeSpan.FromSeconds(40);
 
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterBundles(BundleTable.Bundles);
             RegisterRoutes(RouteTable.Routes);
-
-            Gateway = DependencyResolver.Current.GetService<RedisConnectionGateway>();
-
-            OnChannelClosed(null, null);
+            MessageRelay = new JobDoneMessageRelay(DependencyResolver.Current.GetService<RedisConnectionGateway>());
         }
         
-        protected void Application_End()
-        {
-            if (Channel != null && Channel.State < RedisConnectionBase.ConnectionState.Closing)
-            {
-                Channel.PatternUnsubscribe("workers:job-done:*");
-                Channel.Closed -= OnChannelClosed;
-                Channel.Close(true);
-            }
-        }
-
-        private static RedisConnectionGateway Gateway;
-        private static RedisSubscriberConnection Channel;
-
-        private static void OnChannelClosed(object sender, EventArgs e)
-        {
-            if (Channel != null)
-            {
-                Channel.Closed -= OnChannelClosed;
-                Channel.Dispose();
-                Channel = null;
-            }
-
-            Channel = Gateway.GetConnection().GetOpenSubscriberChannel();
-            Channel.Closed += OnChannelClosed;
-
-            Channel.PatternSubscribe("workers:job-done:*", OnExecutionCompleted);
-        }
-
-        /// <summary>
-        /// Handle messages received from workers through Redis.</summary>
-        /// <param name="key">
-        /// The name of the channel on which the message was received.</param>
-        /// <param name="message">
-        /// A JSON message.</param>
-        private static void OnExecutionCompleted(string key, byte[] message)
-        {
-            // Retrieve the client's connection ID from the key
-            var parts = key.Split(new[] { ':' });
-            var clientId = parts[parts.Length - 1];
-
-            if (!string.IsNullOrEmpty(clientId))
-            {
-                var connectionManager = AspNetHost.DependencyResolver.Resolve<IConnectionManager>();
-                var connection = connectionManager.GetConnection<ExecuteEndPoint>();
-                var data = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(message));
-
-                // Forward the message to the user's browser with SignalR
-                connection.Broadcast(clientId, new { status = "ok", data = data });
-            }
-        }
-        
-        private static void RegisterGlobalFilters(GlobalFilterCollection filters)
-        {
+        private static void RegisterGlobalFilters(GlobalFilterCollection filters) {
             filters.Add(new HandleErrorAttribute());
         }
 
-        private static void RegisterRoutes(RouteCollection routes)
-        {
+        private static void RegisterRoutes(RouteCollection routes) {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapLowercaseRoute(
@@ -114,8 +60,7 @@ namespace Compilify.Web
                 name: "Update",
                 url: "{slug}/{version}",
                 defaults: new { controller = "Home", action = "Save", version = UrlParameter.Optional },
-                constraints: new
-                             {
+                constraints: new {
                                  httpMethod = new HttpMethodConstraint("POST"),
                                  slug = @"[a-z0-9]*"
                              }
@@ -125,8 +70,7 @@ namespace Compilify.Web
                 name: "Save",
                 url: "{slug}",
                 defaults: new { controller = "Home", action = "Save", slug = UrlParameter.Optional },
-                constraints: new
-                             {
+                constraints: new {
                                  httpMethod = new HttpMethodConstraint("POST"),
                                  slug = @"[a-z0-9]*"
                              }
@@ -136,8 +80,7 @@ namespace Compilify.Web
                 name: "Show",
                 url: "{slug}/{version}",
                 defaults: new { controller = "Home", action = "Show", version = UrlParameter.Optional },
-                constraints: new
-                             {
+                constraints: new {
                                  httpMethod = new HttpMethodConstraint("GET"),
                                  slug = @"[a-z0-9]+",
                                  version = @"\d*"
@@ -148,16 +91,14 @@ namespace Compilify.Web
                 name: "Latest",
                 url: "{slug}/latest",
                 defaults: new { controller = "Home", action = "Latest" },
-                constraints: new
-                             {
+                constraints: new {
                                  httpMethod = new HttpMethodConstraint("GET"),
                                  slug = @"[a-z0-9]+"
                              }
             );
         }
 
-        private static void RegisterBundles(BundleCollection bundles)
-        {
+        private static void RegisterBundles(BundleCollection bundles) {
             var css = new Bundle("~/css", new CssMinify());
             css.AddFile("~/assets/css/vendor/bootstrap-2.0.2.css");
             css.AddFile("~/assets/css/vendor/codemirror-2.23.css");
@@ -165,7 +106,8 @@ namespace Compilify.Web
             css.AddFile("~/assets/css/compilify.css");
             bundles.Add(css);
 
-            var js = new Bundle("~/vendor/js", new JsMinify());
+            var js = new Bundle("~/vendor/js");
+
             js.AddFile("~/assets/js/vendor/json2.js");
             js.AddFile("~/assets/js/vendor/underscore-1.3.1.js");
             js.AddFile("~/assets/js/vendor/backbone-0.9.2.js");
@@ -174,6 +116,15 @@ namespace Compilify.Web
             js.AddFile("~/assets/js/vendor/codemirror-clike-2.23.js");
             js.AddFile("~/assets/js/vendor/jquery.signalr.js");
             bundles.Add(js);
+
+#if DEBUG
+            css.Transform = new NoTransform("text/css");
+            js.Transform = new NoTransform("text/javascript");
+#else
+            css.Transform = new CssMinify();
+            js.Transform = new JsMinify();
+#endif
+
         }
     }
 }

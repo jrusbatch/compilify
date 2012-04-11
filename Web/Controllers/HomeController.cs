@@ -1,8 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Text;
+﻿using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Compilify.Models;
@@ -24,7 +20,7 @@ namespace Compilify.Web.Controllers
         public ActionResult Index()
         {
             var viewModel = new PostViewModel();
-
+            
             const string code = "return \"Hello, world!\";";
             var compiler = new CSharpCompiler();
 

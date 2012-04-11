@@ -191,6 +191,7 @@
     <Compile Include="Infrastructure\DependencyInjection\RedisModule.cs" />
     <Compile Include="Infrastructure\Extensions\RouteCollectionExtensions.cs" />
     <Compile Include="Infrastructure\LowercaseRoute.cs" />
+    <Compile Include="Services\JobDoneMessageRelay.cs" />
     <Compile Include="Infrastructure\TaskAsyncHelper.cs" />
     <Compile Include="Models\Envelope.cs" />
     <Compile Include="Models\PostViewModel.cs" />
