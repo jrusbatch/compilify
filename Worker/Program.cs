@@ -27,7 +27,7 @@ namespace Compilify.Worker
                 // ClientManager = CreateOpenRedisConnection();
                 // Client = ClientManager.GetClient();
 
-                var tasks = new Task[4];
+                var tasks = new Task[2];
                 
                 for (var i = 0; i < tasks.Length; i++) {
                     var task = Task.Factory.StartNew(ProcessQueue, TokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
@@ -90,8 +90,6 @@ namespace Compilify.Worker
 
         private static CodeExecuter Executer;
         private static CancellationTokenSource TokenSource;
-        // private static IRedisClientsManager ClientManager;
-        // private static IRedisClient Client;
 
         private static void ProcessQueue() {
             Logger.Debug("ProcessQueue task {0} started.", Task.CurrentId);
