@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -39,25 +40,30 @@ namespace Compilify.Web.Controllers
         // GET /:slug/live      -> Watch or collaborate on the content in real time
         //
         [HttpGet]
-        public ActionResult Show(string slug, string version)
-        {
+        public ActionResult Show(string slug, string version) {
+            Post content;
             int versionNumber;
-            Post content = null;
-            if (string.IsNullOrEmpty(version))
-            {
-                content = db.GetVersion(slug, 1);
+
+            if (string.Equals("latest", version, StringComparison.OrdinalIgnoreCase)) {
+                var latest = db.GetLatestVersion(slug);
+
+                return (latest > 0) 
+                    ? RedirectToAction("Show", "Home", new { slug = slug, version = latest }) 
+                    : (ActionResult)HttpNotFound();
             }
-            else if (string.Equals("latest", version, StringComparison.OrdinalIgnoreCase))
-            {
-                content = db.GetLatestVersion(slug);
-            }
-            else if (Int32.TryParse(version, out versionNumber))
-            {
+            
+            if (Int32.TryParse(version, out versionNumber)) {
+                if (versionNumber < 1) {
+                    return RedirectToActionPermanent("Show", "Home", new { slug = slug, version = 1 });
+                }
+
                 content = db.GetVersion(slug, versionNumber);
             }
+            else {
+                content = db.GetVersion(slug);
+            }
 
-            if (content == null)
-            {
+            if (content == null) {
                 return HttpNotFound();
             }
 

@@ -10,10 +10,14 @@ namespace Compilify.Models {
         }
 
         public string Id { get; set; }
+        
+        public string Title { get; set; }
 
         public string Slug { get; set; }
 
         public int Version { get; set; }
+
+        public string Description { get; set; }
 
         /// <summary>
         /// The ID of the user who created the post, or null if the post was 

@@ -1,7 +1,5 @@
 ﻿using System.Linq;
-using BookSleeve;
 using Compilify.Models;
-using Compilify.Web.Infrastructure;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 
@@ -9,9 +7,9 @@ namespace Compilify.Web.Services
 {
     public interface IPostRepository
     {
-        Post GetVersion(string slug, int version);
+        int GetLatestVersion(string slug);
 
-        Post GetLatestVersion(string slug);
+        Post GetVersion(string slug, int version = 1);
 
         Post Save(string slug, Post content);
     }
@@ -34,7 +32,8 @@ namespace Compilify.Web.Services
 
         private readonly MongoDatabase db;
 
-        public Post GetVersion(string slug, int version) {
+        public Post GetVersion(string slug, int version = 1) {
+
             var query = Query.And(
                 Query.EQ("Slug", slug),
                 Query.EQ("Version", version)
@@ -43,11 +42,14 @@ namespace Compilify.Web.Services
             return db.GetCollection<Post>("posts").FindOne(query);
         }
 
-        public Post GetLatestVersion(string slug) {
-
+        public int GetLatestVersion(string slug) {
             return db.GetCollection<Post>("posts")
                      .Find(Query.EQ("Slug", slug))
+                     .SetSlaveOk(false)
                      .SetSortOrder(SortBy.Descending("Version"))
+                     .SetLimit(1)
+                     .SetFields("Slug", "Version")
+                     .Select(x => x.Version)
                      .FirstOrDefault();
         }
 
@@ -65,14 +67,9 @@ namespace Compilify.Web.Services
                 slug = Base32Encoder.Encode(sequence.Current);
             }
 
-            content.Tags.Add("Test");
             content.Slug = slug;
 
-            content.Version = db.GetCollection<Post>("posts")
-                                .Find(Query.EQ("Slug", content.Slug))
-                                .SetSortOrder(SortBy.Descending("Version"))
-                                .Select(x => x.Version)
-                                .FirstOrDefault() + 1;
+            content.Version = GetLatestVersion(slug) + 1;
 
             db.GetCollection<Post>("posts").Save(content, SafeMode.True);
 

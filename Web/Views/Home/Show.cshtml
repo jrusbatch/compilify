@@ -1,7 +1,4 @@
-@using System.Globalization
 @model Compilify.Web.Models.PostViewModel
-
-@{ var hasErrors = Model.Errors != null && Model.Errors.Any(); }
 
 <div id="define">
     <div class="page-header">
@@ -20,7 +17,7 @@
 
     <div class="messages">
         <ul>
-            @if (!hasErrors)
+            @if (!Model.Errors.Any())
             {
                 <li class="message success">Build completed successfully.</li>
             }
