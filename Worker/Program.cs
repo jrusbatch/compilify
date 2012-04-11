@@ -28,15 +28,10 @@ namespace Compilify.Worker
                 // ClientManager = CreateOpenRedisConnection();
                 // Client = ClientManager.GetClient();
 
-                var tasks = new Task[2];
-                
-                for (var i = 0; i < tasks.Length; i++) {
-                    var task = Task.Factory.StartNew(ProcessQueue, TokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-                    task.ContinueWith(OnTaskFaulted, TaskContinuationOptions.OnlyOnFaulted);
-                    tasks[i] = task;
-                }
+                var task = Task.Factory.StartNew(ProcessQueue, TokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                task.ContinueWith(OnTaskFaulted, TaskContinuationOptions.OnlyOnFaulted);
 
-                Task.WaitAny(tasks, TokenSource.Token);
+                task.Wait();
                 
                 Logger.Debug("Task finished.");
             }
