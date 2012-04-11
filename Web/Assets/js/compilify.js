@@ -109,7 +109,7 @@ if (typeof String.prototype.trim !== 'function') {
             if (message.status === "ok") {
                 if (message.data && !_.isUndefined(message.data.result)) {
                     var result = htmlEscape(message.data.result.toString());
-                    $('#results p').html(result);
+                    $('#results pre').html(result);
                 }
             }
         });

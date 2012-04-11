@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -114,10 +115,22 @@ namespace Compilify.Worker
                         var messageBytes = Convert.FromBase64String(message);
 
                         var command = ExecuteCommand.Deserialize(messageBytes);
+                        var stopWatch = new Stopwatch();
 
+                        Logger.Info("Executing: {0}", command.Code ?? string.Empty);
+
+                        stopWatch.Start();
                         var result = Executer.Execute(command.Code);
+                        stopWatch.Stop();
 
-                        var response = JsonConvert.SerializeObject(new { result = result });
+                        Logger.Info("Executed: {0}", command.Code ?? string.Empty);
+
+                        var response = JsonConvert.SerializeObject(new {
+                            code = command.Code,
+                            result = result, 
+                            time = DateTime.UtcNow,
+                            duration = stopWatch.ElapsedMilliseconds
+                        });
 
                         var listeners = client.PublishMessage("workers:job-done:" + command.ClientId, response);
 
