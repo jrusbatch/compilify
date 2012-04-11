@@ -47,11 +47,16 @@ if (typeof String.prototype.trim !== 'function') {
     }
     
     var validate = _.debounce(function(sender) {
+        if (!_.isUndefined(window._gaq) && _.isFunction(window._gaq.push)) {
+            window._gaq.push(['_trackEvent', 'Code', 'Validate',,, false]);
+        }
+
         $.ajax('/validate', {
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ code: sender.getValue() }),
             success: function (msg) {
+
                 var $list = $('#define .messages ul').detach().empty(),
                     hasErrors = msg.data.length > 0;
 
@@ -95,6 +100,10 @@ if (typeof String.prototype.trim !== 'function') {
         });
 
         $('#define .js-execute').on('click', function() {
+            if (!_.isUndefined(window._gaq) && _.isFunction(window._gaq.push)) {
+                window._gaq.push(['_trackEvent', 'Code', 'Execute',,, false]);
+            }
+
             var currentValue = Compilify.Editor.getValue().trim();
 
             execute(currentValue);
