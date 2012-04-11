@@ -29,12 +29,21 @@ if (typeof String.prototype.trim !== 'function') {
         });
     }
     
-    function execute(value, callback) {
+    function execute(value) {
         if (!isConnected) {
             connection.start();
         }
 
         connection.send(value);
+    }
+    
+    function htmlEscape(str) {
+        return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
     }
     
     var validate = _.debounce(function(sender) {
@@ -52,7 +61,7 @@ if (typeof String.prototype.trim !== 'function') {
                 else {
                     for (var i in msg.data) {
                         var error = msg.data[i];
-                        $list.append('<li class="message error">' + error + '</li>');
+                        $list.append('<li class="message error">' + htmlEscape(error) + '</li>');
                     }
                 }
                 
@@ -88,14 +97,8 @@ if (typeof String.prototype.trim !== 'function') {
         $('#define .js-execute').on('click', function() {
             var currentValue = Compilify.Editor.getValue().trim();
 
-            // if (currentValue.toUpperCase() !== original) {
-            //    saveContent(currentValue, function(data) {
-                    execute(currentValue, function (msg) {
-                        $('#results p').html(msg.data.Result);
-                    });
-            //    });
-            // }
-
+            execute(currentValue);
+            
             return false;
         });
         
@@ -105,7 +108,8 @@ if (typeof String.prototype.trim !== 'function') {
         connection.received(function(message) {
             if (message.status === "ok") {
                 if (message.data && !_.isUndefined(message.data.result)) {
-                    $('#results p').html(message.data.result.toString());
+                    var result = htmlEscape(message.data.result.toString());
+                    $('#results p').html(result);
                 }
             }
         });
