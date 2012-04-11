@@ -10,21 +10,8 @@ if (typeof String.prototype.trim !== 'function') {
         $ = root.jQuery,
         _ = root._,
         CodeMirror = root.CodeMirror,
-        Backbone = root.Backbone,
         isConnected = false,
         original, connection;
-
-    var Post = Backbone.Model.extend({
-        defaults: {
-            id: '',
-            title: '',
-            description: '',
-            slug: '',
-            version: 1,
-            content: '',
-            tags: []
-        }
-    });
     
     function saveContent(value, callback) {
         $.ajax(window.location.pathname, {
@@ -102,11 +89,11 @@ if (typeof String.prototype.trim !== 'function') {
             var currentValue = Compilify.Editor.getValue().trim();
 
             // if (currentValue.toUpperCase() !== original) {
-                saveContent(currentValue, function(data) {
+            //    saveContent(currentValue, function(data) {
                     execute(currentValue, function (msg) {
                         $('#results p').html(msg.data.Result);
                     });
-                });
+            //    });
             // }
 
             return false;
