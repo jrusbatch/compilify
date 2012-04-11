@@ -45,7 +45,7 @@ namespace Compilify.Worker
                 {
                     TokenSource.Cancel();
                     TokenSource.Dispose();
-                }
+                } 
 
                 //if (Client != null)
                 //{
