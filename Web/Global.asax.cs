@@ -139,6 +139,18 @@ namespace Compilify.Web
                 constraints: new
                              {
                                  httpMethod = new HttpMethodConstraint("GET"),
+                                 slug = @"[a-z0-9]+",
+                                 version = @"\d*"
+                             }
+            );
+
+            routes.MapLowercaseRoute(
+                name: "Latest",
+                url: "{slug}/latest",
+                defaults: new { controller = "Home", action = "Latest" },
+                constraints: new
+                             {
+                                 httpMethod = new HttpMethodConstraint("GET"),
                                  slug = @"[a-z0-9]+"
                              }
             );

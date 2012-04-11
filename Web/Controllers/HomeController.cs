@@ -40,46 +40,41 @@ namespace Compilify.Web.Controllers
         // GET /:slug/live      -> Watch or collaborate on the content in real time
         //
         [HttpGet]
-        public ActionResult Show(string slug, string version) {
-            Post content;
-            int versionNumber;
-
-            if (string.Equals("latest", version, StringComparison.OrdinalIgnoreCase)) {
-                var latest = db.GetLatestVersion(slug);
-
-                return (latest > 0) 
-                    ? RedirectToAction("Show", "Home", new { slug = slug, version = latest }) 
-                    : (ActionResult)HttpNotFound();
-            }
+        public ActionResult Show(string slug, int? version) {
             
-            if (Int32.TryParse(version, out versionNumber)) {
-                if (versionNumber < 1) {
-                    return RedirectToActionPermanent("Show", "Home", new { slug = slug, version = 1 });
-                }
+            if (version <= 1) {
+                // Redirect the user to /:slug instead of /:slug/1
+                return RedirectToActionPermanent("Show", "Home", new { slug = slug, version = (int?)null });
+            }
 
-                content = db.GetVersion(slug, versionNumber);
-            }
-            else {
-                content = db.GetVersion(slug);
-            }
+            var content = db.GetVersion(slug, version ?? 1);
 
             if (content == null) {
                 return HttpNotFound();
             }
 
             var compiler = new CSharpCompiler();
-            var viewModel = new PostViewModel
-                            {
-                                Post = content, 
-                                Errors = compiler.GetCompilationErrors(content.Content)
-                            };
+            var viewModel = new PostViewModel {
+                Post = content, 
+                Errors = compiler.GetCompilationErrors(content.Content)
+            };
 
-            if (Request.IsAjaxRequest())
-            {
+            if (Request.IsAjaxRequest()) {
                 return Json(new { status = "ok", data = viewModel }, JsonRequestBehavior.AllowGet);
             }
             
             return View("Show", viewModel);
+        }
+
+        [HttpGet]
+        public ActionResult Latest(string slug) {
+            var latest = db.GetLatestVersion(slug);
+
+            if (latest < 1) {
+                return HttpNotFound();
+            }
+
+            return RedirectToAction("Show", "Home", new { slug = slug, version = latest });
         }
 
         [HttpPost]

@@ -9,7 +9,7 @@ namespace Compilify.Web.Services
     {
         int GetLatestVersion(string slug);
 
-        Post GetVersion(string slug, int version = 1);
+        Post GetVersion(string slug, int version);
 
         Post Save(string slug, Post content);
     }
@@ -32,7 +32,7 @@ namespace Compilify.Web.Services
 
         private readonly MongoDatabase db;
 
-        public Post GetVersion(string slug, int version = 1) {
+        public Post GetVersion(string slug, int version) {
 
             var query = Query.And(
                 Query.EQ("Slug", slug),
