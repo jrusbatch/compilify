@@ -33,10 +33,10 @@ namespace Compilify.Services
 
         public object Execute(string code)
         {
-            //if (!Validator.Validate(code))
-            //{
-            //    return "Not supported";
-            //} 
+            if (!Validator.Validate(code))
+            {
+                return "Not supported";
+            } 
 
             var sandbox = SecureAppDomainFactory.Create();
 
