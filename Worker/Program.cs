@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading;
@@ -25,12 +26,15 @@ namespace Compilify.Worker
             {
                 ClientManager = CreateOpenRedisConnection();
                 Client = ClientManager.GetClient();
+
+                var tasks = new Task[4];
                 
-                var task = Task.Factory.StartNew(ProcessQueue, TokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                for (var i = 0; i < 4; i++) {
+                    var task = Task.Factory.StartNew(ProcessQueue, TokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                    task.ContinueWith(OnTaskFaulted, TaskContinuationOptions.OnlyOnFaulted);
+                }
 
-                task.ContinueWith(OnTaskFaulted, TaskContinuationOptions.OnlyOnFaulted);
-
-                task.Wait(TokenSource.Token);
+                Task.WaitAny(tasks.ToArray(), TokenSource.Token);
 
                 Logger.Debug("Task finished.");
             }
