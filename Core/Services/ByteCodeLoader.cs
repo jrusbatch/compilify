@@ -7,12 +7,12 @@ namespace Compilify.Services
     {
         public ByteCodeLoader() { }
 
-        public object Run(byte[] compiledAssembly)
+        public object Run(string className, string resultProperty, byte[] compiledAssembly)
         {
             var assembly = Assembly.Load(compiledAssembly);
             assembly.EntryPoint.Invoke(null, new object[] { });
 
-            var result = assembly.GetType("EntryPoint").GetProperty("Result").GetValue(null, null);
+            var result = assembly.GetType(className).GetProperty(resultProperty).GetValue(null, null);
             return result;
         }
     }
