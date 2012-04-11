@@ -65,7 +65,7 @@ namespace Compilify.Web.Controllers
             
             return View("Show", viewModel);
         }
-
+        
         [HttpGet]
         public ActionResult Latest(string slug) {
             var latest = db.GetLatestVersion(slug);

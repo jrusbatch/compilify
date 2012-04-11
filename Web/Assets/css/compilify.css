@@ -64,6 +64,10 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 36px;
 }
 
+.navbar .brand h1 small {
+    line-height: 18px;
+}
+
 .navbar .nav li,
 .navbar .nav li a {
     padding-top: 0;
