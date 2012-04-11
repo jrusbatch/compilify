@@ -111,10 +111,17 @@ h1 {
     font-size: 13px;
 }
 
-.editor {
+.editor, #results pre {
     -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
        -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+
+#results pre {
+    border: none;
+    -webkit-border-radius: 0;
+       -moz-border-radius: 0;
+            border-radius: 0;
 }
 
 .CodeMirror pre.CodeMirror-cursor {

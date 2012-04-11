@@ -32,6 +32,20 @@ namespace Compilify.Web.Infrastructure
             }
             return task;
         }
+        
+        public static TTask Catch<TTask>(this TTask task) where TTask : Task
+        {
+            if (task != null && task.Status != TaskStatus.RanToCompletion)
+            {
+                task.ContinueWith(innerTask =>
+                {
+                    var ex = innerTask.Exception;
+                    //Trace.TraceError("SignalR exception thrown by Task: {0}", ex);
+                }, TaskContinuationOptions.OnlyOnFaulted);
+            }
+            return task;
+        }
+
 
         public static void ContinueWithNotComplete(this Task task, TaskCompletionSource<object> tcs)
         {

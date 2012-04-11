@@ -2,12 +2,12 @@
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Optimization;
 using System.Web.Routing;
 using BookSleeve;
 using Compilify.Web.EndPoints;
 using Compilify.Web.Infrastructure.Extensions;
 using Compilify.Web.Services;
-using Microsoft.Web.Optimization;
 using Newtonsoft.Json;
 using SignalR;
 using SignalR.Hosting.AspNet;
@@ -158,14 +158,14 @@ namespace Compilify.Web
 
         private static void RegisterBundles(BundleCollection bundles)
         {
-            var css = new Bundle("~/css", typeof(CssMinify));
+            var css = new Bundle("~/css", new CssMinify());
             css.AddFile("~/assets/css/vendor/bootstrap-2.0.2.css");
             css.AddFile("~/assets/css/vendor/codemirror-2.23.css");
             css.AddFile("~/assets/css/vendor/codemirror-neat-2.23.css");
             css.AddFile("~/assets/css/compilify.css");
             bundles.Add(css);
 
-            var js = new Bundle("~/vendor/js", typeof(JsMinify));
+            var js = new Bundle("~/vendor/js", new JsMinify());
             js.AddFile("~/assets/js/vendor/json2.js");
             js.AddFile("~/assets/js/vendor/underscore-1.3.1.js");
             js.AddFile("~/assets/js/vendor/backbone-0.9.2.js");
