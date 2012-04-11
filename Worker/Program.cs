@@ -24,8 +24,8 @@ namespace Compilify.Worker
 
             try
             {
-                ClientManager = CreateOpenRedisConnection();
-                Client = ClientManager.GetClient();
+                // ClientManager = CreateOpenRedisConnection();
+                // Client = ClientManager.GetClient();
 
                 var tasks = new Task[4];
                 
@@ -51,15 +51,15 @@ namespace Compilify.Worker
                     TokenSource.Dispose();
                 }
 
-                if (Client != null)
-                {
-                    Client.Dispose();
-                }
+                //if (Client != null)
+                //{
+                //    Client.Dispose();
+                //}
 
-                if (ClientManager != null)
-                {
-                    ClientManager.Dispose();
-                }
+                //if (ClientManager != null)
+                //{
+                //    ClientManager.Dispose();
+                //}
             }
 
             Logger.Info("Application ending.");
@@ -90,41 +90,45 @@ namespace Compilify.Worker
 
         private static CodeExecuter Executer;
         private static CancellationTokenSource TokenSource;
-        private static IRedisClientsManager ClientManager;
-        private static IRedisClient Client;
+        // private static IRedisClientsManager ClientManager;
+        // private static IRedisClient Client;
 
         private static void ProcessQueue() {
             Logger.Debug("ProcessQueue task {0} started.", Task.CurrentId);
 
-            while (true)
-            {
-                var message = Client.BlockingDequeueItemFromList("queue:execute", null);
+            using (var connection = CreateOpenRedisConnection())
+            using (var client = connection.GetClient()) {
                 
-                if (TokenSource.IsCancellationRequested)
+                while (true)
                 {
-                    Logger.Error("ProcessQueue task cancelled.");
-                    break;
+                    var message = client.BlockingDequeueItemFromList("queue:execute", null);
+                
+                    if (TokenSource.IsCancellationRequested)
+                    {
+                        Logger.Error("ProcessQueue task cancelled.");
+                        break;
+                    }
+
+                    if (message != null)
+                    {
+                        Logger.Debug("Message received.");
+
+                        var messageBytes = Convert.FromBase64String(message);
+
+                        var command = ExecuteCommand.Deserialize(messageBytes);
+
+                        var result = Executer.Execute(command.Code);
+
+                        var response = JsonConvert.SerializeObject(new { result = result });
+
+                        var listeners = client.PublishMessage("workers:job-done:" + command.ClientId, response);
+
+                        Logger.Debug("Response published to " + listeners + " listeners.");
+                    }
                 }
 
-                if (message != null)
-                {
-                    Logger.Debug("Message received.");
-
-                    var messageBytes = Convert.FromBase64String(message);
-
-                    var command = ExecuteCommand.Deserialize(messageBytes);
-
-                    var result = Executer.Execute(command.Code);
-
-                    var response = JsonConvert.SerializeObject(new { result = result });
-
-                    var listeners = Client.PublishMessage("workers:job-done:" + command.ClientId, response);
-
-                    Logger.Debug("Response published to " + listeners + " listeners.");
-                }
+                Logger.Debug("ProcessQueue task ending.");
             }
-
-            Logger.Debug("ProcessQueue task ending.");
         }
 
         private static IRedisClientsManager CreateOpenRedisConnection()
