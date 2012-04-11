@@ -1,5 +1,4 @@
-The goal is that you'll be able to write c# and see any compile-time errors in real time. No need to build to see if it fails.
-
-Eventually, I'd like to let you execute the code as you write it. I also want to allow more than one developer to work on a single piece of code concurrently. So if you make changes while I'm looking at the same code, I see your changes - and the effects that those changes have on the code's execution - in near real-time.
+Based on a blog post by Filip Ekberg (https://github.com/fekberg/Roslyn-Hosted-Execution).
 
 Debugging this project requires a MongoDB and Redis server running on localhost.
+
