@@ -29,13 +29,14 @@ namespace Compilify.Worker
 
                 var tasks = new Task[4];
                 
-                for (var i = 0; i < 4; i++) {
+                for (var i = 0; i < tasks.Length; i++) {
                     var task = Task.Factory.StartNew(ProcessQueue, TokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                     task.ContinueWith(OnTaskFaulted, TaskContinuationOptions.OnlyOnFaulted);
+                    tasks[i] = task;
                 }
 
-                Task.WaitAny(tasks.ToArray(), TokenSource.Token);
-
+                Task.WaitAny(tasks, TokenSource.Token);
+                
                 Logger.Debug("Task finished.");
             }
             catch (RedisException ex)
@@ -92,9 +93,8 @@ namespace Compilify.Worker
         private static IRedisClientsManager ClientManager;
         private static IRedisClient Client;
 
-        private static void ProcessQueue()
-        {
-            Logger.Debug("ProcessQueue task started.");
+        private static void ProcessQueue() {
+            Logger.Debug("ProcessQueue task {0} started.", Task.CurrentId);
 
             while (true)
             {
