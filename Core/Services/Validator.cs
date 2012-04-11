@@ -18,9 +18,13 @@ namespace Compilify.Services {
                     return false;
                 }
 
-                if (syntaxNode is QualifiedNameSyntax || 
+                // QualifiedNameExpression 
+                // * represents a qualified name of the form <left-name>.<right-identifier-or-generic-name> such as System.IO
+                //
+
+                if (syntaxNode is QualifiedNameSyntax) /* || 
                     (syntaxNode is InvocationExpressionSyntax && 
-                     ((InvocationExpressionSyntax)syntaxNode).Expression is MemberAccessExpressionSyntax)) {
+                     ((InvocationExpressionSyntax)syntaxNode).Expression is MemberAccessExpressionSyntax)) */{
                     return false;
                 }
             }
