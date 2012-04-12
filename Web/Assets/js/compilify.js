@@ -5,30 +5,14 @@ if (typeof String.prototype.trim !== 'function') {
     };
 }
 
-(function(Compilify) {
+(function($, _, Compilify) {
     var root = this,
-        $ = root.jQuery,
-        _ = root._,
-        CodeMirror = root.CodeMirror,
         original, connection;
     
-    function saveContent(value, callback) {
-        $.ajax(window.location.pathname, {
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ post: { Content: value } }),
-            success: function(msg) {
-                root.history.pushState({ }, '', msg.data.url);
-                original = value.toUpperCase();
-                
-                if (_.isFunction(callback)) {
-                    callback(msg.data);
-                }
-            }
-        });
-    }
-    
     function htmlEscape(str) {
+        /// <summary>
+        /// Sanitizes a string for display as HTML content.</summary>
+        
         return String(str)
                 .replace(/&/g, '&amp;')
                 .replace(/"/g, '&quot;')
@@ -37,78 +21,91 @@ if (typeof String.prototype.trim !== 'function') {
                 .replace(/>/g, '&gt;');
     }
     
-    var validate = _.debounce(function(sender) {
-        if (!_.isUndefined(window._gaq) && _.isFunction(window._gaq.push)) {
-            window._gaq.push(['_trackEvent', 'Code', 'Validate',,, false]);
+    function trackEvent(category, action, label) {
+        /// <summary>
+        /// Tracks an event in Google Analytics if it is initialized.</summary>
+        
+        var gaq = root._gaq;
+        if (gaq && _.isFunction(gaq.push)) {
+            gaq.push(['_trackEvent', category, action, label, , false]);
         }
+    }
+    
+    function save(value) {
+        /// <summary>
+        /// Save content.</summary>
+        
+        trackEvent('Code', 'Save', window.location.pathname);
 
-        $.ajax('/validate', {
+        return $.ajax(window.location.pathname, {
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ code: sender.getValue() }),
-            success: function (msg) {
+            data: JSON.stringify({ post: { Content: value } })
+        });
+    }
+    
+    function validate(code) {
+        /// <summary>
+        /// Sends code to the server for validation and displays the resulting
+        /// errors, if any.</summary>
+        
+        trackEvent('Code', 'Validate', window.location.pathname);
 
-                var $list = $('#define .messages ul').detach().empty(),
-                    hasErrors = msg.data.length > 0;
+        return $.ajax('/validate', {
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ 'code': code }),
+            success: function(msg) {
+                var data = msg.data;
 
-                if (!hasErrors) {
-                    $list.append('<li class="message success">Build completed successfully.</li>');
-                }
-                else {
-                    for (var i in msg.data) {
-                        var error = msg.data[i];
-                        $list.append('<li class="message error">' + htmlEscape(error) + '</li>');
+                if (_.isArray(data)) {
+                    var $list = $('#define .messages ul').detach().empty();
+
+                    if (data.length == 0) {
+                        $list.append('<li class="message success">Build ' +
+                                     'completed successfully.</li>');
+                    } else {
+                        for (var i in msg.data) {
+                            var error = msg.data[ i ];
+                            $list.append('<li class="message error">' + 
+                                         htmlEscape(error) + '</li>');
+                        }
                     }
+
+                    $('#define .messages').append($list);
                 }
-                
-                $('#define .messages').append($list);
             }
         });
-    }, 500);
+    }
+
+    function execute(code) {
+        /// <summary>
+        /// Queues code for execution on the server.</summary>
+        
+        if (_.isString(code) && code.length > 0) {
+            trackEvent('Code', 'Execute', window.location.pathname);
+            connection.send(code);
+        }
+    }
+    
+    function setResult(result) {
+        /// <summary>
+        /// Sets the content displayed in the results section.</summary>
+        $('#results pre').html(result);
+    }
 
     $(function() {
-        var editor = $('#define .editor textarea')[0];
-
-        original = editor.innerHTML.trim().toUpperCase();
-
-        // Set up editor
-        Compilify.Editor = CodeMirror.fromTextArea(editor, {
-            indentUnit: 4,
-            lineNumbers: true,
-            theme: 'neat',
-            mode: 'text/x-csharp',
-            onChange: validate
-        });
-        
-        $('#define .js-save').on('click', function() {
-            var currentValue = Compilify.Editor.getValue().trim();
-            
-            if (currentValue.toUpperCase() !== original) {
-                saveContent(currentValue);
-            }
-
-            return false;
-        });
-
-        $('#define .js-execute').on('click', function() {
-            if (!_.isUndefined(window._gaq) && _.isFunction(window._gaq.push)) {
-                window._gaq.push(['_trackEvent', 'Code', 'Execute',,, false]);
-            }
-
-            var currentValue = Compilify.Editor.getValue().trim();
-            
-            connection.send(currentValue);
-            
-            return false;
-        });
-        
+        //
+        // Set up the SignalR connection
+        //
         connection = $.connection('/execute');
         
-        connection.received(function(message) {
-            if (message.status === "ok") {
-                if (message.data && !_.isUndefined(message.data.result)) {
-                    var result = htmlEscape(message.data.result.toString());
-                    $('#results pre').html(result);
+        connection.received(function(msg) {
+            if (msg && msg.status === "ok") {
+                var data = msg.data;
+                if (data && data.result) {
+                    var result = htmlEscape(data.result.toString());
+                    setResult(result);
                 }
             }
         });
@@ -118,6 +115,48 @@ if (typeof String.prototype.trim !== 'function') {
         });
 
         connection.start();
-    });
-}).call(window, window.Compilify || {});
+        
+        //
+        // Set up CodeMirror editor
+        //
+        
+        // Get the editor and save the current content so we can tell when it 
+        // changes
+        var editor = $('#define .editor textarea')[0];
+        original = editor.innerHTML.trim().toUpperCase();
+        
+        Compilify.Editor = root.CodeMirror.fromTextArea(editor, {
+            indentUnit: 4,
+            lineNumbers: true,
+            theme: 'neat',
+            mode: 'text/x-csharp',
+            onChange: _.debounce(function (sender) {
+                // throttled to once every 500ms max
+                validate(sender.getValue());
+            }, 500)
+        });
+        
+        $('#define .js-save').on('click', function() {
+            var code = Compilify.Editor.getValue().trim();
+            
+            // Only save the content if it changed since we last loaded it.
+            if (code.toUpperCase() !== original) {
+                save(code)
+                    .done(function (msg) {
+                        // Might be able to use the object stored by pushState 
+                        // hold the original value
+                        root.history.pushState({ }, '', msg.data.url);
+                        original = value.toUpperCase();
+                    });
+            }
 
+            return false;
+        });
+
+        $('#define .js-execute').on('click', function() {
+            var code = Compilify.Editor.getValue().trim();
+            execute(code);
+            return false;
+        });
+    });
+}).call(window, window.jQuery, window._, window.Compilify || {});
