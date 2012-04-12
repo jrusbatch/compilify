@@ -31,10 +31,14 @@ if (typeof String.prototype.trim !== 'function') {
     
     function execute(value) {
         if (!isConnected) {
-            connection.start();
+            connection.start(function () {
+                isConnected = true;
+                connection.send(value);
+            });
         }
-
-        connection.send(value);
+        else {
+            connection.send(value);
+        }
     }
     
     function htmlEscape(str) {
@@ -105,14 +109,13 @@ if (typeof String.prototype.trim !== 'function') {
             }
 
             var currentValue = Compilify.Editor.getValue().trim();
-
+            
             execute(currentValue);
             
             return false;
         });
         
         connection = $.connection('/execute');
-        connection.logging = true;
         
         connection.received(function(message) {
             if (message.status === "ok") {
@@ -122,12 +125,22 @@ if (typeof String.prototype.trim !== 'function') {
                 }
             }
         });
+
+        connection.disconnected(function() {
+            isConnected = false;
+        });
+
+        connection.reconnected(function() {
+            isConnected = true;
+        });
         
         connection.error(function(e) {
             console.error(e);
         });
 
-        connection.start({ transport: 'auto' });
+        connection.start(function () {
+            isConnected = true;
+        });
     });
 }).call(window, window.Compilify || {});
 
