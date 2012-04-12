@@ -24,9 +24,6 @@ namespace Compilify.Worker
 
             try
             {
-                // ClientManager = CreateOpenRedisConnection();
-                // Client = ClientManager.GetClient();
-
                 var task = Task.Factory.StartNew(ProcessQueue, TokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
                 task.ContinueWith(OnTaskFaulted, TaskContinuationOptions.OnlyOnFaulted);
 
@@ -44,17 +41,7 @@ namespace Compilify.Worker
                 {
                     TokenSource.Cancel();
                     TokenSource.Dispose();
-                } 
-
-                //if (Client != null)
-                //{
-                //    Client.Dispose();
-                //}
-
-                //if (ClientManager != null)
-                //{
-                //    ClientManager.Dispose();
-                //}
+                }
             }
 
             Logger.Info("Application ending.");
