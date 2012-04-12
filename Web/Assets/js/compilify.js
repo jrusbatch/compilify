@@ -10,7 +10,6 @@ if (typeof String.prototype.trim !== 'function') {
         $ = root.jQuery,
         _ = root._,
         CodeMirror = root.CodeMirror,
-        isConnected = false,
         original, connection;
     
     function saveContent(value, callback) {
@@ -27,18 +26,6 @@ if (typeof String.prototype.trim !== 'function') {
                 }
             }
         });
-    }
-    
-    function execute(value) {
-        if (!isConnected) {
-            connection.start(function () {
-                isConnected = true;
-                connection.send(value);
-            });
-        }
-        else {
-            connection.send(value);
-        }
     }
     
     function htmlEscape(str) {
@@ -110,7 +97,7 @@ if (typeof String.prototype.trim !== 'function') {
 
             var currentValue = Compilify.Editor.getValue().trim();
             
-            execute(currentValue);
+            connection.send(currentValue);
             
             return false;
         });
@@ -126,21 +113,11 @@ if (typeof String.prototype.trim !== 'function') {
             }
         });
 
-        connection.disconnected(function() {
-            isConnected = false;
-        });
-
-        connection.reconnected(function() {
-            isConnected = true;
-        });
-        
         connection.error(function(e) {
             console.error(e);
         });
 
-        connection.start(function () {
-            isConnected = true;
-        });
+        connection.start();
     });
 }).call(window, window.Compilify || {});
 
