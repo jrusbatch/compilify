@@ -87,7 +87,7 @@ namespace Compilify.Worker
                     {
                         Logger.Error("ProcessQueue task cancelled.");
                         break;
-                    }
+                    } 
 
                     if (message != null)
                     {
