@@ -8,7 +8,7 @@
            ? ViewBag.Title + " - Compilify.net"
            : "Code, Collaborate, Compile - Compilify.net")</title>
 
-    <meta name="description" 
+    <meta name="description"  
           value="Compilify.net is a place for .NET developers to write, save, share, and run their C# code." />
           
     <meta name="keywords" value=".net, c#, c-sharp, compile, build, share, paste, post, code"/>
@@ -51,9 +51,7 @@
     </div>
     
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-    <script src="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/vendor/js")"></script>
-    <script src="@Url.Content("~/assets/js/compilify.js")"> </script>
-    <script src="@Url.Content("~/assets/js/compilify.ajaxanalytics.js")"> </script>
+    <script src="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/js")"></script>
     
     @RenderSection("PageScripts", false)
 </body>

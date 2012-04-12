@@ -212,7 +212,6 @@
     <Content Include="Assets\fonts\Roboto-Regular-webfont.svg" />
     <Content Include="Assets\img\glyphicons-halflings-white.png" />
     <Content Include="Assets\img\glyphicons-halflings.png" />
-    <Content Include="Assets\js\Compilify.AjaxAnalytics.js" />
     <Content Include="Assets\js\vendor\backbone-0.9.2.js" />
     <Content Include="Assets\js\vendor\jquery.signalr.js" />
     <Content Include="Assets\js\vendor\json2.js" />

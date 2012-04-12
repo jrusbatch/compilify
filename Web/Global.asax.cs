@@ -93,32 +93,28 @@ namespace Compilify.Web {
         }
 
         private static void RegisterBundles(BundleCollection bundles) {
-            var css = new Bundle("~/css", new CssMinify());
+            var css = new Bundle("~/css");
             css.AddFile("~/assets/css/vendor/bootstrap-2.0.2.css");
             css.AddFile("~/assets/css/vendor/codemirror-2.23.css");
             css.AddFile("~/assets/css/vendor/codemirror-neat-2.23.css");
             css.AddFile("~/assets/css/compilify.css");
             bundles.Add(css);
 
-            var js = new Bundle("~/vendor/js");
-
+            var js = new Bundle("~/js");
             js.AddFile("~/assets/js/vendor/json2.js");
             js.AddFile("~/assets/js/vendor/underscore-1.3.1.js");
-            js.AddFile("~/assets/js/vendor/backbone-0.9.2.js");
-            js.AddFile("~/assets/js/vendor/bootstrap-2.0.2.js");
+            // js.AddFile("~/assets/js/vendor/backbone-0.9.2.js");
+            // js.AddFile("~/assets/js/vendor/bootstrap-2.0.2.js");
             js.AddFile("~/assets/js/vendor/codemirror-2.23.js");
             js.AddFile("~/assets/js/vendor/codemirror-clike-2.23.js");
             js.AddFile("~/assets/js/vendor/jquery.signalr.js");
+            js.AddFile("~/assets/js/compilify.js");
             bundles.Add(js);
 
-#if DEBUG
-            css.Transform = new NoTransform("text/css");
-            js.Transform = new NoTransform("text/javascript");
-#else
-            css.Transform = new CssMinify();
-            js.Transform = new JsMinify();
-#endif
-
+            if (!HttpContext.Current.IsDebuggingEnabled) {
+                css.Transform = new CssMinify();
+                js.Transform = new JsMinify();
+            }
         }
     }
 }
