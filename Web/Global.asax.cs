@@ -7,10 +7,7 @@ using System.Web.Routing;
 using Compilify.Web.EndPoints;
 using Compilify.Web.Infrastructure.Extensions;
 using Compilify.Web.Services;
-using SignalR.Configuration;
-using SignalR.Hosting.AspNet;
 using SignalR.Hosting.AspNet.Routing;
-using SignalR.Infrastructure;
 
 namespace Compilify.Web {
 
@@ -23,9 +20,6 @@ namespace Compilify.Web {
             ViewEngines.Engines.Add(new RazorViewEngine());
 
             MvcHandler.DisableMvcResponseHeader = true;
-            
-            var configuration = AspNetHost.DependencyResolver.Resolve<IConfigurationManager>();
-            configuration.ReconnectionTimeout = TimeSpan.FromSeconds(40);
 
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterBundles(BundleTable.Bundles);
