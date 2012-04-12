@@ -146,7 +146,7 @@ if (typeof String.prototype.trim !== 'function') {
                         // Might be able to use the object stored by pushState 
                         // hold the original value
                         root.history.pushState({ }, '', msg.data.url);
-                        original = value.toUpperCase();
+                        original = code.toUpperCase();
                     });
             }
 
