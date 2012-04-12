@@ -1,4 +1,0 @@
-Based on a blog post by Filip Ekberg (https://github.com/fekberg/Roslyn-Hosted-Execution).
-
-Debugging this project requires a MongoDB and Redis server running on localhost.
-
