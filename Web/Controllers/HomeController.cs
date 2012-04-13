@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Compilify.Models;
@@ -20,8 +21,11 @@ namespace Compilify.Web.Controllers
         public ActionResult Index()
         {
             var viewModel = new PostViewModel();
-            
-            const string code = "return \"Hello, world!\";";
+
+            var builder = new StringBuilder();
+            builder.AppendLine("// The value returned is displayed in the results panel below");
+            builder.AppendLine("return \"Hello, world!\";");
+            var code = builder.ToString();
             var compiler = new CSharpCompiler();
 
             viewModel.Post.Content = code;

@@ -32,8 +32,13 @@ strong {
 /* Navbar 
  *****************************************************************************/
 .navbar,
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, p {
     font-family: "Segoe UI Light", "Helvetica Neue", 'RobotoLight', "Segoe UI", "Segoe WP", sans-serif;
+    font-weight: 100;
+}
+
+p {
+    font-size: 14px;
 }
 
 .navbar {
@@ -180,4 +185,12 @@ h1 {
     
 #define .messages .info {
     background-color: #1BA1E2;
+}
+
+#about h1 strong, #about h2 strong, #about h3 strong {
+    font-weight: 400;
+}
+
+#about ul {
+    list-style: none;
 }
