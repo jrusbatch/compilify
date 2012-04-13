@@ -42,54 +42,6 @@
         </div>
     </div>
     <div class="span3">
-        <div id="about">
-            <div class="page-header">
-                <h1>what is this?</h1>
-            </div>
-            <p>
-                <strong>compilify.net</strong> is an interactive web interface 
-                for the .NET compiler. It allows you to quickly and easily 
-                execute snippets of C# code from your browser. It is powered by 
-                the <a href="http://msdn.microsoft.com/en-us/roslyn">Roslyn 
-                Project CTP</a>.
-            </p>
-            <p>
-                The source code for this site is available on 
-                <a href="https://github.com/Compilify/Compilify">github</a>.
-            </p>
-            <div class="page-header">
-                <h2>how do I use this?</h2>
-            </div>
-            <p>
-                Enter your code in the textbox and click <strong>run</strong>. 
-                Click the <strong>save</strong> link to generate a unique URL 
-                for your snippet. 
-            </p>
-            <p>
-                Check out these examples:
-            </p>
-            <ul>
-                <li><a href="//compilify.net/3b">FizzBuzz</a></li>
-                <li><a href="//compilify.net/8m/2">Fibonacci Sequence</a></li>
-            </ul>
-            <p>
-                This application currently only supports <strong>method-level 
-                statements</strong>. Support for class declarations is coming 
-                in the near future. Some examples of snippets 
-            </p>
-            <p>
-                In addition, not all features of the compiler are currently 
-                supported by the Roslyn CTP. A list of known limitations and 
-                unsupported features can be found 
-                <a href="http://social.msdn.microsoft.com/Forums/en-US/roslyn/thread/f5adeaf0-49d0-42dc-861b-0f6ffd731825">here</a>.
-            </p>
-            <div class="page-header">
-                <h3>who are you?</h3>
-            </div>
-            <p>
-                You can find me on <a href="https://github.com/JRusbatch">github</a> 
-                and <a href="https://twitter.com/jrusbatch" data-show-count="false">twitter</a>.
-            </p>
-        </div>
+        @Html.Partial("_About")
     </div>
 </div>

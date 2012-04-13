@@ -250,6 +250,7 @@
     <None Include="Assets\fonts\Roboto-Regular-webfont.eot" />
     <None Include="Assets\fonts\Roboto-Regular-webfont.ttf" />
     <None Include="Assets\fonts\Roboto-Regular-webfont.woff" />
+    <Content Include="Views\Home\_About.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
