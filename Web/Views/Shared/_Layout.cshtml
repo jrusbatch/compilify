@@ -35,8 +35,11 @@
                 </a>
                 <ul class="nav pull-right">
                     <li>
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://compilify.net" data-text="Check out #compilify - compile #dotnet from your browser!" data-related="jrusbatch" data-hashtags="compilify">Tweet</a>
-                        
+                        @{
+                            var url = Url.Encode("http://compilify.net");
+                            var msg = Url.Encode("Check out #compilify - compile #dotnet from your browser!");
+                        }
+                        <a href="https://twitter.com/share?url=@(url)&text=@(msg)&related=jrusbatch" target="_blank">tweet this!</a>
                     </li>
                 </ul>
             </div>
@@ -51,7 +54,5 @@
     <script src="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/js")"></script>
     
     @RenderSection("PageScripts", false)
-    
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 </body>
 </html>
