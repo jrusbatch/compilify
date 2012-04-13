@@ -194,3 +194,20 @@ h1 {
 #about ul {
     list-style: none;
 }
+
+#about p strong {
+    color: #F09609;
+    opacity: 0.75;
+}
+     
+#about .blue {
+    color: #444;
+}
+     
+#about .disclaimer {
+    font-size: 0.75em;
+}
+     
+#about .page-header {
+    margin: 10px 0 5px 0;
+}
