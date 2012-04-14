@@ -210,6 +210,7 @@
     <Content Include="Assets\fonts\Roboto License.txt" />
     <Content Include="Assets\fonts\Roboto-Light-webfont.svg" />
     <Content Include="Assets\fonts\Roboto-Regular-webfont.svg" />
+    <Content Include="Assets\img\appharbor.png" />
     <Content Include="Assets\img\glyphicons-halflings-white.png" />
     <Content Include="Assets\img\glyphicons-halflings.png" />
     <Content Include="Assets\js\vendor\backbone-0.9.2.js" />
