@@ -7,7 +7,7 @@ if (typeof String.prototype.trim !== 'function') {
 
 (function($, _, Compilify) {
     var root = this,
-        original, connection;
+        connection;
     
     function htmlEscape(str) {
         /// <summary>
@@ -34,10 +34,11 @@ if (typeof String.prototype.trim !== 'function') {
     function save(code) {
         /// <summary>
         /// Save content.</summary>
+        var pathname = window.location.pathname;
         
-        trackEvent('Code', 'Save', window.location.pathname);
+        trackEvent('Code', 'Save', pathname);
 
-        return $.ajax(window.location.pathname, {
+        return $.ajax(pathname, {
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ post: { Content: code } })
@@ -48,8 +49,9 @@ if (typeof String.prototype.trim !== 'function') {
         /// <summary>
         /// Sends code to the server for validation and displays the resulting
         /// errors, if any.</summary>
-
-        trackEvent('Code', 'Validate', window.location.pathname);
+        var pathname = window.location.pathname;
+        
+        trackEvent('Code', 'Validate', pathname);
 
         return $.ajax('/validate', {
             type: 'POST',
@@ -123,7 +125,6 @@ if (typeof String.prototype.trim !== 'function') {
         // Get the editor and save the current content so we can tell when it 
         // changes
         var editor = $('#define .editor textarea')[0];
-        original = editor.innerHTML.trim().toUpperCase();
         
         Compilify.Editor = root.CodeMirror.fromTextArea(editor, {
             indentUnit: 4,
@@ -144,8 +145,6 @@ if (typeof String.prototype.trim !== 'function') {
             // Only save the content if it changed since we last loaded it.
             save(code)
                 .done(function(msg) {
-                    // Might be able to use the object stored by pushState 
-                    // hold the original value
                     root.history.pushState({ }, '', msg.data.url);
                 });
 
