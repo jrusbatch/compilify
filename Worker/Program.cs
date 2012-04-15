@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Compilify.Services;
 using Newtonsoft.Json;
+using Roslyn.Scripting.CSharp;
 using ServiceStack.Redis;
 using NLog;
 
@@ -106,9 +107,10 @@ namespace Compilify.Worker
 
                         Logger.Info("Executed: {0}", command.Code ?? string.Empty);
 
+                        var formatter = new ObjectFormatter(maxLineLength: 5120);
                         var response = JsonConvert.SerializeObject(new {
                             code = command.Code,
-                            result = result, 
+                            result = formatter.FormatObject(result), 
                             time = DateTime.UtcNow,
                             duration = stopWatch.ElapsedMilliseconds
                         });

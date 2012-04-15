@@ -88,17 +88,17 @@ namespace Compilify.Services
             var timeout = TimeSpan.FromSeconds(5);
             try
             {
-                var task = Task.Factory.StartNew(() =>
-                                                 {
-                                                     try
-                                                     {
-                                                         result = loader.Run("EntryPoint", "Result", compiledAssembly);
-                                                     }
-                                                     catch (Exception ex) {
-                                                         var inner = ex.InnerException;
-                                                         result = ex.InnerException != null ? inner.Message : ex.Message;
-                                                     }
-                }, TaskCreationOptions.PreferFairness);
+                var task = Task.Factory
+                               .StartNew(() =>
+                                         {
+                                             try
+                                             {
+                                                 result = loader.Run("EntryPoint", "Result", compiledAssembly);
+                                             }
+                                             catch (Exception ex) {
+                                                 result = ex.InnerException ?? ex;
+                                             }
+                                         });
 
                 if (!task.Wait(timeout))
                 {
@@ -109,7 +109,7 @@ namespace Compilify.Services
             }
             catch (Exception ex)
             {
-                result = ex.Message;
+                result = ex.InnerException ?? ex;
             }
             
             if (!unloaded)
