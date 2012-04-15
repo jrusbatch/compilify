@@ -14,9 +14,11 @@ namespace Compilify.Web.Controllers
         public HomeController(IPostRepository contentRepository)
         {
             db = contentRepository;
+            compiler = new CSharpCompiler();
         }
 
         private readonly IPostRepository db;
+        private readonly CSharpCompiler compiler;
 
         public ActionResult Index()
         {
@@ -26,8 +28,7 @@ namespace Compilify.Web.Controllers
             builder.AppendLine("// The value returned is displayed in the results panel below");
             builder.AppendLine("return \"Hello, world!\";");
             var code = builder.ToString();
-            var compiler = new CSharpCompiler();
-
+            
             viewModel.Post.Content = code;
 
             viewModel.Errors = compiler.GetCompilationErrors(code);
@@ -40,26 +41,30 @@ namespace Compilify.Web.Controllers
         // GET /:slug/live      -> Watch or collaborate on the content in real time
         //
         [HttpGet]
-        public ActionResult Show(string slug, int? version) {
+        public ActionResult Show(string slug, int? version)
+        {
             
-            if (version <= 1) {
+            if (version <= 1)
+            {
                 // Redirect the user to /:slug instead of /:slug/1
                 return RedirectToActionPermanent("Show", "Home", new { slug = slug, version = (int?)null });
             }
 
             var content = db.GetVersion(slug, version ?? 1);
 
-            if (content == null) {
+            if (content == null)
+            {
                 return HttpNotFound();
             }
 
-            var compiler = new CSharpCompiler();
-            var viewModel = new PostViewModel {
+            var viewModel = new PostViewModel
+            {
                 Post = content, 
                 Errors = compiler.GetCompilationErrors(content.Content)
             };
 
-            if (Request.IsAjaxRequest()) {
+            if (Request.IsAjaxRequest())
+            {
                 return Json(new { status = "ok", data = viewModel }, JsonRequestBehavior.AllowGet);
             }
             
@@ -67,10 +72,12 @@ namespace Compilify.Web.Controllers
         }
         
         [HttpGet]
-        public ActionResult Latest(string slug) {
+        public ActionResult Latest(string slug)
+        {
             var latest = db.GetLatestVersion(slug);
 
-            if (latest < 1) {
+            if (latest < 1)
+            {
                 return HttpNotFound();
             }
 
@@ -78,7 +85,8 @@ namespace Compilify.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Save(string slug, Post post) {
+        public ActionResult Save(string slug, Post post)
+        {
             var result = db.Save(slug, post);
 
             var routeValues = new RouteValueDictionary { { "slug", result.Slug } };
@@ -95,8 +103,6 @@ namespace Compilify.Web.Controllers
         [HttpPost]
         public ActionResult Validate(string code)
         {
-            var compiler = new CSharpCompiler();
-
             var errors = compiler.GetCompilationErrors(code)
                                  .ToArray();
 
