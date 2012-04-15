@@ -135,14 +135,14 @@ if (typeof String.prototype.trim !== 'function') {
                 validate(sender.getValue());
             }, 500)
         });
-        
-        $('#define .js-save').on('click', function() {
-            var code = Compilify.Editor.getValue().trim();
-            
+
+        Compilify.Editor.save = _.bind(function() {
+            var code = this.getValue().trim();
+
             // Only save the content if it changed since we last loaded it.
             if (code.toUpperCase() !== original) {
                 save(code)
-                    .done(function (msg) {
+                    .done(function(msg) {
                         // Might be able to use the object stored by pushState 
                         // hold the original value
                         root.history.pushState({ }, '', msg.data.url);
@@ -151,7 +151,13 @@ if (typeof String.prototype.trim !== 'function') {
             }
 
             return false;
-        });
+        }, Compilify.Editor);
+        
+        root.CodeMirror.commands["save"] = Compilify.Editor.save;
+        
+
+
+        $('#define .js-save').on('click', Compilify.Editor.save);
 
         $('#define .js-execute').on('click', function() {
             var code = Compilify.Editor.getValue().trim();

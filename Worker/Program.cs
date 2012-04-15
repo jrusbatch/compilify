@@ -77,6 +77,9 @@ namespace Compilify.Worker
         private static void ProcessQueue() {
             Logger.Debug("ProcessQueue task {0} started.", Task.CurrentId);
 
+            var stopWatch = new Stopwatch();
+            var formatter = new ObjectFormatter(maxLineLength: 5120);
+
             using (var connection = CreateOpenRedisConnection())
             using (var client = connection.GetClient()) {
                 
@@ -97,7 +100,6 @@ namespace Compilify.Worker
                         var messageBytes = Convert.FromBase64String(message);
 
                         var command = ExecuteCommand.Deserialize(messageBytes);
-                        var stopWatch = new Stopwatch();
 
                         Logger.Info("Executing: {0}", command.Code ?? string.Empty);
 
@@ -107,7 +109,7 @@ namespace Compilify.Worker
 
                         Logger.Info("Executed: {0}", command.Code ?? string.Empty);
 
-                        var formatter = new ObjectFormatter(maxLineLength: 5120);
+                        
                         var response = JsonConvert.SerializeObject(new {
                             code = command.Code,
                             result = formatter.FormatObject(result), 
@@ -118,6 +120,8 @@ namespace Compilify.Worker
                         var listeners = client.PublishMessage("workers:job-done:" + command.ClientId, response);
 
                         Logger.Debug("Response published to " + listeners + " listeners.");
+
+                        stopWatch.Reset();
                     }
                 }
 
