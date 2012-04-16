@@ -12,7 +12,7 @@ namespace Compilify.Web.Infrastructure.Extensions
         {
             var accountId = ConfigurationManager.AppSettings["Compilify.GoogleAnalyticsAccount"];
             
-            if (!helper.ViewContext.HttpContext.IsDebuggingEnabled || string.IsNullOrWhiteSpace(accountId))
+            if (helper.ViewContext.HttpContext.IsDebuggingEnabled || string.IsNullOrWhiteSpace(accountId))
             {
                 return MvcHtmlString.Empty;
             }
