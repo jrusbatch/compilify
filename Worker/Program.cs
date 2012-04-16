@@ -2,12 +2,13 @@
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using BookSleeve;
 using Compilify.Services;
 using Newtonsoft.Json;
 using Roslyn.Scripting.CSharp;
-using ServiceStack.Redis;
 using NLog;
 
 namespace Compilify.Worker
@@ -19,6 +20,9 @@ namespace Compilify.Worker
             Logger.Info("Application started.");
 
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledApplicationException;
+
+            TaskScheduler.UnobservedTaskException += 
+                (sender, e) => Logger.ErrorException("An unobserved task exception occurred", e.Exception);
 
             Executer = new CodeExecuter();
             TokenSource = new CancellationTokenSource();
@@ -74,75 +78,63 @@ namespace Compilify.Worker
         private static CodeExecuter Executer;
         private static CancellationTokenSource TokenSource;
 
-        private static void ProcessQueue() {
-            Logger.Debug("ProcessQueue task {0} started.", Task.CurrentId);
+        private static void ProcessQueue()
+        {
+            Logger.Info("ProcessQueue task {0} started.", Task.CurrentId);
 
             var stopWatch = new Stopwatch();
             var formatter = new ObjectFormatter(maxLineLength: 5120);
 
-            using (var connection = CreateOpenRedisConnection())
-            using (var client = connection.GetClient()) {
-                
-                while (true)
+            using (var connection = OpenConnection())
+            {
+                connection.Error += (sender, e) => Logger.ErrorException(e.Cause, e.Exception);
+
+                connection.Wait(connection.Open());
+
+                while (!TokenSource.IsCancellationRequested)
                 {
-                    var message = client.BlockingDequeueItemFromList("queue:execute", null);
-                
-                    if (TokenSource.IsCancellationRequested)
-                    {
-                        Logger.Error("ProcessQueue task cancelled.");
-                        break;
-                    } 
+                    var message = connection.Lists.BlockingRemoveFirst(0, new[] { "queue:execute" }, Int32.MaxValue);
 
-                    if (message != null)
-                    {
-                        Logger.Debug("Message received.");
+                    var command = ExecuteCommand.Deserialize(message.Result.Item2);
 
-                        var messageBytes = Convert.FromBase64String(message);
+                    stopWatch.Start();
 
-                        var command = ExecuteCommand.Deserialize(messageBytes);
+                    var result = Executer.Execute(command.Code, command.Classes);
 
-                        Logger.Info("Executing: {0}", command.Code ?? string.Empty);
+                    stopWatch.Stop();
 
-                        stopWatch.Start();
-                        var result = Executer.Execute(command.Code);
-                        stopWatch.Stop();
+                    var response = JsonConvert.SerializeObject(new
+                                   {
+                                       code = command.Code,
+                                       classes = command.Classes,
+                                       result = formatter.FormatObject(result), 
+                                       time = DateTime.UtcNow,
+                                       duration = stopWatch.ElapsedMilliseconds
+                                   });
 
-                        Logger.Info("Executed: {0}", command.Code ?? string.Empty);
+                    var responseBytes = Encoding.UTF8.GetBytes(response);
 
-                        
-                        var response = JsonConvert.SerializeObject(new {
-                            code = command.Code,
-                            result = formatter.FormatObject(result), 
-                            time = DateTime.UtcNow,
-                            duration = stopWatch.ElapsedMilliseconds
-                        });
+                    connection.Wait(connection.Publish("workers:job-done:" + command.ClientId, responseBytes));
 
-                        var listeners = client.PublishMessage("workers:job-done:" + command.ClientId, response);
-
-                        Logger.Debug("Response published to " + listeners + " listeners.");
-
-                        stopWatch.Reset();
-                    }
+                    stopWatch.Reset();
                 }
 
-                Logger.Debug("ProcessQueue task ending.");
+                Logger.Error("ProcessQueue task {0} cancelled.", Task.CurrentId);
             }
         }
 
-        private static IRedisClientsManager CreateOpenRedisConnection()
+        private static RedisConnection OpenConnection()
         {
-            var connectionString = ConfigurationManager.AppSettings["REDISTOGO_URL"] ?? "redis://localhost:6379";
-
+            var connectionString = ConfigurationManager.AppSettings["REDISTOGO_URL"];
             var uri = new Uri(connectionString);
             var password = uri.UserInfo.Split(':').LastOrDefault();
 
-#if !DEBUG
-            var host = string.Format("{0}@{1}:{2}", password ?? string.Empty, uri.Host, uri.Port);
-#else
-            var host = uri.Host;
-#endif
+            if (password != null)
+            {
+                return new RedisConnection(uri.Host, uri.Port, password: password, syncTimeout: 5000, ioTimeout: 5000);
+            }
 
-            return new PooledRedisClientManager(0, new[] { host });
+            return new RedisConnection(uri.Host, uri.Port, syncTimeout: 5000, ioTimeout: 5000);
         }
     }
 }

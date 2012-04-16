@@ -31,21 +31,27 @@ if (typeof String.prototype.trim !== 'function') {
         }
     }
     
-    function save(code) {
+    function save() {
         /// <summary>
         /// Save content.</summary>
         var pathname = window.location.pathname;
-        
+
+        var command = Compilify.Prompt.getValue().trim();
+        var classes = Compilify.Editor.getValue().trim();
+
         trackEvent('Code', 'Save', pathname);
 
         return $.ajax(pathname, {
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ post: { Content: code } })
-        });
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ post: { 'Content': command, 'Classes': classes } })
+                })
+                .done(function(msg) {
+                    root.history.pushState({ }, '', msg.data.url);
+                });;
     }
 
-    var validate = function(code) {
+    function validate(command, classes) {
         /// <summary>
         /// Sends code to the server for validation and displays the resulting
         /// errors, if any.</summary>
@@ -56,12 +62,12 @@ if (typeof String.prototype.trim !== 'function') {
         return $.ajax('/validate', {
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ 'code': code }),
+            data: JSON.stringify({ 'Command': command, 'Classes': classes }),
             success: function(msg) {
                 var data = msg.data;
 
                 if (_.isArray(data)) {
-                    var $list = $('#define .messages ul').detach().empty();
+                    var $list = $('.messages ul').detach().empty();
 
                     if (data.length == 0) {
                         $list.append('<li class="message success">Build ' +
@@ -74,19 +80,19 @@ if (typeof String.prototype.trim !== 'function') {
                         }
                     }
 
-                    $('#define .messages').append($list);
+                    $('.messages').append($list);
                 }
             }
         });
-    };
+    }
 
-    function execute(code) {
+    function execute(command, classes) {
         /// <summary>
         /// Queues code for execution on the server.</summary>
         
-        if (_.isString(code) && code.length > 0) {
+        if (_.isString(command) && command.length > 0) {
             trackEvent('Code', 'Execute', window.location.pathname);
-            connection.send(code);
+            connection.send(JSON.stringify({ 'Content': command, 'Classes': classes }));
         }
     }
     
@@ -124,40 +130,40 @@ if (typeof String.prototype.trim !== 'function') {
         
         // Get the editor and save the current content so we can tell when it 
         // changes
-        var editor = $('#define .editor textarea')[0];
+        var editor = $('#define .editor textarea')[0],
+            prompt = $('#execute .editor textarea')[0];
+
+        var validateEnvironment = _.debounce(function() {
+            var classes = Compilify.Editor.getValue();
+            var command = Compilify.Prompt.getValue();
+
+            validate(command, classes);
+        }, 500);
         
-        Compilify.Editor = root.CodeMirror.fromTextArea(editor, {
+        root.CodeMirror.commands.save = save;
+
+        var opts = {
             indentUnit: 4,
             lineNumbers: true,
             theme: 'neat',
             mode: 'text/x-csharp',
-            onChange: _.debounce(function (sender) {
-                var code = sender.getValue().trim();
-                
-                // throttled to once every 500ms max
-                validate(code);
-            }, 500)
-        });
-
-        Compilify.Editor.save = _.bind(function() {
-            var code = this.getValue().trim();
-
-            // Only save the content if it changed since we last loaded it.
-            save(code)
-                .done(function(msg) {
-                    root.history.pushState({ }, '', msg.data.url);
-                });
-
-            return false;
-        }, Compilify.Editor);
+            onChange: function() {
+                validateEnvironment();
+            }
+        };
         
-        root.CodeMirror.commands["save"] = Compilify.Editor.save;
+        Compilify.Editor = root.CodeMirror.fromTextArea(editor, opts);
+        Compilify.Editor.save = save;
+
+        Compilify.Prompt = root.CodeMirror.fromTextArea(prompt, opts);
+        Compilify.Prompt.save = save;
         
-        $('#define .js-save').on('click', Compilify.Editor.save);
+        $('#define .js-save').on('click', save);
 
         $('#define .js-execute').on('click', function() {
-            var code = Compilify.Editor.getValue().trim();
-            execute(code);
+            var command = Compilify.Prompt.getValue().trim();
+            var classes = Compilify.Editor.getValue().trim();
+            execute(command, classes);
             return false;
         });
     });

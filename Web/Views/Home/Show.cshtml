@@ -1,47 +1,57 @@
 @model Compilify.Web.Models.PostViewModel
 
-<div class="row-fluid">
-    <div class="span8">
-        <div id="define">
-            <div class="page-header">
-                <h1>
-                    code
-                    <small>
-                        <a class="js-execute" href="#" title="F5">run</a>
-                        <a class="js-save" href="#" title="Ctrl+S">save</a>
-                    </small>
-                </h1>
-            </div>
-
-            <div class="editor">
-                <textarea>@Model.Post.Content</textarea>
-            </div>
-
-            <div class="messages">
-                <ul>
-                    @if (!Model.Errors.Any())
-                    {
-                        <li class="message success">Build completed successfully.</li>
-                    }
-                    else
-                    {
-                        foreach (var error in Model.Errors)
-                        {
-                            <li class="message error">@error</li>
-                        }
-                    }
-                </ul>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span6">
+            <div id="define">
+                <div class="page-header">
+                    <h1>
+                        define
+                        <small>
+                            <a class="js-save" href="#" title="Ctrl+S">save</a>
+                            <a class="js-execute" href="#">run</a>
+                        </small>
+                    </h1>
+                </div>
+            
+                <div class="editor">
+                    <textarea>@Model.Post.Classes</textarea>
+                </div>
             </div>
         </div>
+        <div class="span6">
+            <div id="execute">
+                <div class="page-header">
+                    <h1>execute</h1>
+                </div>
 
-        <div id="results">
-            <div class="page-header">
-                <h1>results</h1>
+                <div class="editor">
+                    <textarea>@Model.Post.Content</textarea>
+                </div>
             </div>
-            <pre></pre>
         </div>
     </div>
-    <div class="span4">
-        @Html.Partial("_About")
+
+    <div class="messages">
+        <ul>
+            @if (!Model.Errors.Any())
+            {
+                <li class="message success">Build completed successfully!</li>
+            }
+            else
+            {
+                foreach (var error in Model.Errors)
+                {
+                    <li class="message error">@error</li>
+                }
+            }
+        </ul>
+    </div>
+
+    <div id="results">
+        <div class="page-header">
+            <h1>results</h1>
+        </div>
+        <pre></pre>
     </div>
 </div>

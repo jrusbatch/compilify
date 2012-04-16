@@ -32,7 +32,8 @@ namespace Compilify.Web.Services
 
         private readonly MongoDatabase db;
 
-        public Post GetVersion(string slug, int version) {
+        public Post GetVersion(string slug, int version)
+        {
 
             var query = Query.And(
                 Query.EQ("Slug", slug),
@@ -42,7 +43,8 @@ namespace Compilify.Web.Services
             return db.GetCollection<Post>("posts").FindOne(query);
         }
 
-        public int GetLatestVersion(string slug) {
+        public int GetLatestVersion(string slug)
+        {
             return db.GetCollection<Post>("posts")
                      .Find(Query.EQ("Slug", slug))
                      .SetSlaveOk(false)
@@ -53,9 +55,11 @@ namespace Compilify.Web.Services
                      .FirstOrDefault();
         }
 
-        public Post Save(string slug, Post content) {
-
-            if (string.IsNullOrEmpty(slug)) {
+        public Post Save(string slug, Post content)
+        {
+            var isNew = string.IsNullOrEmpty(slug);
+            if (isNew)
+            {
                 // No slug was specified, so we need to get the next one
                 var docs = db.GetCollection("sequences");
 
@@ -69,7 +73,7 @@ namespace Compilify.Web.Services
 
             content.Slug = slug;
 
-            content.Version = GetLatestVersion(slug) + 1;
+            content.Version = isNew ? 1 : GetLatestVersion(slug) + 1;
 
             db.GetCollection<Post>("posts").Save(content, SafeMode.True);
 

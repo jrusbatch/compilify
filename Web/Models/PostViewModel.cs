@@ -12,6 +12,7 @@ namespace Compilify.Web.Models
         }
 
         public Post Post { get; set; }
+
         public IEnumerable<string> Errors { get; set; } 
     }
 }

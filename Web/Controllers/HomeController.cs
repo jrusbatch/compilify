@@ -6,6 +6,7 @@ using Compilify.Models;
 using Compilify.Services;
 using Compilify.Web.Models;
 using Compilify.Web.Services;
+using Roslyn.Compilers.CSharp;
 
 namespace Compilify.Web.Controllers
 {
@@ -22,17 +23,54 @@ namespace Compilify.Web.Controllers
 
         public ActionResult Index()
         {
-            var viewModel = new PostViewModel();
+            var classesBuilder = new StringBuilder();
 
-            var builder = new StringBuilder();
-            builder.AppendLine("// The value returned is displayed in the results panel below");
-            builder.AppendLine("return \"Hello, world!\";");
-            var code = builder.ToString();
+            classesBuilder.AppendLine("public interface IPerson");
+            classesBuilder.AppendLine("{");
+            classesBuilder.AppendLine("    string Name { get; }");
+            classesBuilder.AppendLine();
+            classesBuilder.AppendLine("    string Greet();");
+            classesBuilder.AppendLine("}");
+            classesBuilder.AppendLine();
+            classesBuilder.AppendLine("class Person : IPerson");
+            classesBuilder.AppendLine("{");
+            classesBuilder.AppendLine("    public Person(string name)");
+            classesBuilder.AppendLine("    {");
+            classesBuilder.AppendLine("        Name = name;");
+            classesBuilder.AppendLine("    }");
+            classesBuilder.AppendLine();
+            classesBuilder.AppendLine("    public string Name { get; private set; }");
+            classesBuilder.AppendLine();
+            classesBuilder.AppendLine("    public string Greet()");
+            classesBuilder.AppendLine("    {");
+            classesBuilder.AppendLine("        if (Name == null)");
+            classesBuilder.AppendLine("            return \"Hello, stranger!\";");
+            classesBuilder.AppendLine();
+            classesBuilder.AppendLine("        return string.Format(\"Hello, {0}!\", Name);");
+            classesBuilder.AppendLine("    }");
+            classesBuilder.AppendLine("}");
             
-            viewModel.Post.Content = code;
+            var commandBuilder = new StringBuilder();
 
-            viewModel.Errors = compiler.GetCompilationErrors(code);
+            commandBuilder.AppendLine("IPerson person = new Person(name: null);");
+            commandBuilder.AppendLine("");
+            commandBuilder.AppendLine("return person.Greet();");
+            
+            var post = new Post { Content = commandBuilder.ToString(), Classes = classesBuilder.ToString() };
+
+            var viewModel = new PostViewModel
+                            {
+                                Post = post,
+                                Errors = compiler.GetCompilationErrors(post.Content, post.Classes)
+                            };
+
             return View("Show", viewModel);
+        }
+
+        [HttpGet]
+        public ActionResult About()
+        {
+            return View();
         }
 
         // GET /:slug           -> Equivilant to /:slug/1
@@ -43,25 +81,24 @@ namespace Compilify.Web.Controllers
         [HttpGet]
         public ActionResult Show(string slug, int? version)
         {
-            
             if (version <= 1)
             {
                 // Redirect the user to /:slug instead of /:slug/1
                 return RedirectToActionPermanent("Show", "Home", new { slug = slug, version = (int?)null });
             }
 
-            var content = db.GetVersion(slug, version ?? 1);
+            var post = db.GetVersion(slug, version ?? 1);
 
-            if (content == null)
+            if (post == null)
             {
                 return HttpNotFound();
             }
 
             var viewModel = new PostViewModel
-            {
-                Post = content, 
-                Errors = compiler.GetCompilationErrors(content.Content)
-            };
+                            {
+                                Post = post, 
+                                Errors = compiler.GetCompilationErrors(post.Content, post.Classes)
+                            };
 
             if (Request.IsAjaxRequest())
             {
@@ -101,9 +138,9 @@ namespace Compilify.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Validate(string code)
+        public ActionResult Validate(ValidateViewModel viewModel)
         {
-            var errors = compiler.GetCompilationErrors(code)
+            var errors = compiler.GetCompilationErrors(viewModel.Command, viewModel.Classes)
                                  .ToArray();
 
             return Json(new { status = "ok", data = errors });

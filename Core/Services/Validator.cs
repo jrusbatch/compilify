@@ -6,7 +6,7 @@ namespace Compilify.Services {
     public static class Validator {
 
         public static bool Validate(string code) {
-            var syntax = Syntax.ParseStatement(code);
+            var syntax = Syntax.ParseStatement(code ?? string.Empty);
             return ScanSyntax(syntax.ChildNodes());
         }
 

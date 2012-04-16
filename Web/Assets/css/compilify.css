@@ -112,8 +112,8 @@ h1 {
 }
 
 .CodeMirror {
-    font-family: 'Droid Sans Mono', monospace;
-    font-size: 13px;
+    font-family: 'Droid Sans Mono', 'Inconsolata', 'Monaco', 'Consolas', 'Andale Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
+    font-size: 11px;
 }
 
 .editor, #results pre {
@@ -133,19 +133,19 @@ h1 {
     border-left-color: #555;
 }
 
-.CodeMirror-scroll {
+.editor .CodeMirror-scroll {
     height: auto;
     min-height: 300px;
     overflow-x: auto;
     overflow-y: hidden;
 }
 
-#define .messages ul {
+.messages ul {
     list-style: none;
     margin-left: 0;
 }
 
-#define .messages .message {
+.messages .message {
     padding: 5px 0 5px 25px;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -167,23 +167,23 @@ h1 {
             transition: opacity 0.15s linear;
 }
 
-#define .messages .message:hover {
+.messages .message:hover {
     opacity: 1;
 }
     
-#define .messages .success {
+.messages .success {
     background-color: #339933;
 }
     
-#define .messages .warning {
+.messages .warning {
     background-color: #F09609;
 }
     
-#define .messages .error {
+.messages .error {
     background-color: #E51400;
 }
     
-#define .messages .info {
+.messages .info {
     background-color: #1BA1E2;
 }
      
@@ -207,3 +207,4 @@ h1 {
 #about .disclaimer {
     font-size: 0.8em;
 }
+

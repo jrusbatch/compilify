@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Web;
+﻿using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -13,7 +11,7 @@ namespace Compilify.Web {
 
     public class Application : HttpApplication {
         
-        private static JobDoneMessageRelay MessageRelay;
+        public static JobDoneMessageRelay MessageRelay;
 
         protected void Application_Start() {
             ViewEngines.Engines.Clear();
@@ -38,6 +36,13 @@ namespace Compilify.Web {
                 name: "Root",
                 url: "",
                 defaults: new { controller = "Home", action = "Index" },
+                constraints: new { httpMethod = new HttpMethodConstraint("GET") }
+            );
+
+            routes.MapLowercaseRoute(
+                name: "About",
+                url: "about",
+                defaults: new { controller = "Home", action = "About" },
                 constraints: new { httpMethod = new HttpMethodConstraint("GET") }
             );
 
@@ -103,8 +108,8 @@ namespace Compilify.Web {
             var js = new Bundle("~/js");
             js.AddFile("~/assets/js/vendor/json2.js");
             js.AddFile("~/assets/js/vendor/underscore-1.3.1.js");
-            // js.AddFile("~/assets/js/vendor/backbone-0.9.2.js");
-            // js.AddFile("~/assets/js/vendor/bootstrap-2.0.2.js");
+            js.AddFile("~/assets/js/vendor/backbone-0.9.2.js");
+            js.AddFile("~/assets/js/vendor/bootstrap-2.0.2.js");
             js.AddFile("~/assets/js/vendor/codemirror-2.23.js");
             js.AddFile("~/assets/js/vendor/codemirror-clike-2.23.js");
             js.AddFile("~/assets/js/vendor/jquery.signalr.js");

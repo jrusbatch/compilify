@@ -23,6 +23,9 @@ namespace Compilify
         public string Code { get; set; }
 
         [ProtoMember(3)]
+        public string Classes { get; set; }
+
+        [ProtoMember(4)]
         public string Result { get; set; }
 
         public byte[] GetBytes()

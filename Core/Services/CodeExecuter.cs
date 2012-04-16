@@ -31,9 +31,9 @@ namespace Compilify.Services
                                                }
                                            }";
 
-        public object Execute(string code)
+        public object Execute(string command, string classes)
         {
-            if (!Validator.Validate(code))
+            if (!Validator.Validate(command) || !Validator.Validate(classes))
             {
                 return "Not supported";
             } 
@@ -45,16 +45,17 @@ namespace Compilify.Services
             var system = sandbox.Load("System,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
             var core = sandbox.Load("System.Core,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
 
-            var script = "public static object Eval() {" + code + "}";
+            var script = "public static object Eval() {" + command + "}";
             
             var options = new CompilationOptions(assemblyKind: AssemblyKind.ConsoleApplication, usings: ReadOnlyArray<string>.CreateFrom(Namespaces));
 
-            var compilation = Compilation.Create("foo", options,
+            var compilation = Compilation.Create(Guid.NewGuid().ToString("N"), options,
                 new[]
                 {
                     SyntaxTree.ParseCompilationUnit(EntryPoint),
                     // This is the syntax tree represented in the `Script` variable.
-                    SyntaxTree.ParseCompilationUnit(script, options: new ParseOptions(kind: SourceCodeKind.Interactive))
+                    SyntaxTree.ParseCompilationUnit(script, options: new ParseOptions(kind: SourceCodeKind.Interactive)),
+                    SyntaxTree.ParseCompilationUnit(classes ?? string.Empty, options: new ParseOptions(kind: SourceCodeKind.Script))
                 },
                 new MetadataReference[] { 
                     new AssemblyFileReference(core.Location), 
@@ -78,6 +79,7 @@ namespace Compilify.Services
 
             if (compiledAssembly.Length == 0)
             {
+                // Not sure how this would happen?
                 return "Incorrect data";
             }
 
@@ -96,7 +98,7 @@ namespace Compilify.Services
                                                  result = loader.Run("EntryPoint", "Result", compiledAssembly);
                                              }
                                              catch (Exception ex) {
-                                                 result = ex.InnerException ?? ex;
+                                                 result = ex.Message;
                                              }
                                          });
 
@@ -109,7 +111,7 @@ namespace Compilify.Services
             }
             catch (Exception ex)
             {
-                result = ex.InnerException ?? ex;
+                result = ex.Message;
             }
             
             if (!unloaded)
