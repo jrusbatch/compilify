@@ -7,7 +7,55 @@ if (typeof String.prototype.trim !== 'function') {
 
 (function($, _, Compilify) {
     var root = this,
-        connection;
+        connection,
+    
+        EndpointConnection = function(url, options) {
+            /// <summary>
+            /// Wraps a SignalR PersistentConnection object to close the connection after a set period of time.</summary>
+            /// <param name="url" type="String">
+            /// The URL of the endpoint to connect to.</param>
+            /// <param name="options" type="Object">
+            /// The URL of the endpoint to connect to.</param>
+            /// <returns type="EndpointConnection" />
+            
+            var timer, 
+                isConnected = false,
+                conn = $.connection(url), 
+                opts = _.defaults(options, {
+                    timeout: 30000,
+                    onReceived: $.noop
+                });
+            
+            function onTimeout() {
+                conn.stop();
+                isConnected = false;
+                timer = null;
+            }
+
+            conn.sending(function() {
+                /// 
+                if (timer != null) {
+                    root.clearTimeout(timer);
+                }
+                timer = root.setTimeout(onTimeout, opts.timeout);
+            });
+
+            conn.received(opts.onReceived);
+            
+            return {
+                send: function (data) {
+                    if (isConnected === true) {
+                        conn.send(data);
+                    }
+                    else {
+                        conn.start({ transport: [ 'serverSentEvents', 'foreverFrame', 'longPolling' ] }, function() {
+                            isConnected = true;
+                            conn.send(data);
+                        });
+                    }
+                }
+            };
+        };
     
     function htmlEscape(str) {
         /// <summary>
@@ -94,23 +142,17 @@ if (typeof String.prototype.trim !== 'function') {
         //
         // Set up the SignalR connection
         //
-        connection = $.connection('/execute');
-        
-        connection.received(function(msg) {
-            if (msg && msg.status === "ok") {
-                var data = msg.data;
-                if (data && data.result) {
-                    var result = htmlEscape(data.result.toString());
-                    setResult(result);
+        connection = new EndpointConnection('/execute', {
+            onReceived: function(msg) {
+                if (msg && msg.status === "ok") {
+                    var data = msg.data;
+                    if (data && data.result) {
+                        var result = htmlEscape(data.result.toString());
+                        setResult(result);
+                    }
                 }
             }
         });
-
-        connection.error(function(e) {
-            console.error(e);
-        });
-
-        connection.start();
         
         //
         // Set up CodeMirror editor
@@ -130,7 +172,7 @@ if (typeof String.prototype.trim !== 'function') {
         
         root.CodeMirror.commands.save = save;
 
-        var opts = {
+        var editorOptions = {
             indentUnit: 4,
             lineNumbers: true,
             theme: 'neat',
@@ -144,10 +186,10 @@ if (typeof String.prototype.trim !== 'function') {
             return;
         }
         
-        Compilify.Editor = root.CodeMirror.fromTextArea(editor, opts);
+        Compilify.Editor = root.CodeMirror.fromTextArea(editor, editorOptions);
         Compilify.Editor.save = save;
 
-        Compilify.Prompt = root.CodeMirror.fromTextArea(prompt, opts);
+        Compilify.Prompt = root.CodeMirror.fromTextArea(prompt, editorOptions);
         Compilify.Prompt.save = save;
         
         $('#define .js-save').on('click', save);
@@ -155,7 +197,9 @@ if (typeof String.prototype.trim !== 'function') {
         $('#define .js-execute').on('click', function() {
             var command = Compilify.Prompt.getValue().trim();
             var classes = Compilify.Editor.getValue().trim();
+            
             execute(command, classes);
+            
             return false;
         });
         
