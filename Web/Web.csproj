@@ -227,7 +227,9 @@
     <Content Include="Assets\js\Compilify.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -256,6 +258,7 @@
     <None Include="Assets\fonts\Roboto-Regular-webfont.ttf" />
     <None Include="Assets\fonts\Roboto-Regular-webfont.woff" />
     <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Shared\_Share.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
