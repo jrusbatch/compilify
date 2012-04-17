@@ -1,10 +1,14 @@
 ﻿@model System.Web.Mvc.HandleErrorInfo
 
 @{
-    ViewBag.Title = "Error";
+    ViewBag.Title = Response.StatusCode;
+    var message = ViewBag.Message ?? "An error occurred while processing your request.";
 }
 
-<hgroup class="title">
-    <h1 class="error">Error.</h1>
-    <h2 class="error">An error occurred while processing your request.</h2>
-</hgroup>
+<section id="error">
+    <hgroup class="title">
+        <h1 class="error">@Response.StatusCode</h1>
+        <h2 class="error">@message</h2>
+    </hgroup>
+    <p>This page isn't very helpful, but maybe you'll find the <a href="@Url.Action("Index", "Home")">home page</a> to be.</p>
+</section>

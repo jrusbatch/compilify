@@ -95,6 +95,8 @@ namespace Compilify.Worker
                 {
                     var message = connection.Lists.BlockingRemoveFirst(0, new[] { "queue:execute" }, Int32.MaxValue);
 
+                    if (message.Result == null) continue;
+
                     var command = ExecuteCommand.Deserialize(message.Result.Item2);
 
                     stopWatch.Start();

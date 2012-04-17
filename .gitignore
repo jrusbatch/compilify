@@ -11,3 +11,4 @@
 _ReSharper.*
 *.resharper
 packages/
+*.ncrunchsolution
