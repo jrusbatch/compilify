@@ -125,6 +125,7 @@ namespace Compilify.Web {
             js.AddFile("~/assets/js/vendor/codemirror-2.23.js");
             js.AddFile("~/assets/js/vendor/codemirror-clike-2.23.js");
             js.AddFile("~/assets/js/vendor/jquery.signalr.js");
+            js.AddFile("~/assets/js/vendor/shortcut.js");
             js.AddFile("~/assets/js/compilify.js");
             bundles.Add(js);
 

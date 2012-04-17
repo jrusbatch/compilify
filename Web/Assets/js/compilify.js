@@ -166,5 +166,15 @@ if (typeof String.prototype.trim !== 'function') {
             execute(command, classes);
             return false;
         });
+        
+        // Shortcut definitions
+        shortcut.add("Ctrl+B",function() {
+            $("#define .js-execute").click();
+        });
+        
+        shortcut.add("Ctrl+S",function() {
+	        $("#define .js-save").click();
+        });
+
     });
 }).call(window, window.jQuery, window._, window.Compilify || {});
