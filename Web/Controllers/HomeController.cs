@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Compilify.Models;
@@ -87,11 +89,14 @@ namespace Compilify.Web.Controllers
                 return RedirectToActionPermanent("Show", "Home", new { slug = slug, version = (int?)null });
             }
 
-            var post = db.GetVersion(slug, version ?? 1);
+            version = version ?? 1;
+            var post = db.GetVersion(slug, version.Value);
 
             if (post == null)
             {
-                return HttpNotFound();
+                Response.StatusCode = 404;
+                ViewBag.Message = string.Format("code snippet of '{0}' ver. {1} was not found.", slug, version.Value);
+                return View("Error");
             }
 
             var viewModel = new PostViewModel

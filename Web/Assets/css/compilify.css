@@ -208,3 +208,31 @@ h1 {
     font-size: 0.8em;
 }
 
+/* Error 
+ *****************************************************************************/
+#error
+{
+    text-align: center;
+}
+
+#error hgroup {
+    display: block;
+    margin: 0 auto;
+    clear: both;
+    height: auto;
+}
+
+    #error hgroup h1, #error hgroup h2
+    {
+        margin: 10px 0;
+        text-align: center;
+    }
+
+    #error hgroup h1
+    {
+        font-family: Georgia;
+        font-weight: bold;
+        font-size: 200px;
+        margin: 20px 0;
+        line-height: 200px;
+    }
