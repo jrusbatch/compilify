@@ -75,6 +75,7 @@ namespace Compilify.Web.Services
                 {
                     try
                     {
+                        connection.Dispose();
                         connection = CreateConnection();
                     }
                     catch (Exception ex)
