@@ -61,7 +61,7 @@ namespace Compilify.Web {
                 defaults: new { controller = "Home", action = "Save", version = UrlParameter.Optional },
                 constraints: new {
                                  httpMethod = new HttpMethodConstraint("POST"),
-                                 slug = @"[a-z0-9]*"
+                                 slug = @"[a-z0-9]*",
                              }
             );
 
@@ -94,6 +94,18 @@ namespace Compilify.Web {
                                  httpMethod = new HttpMethodConstraint("GET"),
                                  slug = @"[a-z0-9]+"
                              }
+            );
+
+            routes.MapRoute(
+                "Error",
+                "Error/{status}",
+                 new { controller = "Error", action = "Index", status = UrlParameter.Optional }  
+            );
+
+            routes.MapRoute(
+                "404",
+                 "{*url}",
+                 new { controller = "Error", action = "Index", status = 404 }  // 404s
             );
         }
 
