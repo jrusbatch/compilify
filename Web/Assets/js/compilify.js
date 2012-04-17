@@ -34,21 +34,9 @@ if (typeof String.prototype.trim !== 'function') {
     function save() {
         /// <summary>
         /// Save content.</summary>
-        var pathname = window.location.pathname;
-
-        var command = Compilify.Prompt.getValue().trim();
-        var classes = Compilify.Editor.getValue().trim();
-
-        trackEvent('Code', 'Save', pathname);
-
-        return $.ajax(pathname, {
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ post: { 'Content': command, 'Classes': classes } })
-                })
-                .done(function(msg) {
-                    root.history.pushState({ }, '', msg.data.url);
-                });;
+        
+        $('form').submit();
+        return false;
     }
 
     function validate(command, classes) {
@@ -167,7 +155,10 @@ if (typeof String.prototype.trim !== 'function') {
             return false;
         });
         
-        // Shortcut definitions
+        //
+        // Set up key binds
+        //
+
         shortcut.add("Ctrl+B",function() {
             $("#define .js-execute").click();
         });

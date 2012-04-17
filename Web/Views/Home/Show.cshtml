@@ -1,57 +1,60 @@
 @model Compilify.Web.Models.PostViewModel
 
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span6">
-            <div id="define">
-                <div class="page-header">
-                    <h1>
-                        define
-                        <small>
-                            <a class="js-save" href="#" title="Ctrl+S">save</a>
-                            <a class="js-execute" href="#">run</a>
-                        </small>
-                    </h1>
-                </div>
+@using (Html.BeginForm())
+{
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span6">
+                <div id="define">
+                    <div class="page-header">
+                        <h1>
+                            define
+                            <small>
+                                <a class="js-save" href="#">save</a>
+                                <a class="js-execute" href="#">run</a>
+                            </small>
+                        </h1>
+                    </div>
             
-                <div class="editor">
-                    <textarea>@Model.Post.Classes</textarea>
+                    <div class="editor">
+                        @Html.TextAreaFor(x => x.Post.Classes)
+                    </div>
+                </div>
+            </div>
+            <div class="span6">
+                <div id="execute">
+                    <div class="page-header">
+                        <h1>execute</h1>
+                    </div>
+
+                    <div class="editor">
+                        @Html.TextAreaFor(x => x.Post.Content)
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="span6">
-            <div id="execute">
-                <div class="page-header">
-                    <h1>execute</h1>
-                </div>
 
-                <div class="editor">
-                    <textarea>@Model.Post.Content</textarea>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="messages">
-        <ul>
-            @if (!Model.Errors.Any())
-            {
-                <li class="message success">Build completed successfully!</li>
-            }
-            else
-            {
-                foreach (var error in Model.Errors)
+        <div class="messages">
+            <ul>
+                @if (!Model.Errors.Any())
                 {
-                    <li class="message error">@error</li>
+                    <li class="message success">Build completed successfully!</li>
                 }
-            }
-        </ul>
-    </div>
-
-    <div id="results">
-        <div class="page-header">
-            <h1>results</h1>
+                else
+                {
+                    foreach (var error in Model.Errors)
+                    {
+                        <li class="message error">@error</li>
+                    }
+                }
+            </ul>
         </div>
-        <pre></pre>
+
+        <div id="results">
+            <div class="page-header">
+                <h1>observe</h1>
+            </div>
+            <pre></pre>
+        </div>
     </div>
-</div>
+}

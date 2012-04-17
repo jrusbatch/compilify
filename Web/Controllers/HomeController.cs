@@ -138,8 +138,7 @@ namespace Compilify.Web.Controllers
                 routeValues.Add("version", result.Version);
             }
 
-            var url = Url.Action("Show", routeValues);
-            return Json(new { status = "ok", data = new { slug = result.Slug, version = result.Version, url = url } });
+            return RedirectToAction("Show", routeValues);
         }
 
         [HttpPost]
