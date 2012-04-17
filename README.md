@@ -13,10 +13,11 @@ Nuget packages will be missing the first time the solution is opened. They will 
 The solution contains the web application and the background worker. Visual Studio can be configured to start both simultaneously while debugging.
 
 In Visual Studio 2010:
-1. Right-click the Solution node in the Solution Explorer window.
-2. Select "Set StartUp Projects".
-3. Choose "Multiple startup projects".
-4. Set the "Action" for "Web" and "Worker" to "Start".
+
+1.  Right-click the Solution node in the Solution Explorer window.
+2.  Select "Set StartUp Projects".
+3.  Choose "Multiple startup projects".
+4.  Set the "Action" for "Web" and "Worker" to "Start".
 
 ## Contributing
 
