@@ -12,3 +12,4 @@ _ReSharper.*
 *.resharper
 packages/
 *.ncrunchsolution
+*.DotSettings
