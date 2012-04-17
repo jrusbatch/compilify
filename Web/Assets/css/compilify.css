@@ -111,6 +111,19 @@ h1 {
     padding-left: 10px;
 }
 
+#social {
+    list-style: none;
+    display: inline-block;
+    margin-top: 10px;
+    width: 325px;
+}
+
+#social li {
+    display: inline-block;
+    width: 100px;
+}
+
+
 .CodeMirror {
     font-family: 'Droid Sans Mono', 'Inconsolata', 'Monaco', 'Consolas', 'Andale Mono', 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
     font-size: 11px;
