@@ -140,6 +140,10 @@ if (typeof String.prototype.trim !== 'function') {
             }
         };
         
+        if (!editor || !prompt) {
+            return;
+        }
+        
         Compilify.Editor = root.CodeMirror.fromTextArea(editor, opts);
         Compilify.Editor.save = save;
 
