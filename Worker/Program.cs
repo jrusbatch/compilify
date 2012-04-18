@@ -86,20 +86,27 @@ namespace Compilify.Worker
 
                 Logger.Info("Work completed in {0} milliseconds.", stopWatch.ElapsedMilliseconds);
 
-                var response = JsonConvert.SerializeObject(new
-                               {
-                                   code = command.Code,
-                                   classes = command.Classes,
-                                   result = formatter.FormatObject(result), 
-                                   time = DateTime.UtcNow,
-                                   duration = stopWatch.ElapsedMilliseconds
-                               });
+                try
+                {
+                    var response = JsonConvert.SerializeObject(new
+                                   {
+                                       code = command.Code,
+                                       classes = command.Classes,
+                                       result = formatter.FormatObject(result), 
+                                       time = DateTime.UtcNow,
+                                       duration = stopWatch.ElapsedMilliseconds
+                                   });
 
-                var bytes = Encoding.UTF8.GetBytes(response);
-                var listeners = connection.Publish("workers:job-done:" + command.ClientId, bytes);
+                    var bytes = Encoding.UTF8.GetBytes(response);
+                    var listeners = connection.Publish("workers:job-done:" + command.ClientId, bytes);
 
-                Logger.Info("Work results published to {0} listeners.", listeners.Result);
-
+                    Logger.Info("Work results published to {0} listeners.", listeners.Result);
+                }
+                catch (JsonSerializationException ex)
+                {
+                    Logger.ErrorException("An error occurred while attempting to serialize the JSON result.", ex);
+                }
+                
                 stopWatch.Reset();
             }
         }
