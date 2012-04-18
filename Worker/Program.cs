@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using BookSleeve;
 using Compilify.Services;
@@ -48,14 +46,13 @@ namespace Compilify.Worker
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly CodeExecuter Executer = new CodeExecuter();
-        private static readonly int ProcessId = Process.GetCurrentProcess().Id;
         
         private static void ProcessQueue(RedisConnection connection, string[] queues)
         {
             var stopWatch = new Stopwatch();
             var formatter = new ObjectFormatter(maxLineLength: 5120);
 
-            Logger.Info("ProcessQueue task {0} started.", ProcessId);
+            Logger.Info("ProcessQueue started.");
 
             while (true)
             {
