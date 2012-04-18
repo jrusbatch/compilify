@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
@@ -21,37 +22,86 @@ namespace Compilify.Worker
 
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledApplicationException;
 
+            // Log the exception, but do not mark it as observed. The process will be terminated and restarted 
+            // automatically by AppHarbor
             TaskScheduler.UnobservedTaskException += 
                 (sender, e) => Logger.ErrorException("An unobserved task exception occurred", e.Exception);
 
-            Executer = new CodeExecuter();
-            TokenSource = new CancellationTokenSource();
-
             try
             {
-                var task = Task.Factory.StartNew(ProcessQueue, TokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-                task.ContinueWith(OnTaskFaulted, TaskContinuationOptions.OnlyOnFaulted);
-
-                task.Wait();
-                
-                Logger.Debug("Task finished.");
-            }
-            catch (RedisException ex)
-            {
-                Logger.ErrorException("An error occured while attempting to access Redis.", ex);
-            }
-            finally
-            {
-                if (TokenSource != null)
+                using (var connection = GetOpenConnection())
                 {
-                    TokenSource.Cancel();
-                    TokenSource.Dispose();
+                    ProcessQueue(connection, new[] { "queue:execute" });
                 }
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorException("An error occured while processing the queue.", ex);
             }
 
             Logger.Info("Application ending.");
 
             return -1; // Return a non-zero code so AppHarbor restarts the worker
+        }
+        
+        private const int DefaultTimeout = 5000;
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly CodeExecuter Executer = new CodeExecuter();
+        private static readonly int ProcessId = Process.GetCurrentProcess().Id;
+        
+        private static void ProcessQueue(RedisConnection connection, string[] queues)
+        {
+            var stopWatch = new Stopwatch();
+            var formatter = new ObjectFormatter(maxLineLength: 5120);
+
+            Logger.Info("ProcessQueue task {0} started.", ProcessId);
+
+            while (true)
+            {
+                var message = connection.Lists.BlockingRemoveFirst(0, queues, DefaultTimeout);
+
+                if (message.Result == null)
+                {
+                    continue;
+                }
+                
+                var command = ExecuteCommand.Deserialize(message.Result.Item2);
+
+                var timeInQueue = DateTime.UtcNow - command.Submitted;
+
+                Logger.Info("Job received after {0:N3} seconds in queue.", timeInQueue.TotalSeconds);
+
+                if (timeInQueue > command.TimeoutPeriod)
+                {
+                    Logger.Warn("Job was in queue for longer than {0} seconds, skipping!", command.TimeoutPeriod.Seconds);
+                    continue;
+                }
+
+                stopWatch.Start();
+
+                var result = Executer.Execute(command.Code, command.Classes);
+
+                stopWatch.Stop();
+
+                Logger.Info("Work completed in {0} milliseconds.", stopWatch.ElapsedMilliseconds);
+
+                var response = JsonConvert.SerializeObject(new
+                               {
+                                   code = command.Code,
+                                   classes = command.Classes,
+                                   result = formatter.FormatObject(result), 
+                                   time = DateTime.UtcNow,
+                                   duration = stopWatch.ElapsedMilliseconds
+                               });
+
+                var bytes = Encoding.UTF8.GetBytes(response);
+                var listeners = connection.Publish("workers:job-done:" + command.ClientId, bytes);
+
+                Logger.Info("Work results published to {0} listeners.", listeners.Result);
+
+                stopWatch.Reset();
+            }
         }
 
         public static void OnUnhandledApplicationException(object sender, UnhandledExceptionEventArgs e)
@@ -68,75 +118,20 @@ namespace Compilify.Worker
             }
         }
 
-        private static void OnTaskFaulted(Task task)
-        {
-            Logger.ErrorException("An exception occured in the worker task.", task.Exception);
-        }
-
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        private static CodeExecuter Executer;
-        private static CancellationTokenSource TokenSource;
-
-        private static void ProcessQueue()
-        {
-            Logger.Info("ProcessQueue task {0} started.", Task.CurrentId);
-
-            var stopWatch = new Stopwatch();
-            var formatter = new ObjectFormatter(maxLineLength: 5120);
-
-            using (var connection = OpenConnection())
-            {
-                connection.Error += (sender, e) => Logger.ErrorException(e.Cause, e.Exception);
-
-                connection.Wait(connection.Open());
-
-                while (!TokenSource.IsCancellationRequested)
-                {
-                    var message = connection.Lists.BlockingRemoveFirst(0, new[] { "queue:execute" }, Int32.MaxValue);
-
-                    if (message.Result == null) continue;
-
-                    var command = ExecuteCommand.Deserialize(message.Result.Item2);
-
-                    stopWatch.Start();
-
-                    var result = Executer.Execute(command.Code, command.Classes);
-
-                    stopWatch.Stop();
-
-                    var response = JsonConvert.SerializeObject(new
-                                   {
-                                       code = command.Code,
-                                       classes = command.Classes,
-                                       result = formatter.FormatObject(result), 
-                                       time = DateTime.UtcNow,
-                                       duration = stopWatch.ElapsedMilliseconds
-                                   });
-
-                    var responseBytes = Encoding.UTF8.GetBytes(response);
-
-                    connection.Wait(connection.Publish("workers:job-done:" + command.ClientId, responseBytes));
-
-                    stopWatch.Reset();
-                }
-
-                Logger.Error("ProcessQueue task {0} cancelled.", Task.CurrentId);
-            }
-        }
-
-        private static RedisConnection OpenConnection()
+        private static RedisConnection GetOpenConnection()
         {
             var connectionString = ConfigurationManager.AppSettings["REDISTOGO_URL"];
             var uri = new Uri(connectionString);
             var password = uri.UserInfo.Split(':').LastOrDefault();
 
-            if (password != null)
-            {
-                return new RedisConnection(uri.Host, uri.Port, password: password, syncTimeout: 5000, ioTimeout: 5000);
-            }
+            var conn = new RedisConnection(uri.Host, uri.Port, password: password, allowAdmin: false,
+                                           syncTimeout: DefaultTimeout, ioTimeout: DefaultTimeout);
 
-            return new RedisConnection(uri.Host, uri.Port, syncTimeout: 5000, ioTimeout: 5000);
+            conn.Error += (sender, e) => Logger.ErrorException(e.Cause, e.Exception);
+
+            conn.Wait(conn.Open());
+
+            return conn;
         }
     }
 }

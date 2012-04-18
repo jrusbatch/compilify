@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Configuration;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using Compilify.Models;
 using Compilify.Web.Services;
@@ -9,6 +11,21 @@ namespace Compilify.Web.EndPoints
 {
     public class ExecuteEndPoint : PersistentConnection
     {
+        static ExecuteEndPoint()
+        {
+            int timeout;
+            if (!int.TryParse(ConfigurationManager.AppSettings["Compilify.ExecutionTimeout"], out timeout))
+            {
+                timeout = DefaultExecutionTimeout;
+            }
+
+            ExecutionTimeout = TimeSpan.FromSeconds(timeout);
+        }
+
+        private const int DefaultExecutionTimeout = 30;
+
+        private static readonly TimeSpan ExecutionTimeout;
+
         /// <summary>
         /// Handle messages sent by the client.</summary>
         protected override Task OnReceivedAsync(string connectionId, string data)
@@ -19,7 +36,9 @@ namespace Compilify.Web.EndPoints
                           {
                               ClientId = connectionId,
                               Code = post.Content,
-                              Classes = post.Classes
+                              Classes = post.Classes,
+                              Submitted = DateTime.UtcNow,
+                              TimeoutPeriod = ExecutionTimeout
                           };
 
             var message = command.GetBytes();

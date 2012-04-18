@@ -28,6 +28,12 @@ namespace Compilify
         [ProtoMember(4)]
         public string Result { get; set; }
 
+        [ProtoMember(5)]
+        public DateTime Submitted { get; set; }
+
+        [ProtoMember(6)]
+        public TimeSpan TimeoutPeriod { get; set; }
+
         public byte[] GetBytes()
         {
             using (var stream = new MemoryStream())
