@@ -130,7 +130,7 @@ if (typeof String.prototype.trim !== 'function') {
 
                             markedErrors.push(mark);
 
-                            var message = 'Line: ' + start.Line + ' Column: ' + start.Character + ' - ' + error.Message;
+                            var message = 'Line: ' + (start.Line + 1) + ' Column: ' + start.Character + ' - ' + error.Message;
 
                             $list.append('<li class="message error" data-errorId="' + index + '">' +
                                 htmlEscape(message) + '</li>');
