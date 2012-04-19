@@ -173,8 +173,8 @@ h1 {
     color: white;
         
     -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-    -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+       -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
 
     opacity: .4;
 
@@ -254,5 +254,8 @@ h1 {
 }
 
 .editor .compilation-error {
-    background-color: #f00;
+    background-color: rgba(229, 20, 0, 0.3);
+    -webkit-box-shadow: 0 0 2px rgba(229, 20, 0, 0.3);
+       -moz-box-shadow: 0 0 2px rgba(229, 20, 0, 0.3);
+            box-shadow: 0 0 2px rgba(229, 20, 0, 0.3);
 }

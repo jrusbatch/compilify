@@ -117,8 +117,8 @@ if (typeof String.prototype.trim !== 'function') {
                         $list.append('<li class="message success">Build ' +
                             'completed successfully.</li>');
                     } else {
-                        for (var i in msg.data) {
-                            var error = msg.data[i];
+                        for (var index in msg.data) {
+                            var error = msg.data[index];
 
                             var start = error.Location.StartLinePosition;
                             var end = error.Location.EndLinePosition;
@@ -130,8 +130,10 @@ if (typeof String.prototype.trim !== 'function') {
 
                             markedErrors.push(mark);
 
-                            $list.append('<li class="message error">' +
-                                htmlEscape(error.Message) + '</li>');
+                            var message = 'Line: ' + start.Line + ' Column: ' + start.Character + ' - ' + error.Message;
+
+                            $list.append('<li class="message error" data-errorId="' + index + '">' +
+                                htmlEscape(message) + '</li>');
                         }
                     }
 

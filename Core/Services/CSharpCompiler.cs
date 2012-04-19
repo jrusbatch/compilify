@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Compilers.Common;
@@ -12,7 +13,15 @@ namespace Compilify.Services
     {
         public IEnumerable<IDiagnostic> GetCompilationErrors(string command, string classes)
         {
-            var script = "public static object Eval() {" + command + "}";
+            var builder = new StringBuilder();
+
+            builder.AppendLine("public static object Eval() {");
+            builder.AppendLine("#line 1");
+            builder.Append(command);
+            builder.AppendLine();
+            builder.AppendLine("}");
+
+            var script = builder.ToString();
 
             var mscorlib = Assembly.Load("mscorlib,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
             var system = Assembly.Load("System,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
