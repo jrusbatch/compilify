@@ -8,11 +8,11 @@ namespace Compilify.Web.Models
         public PostViewModel()
         {
             Post = new Post();
-            Errors = new List<string>();
+            Errors = new List<EditorError>();
         }
 
         public Post Post { get; set; }
 
-        public IEnumerable<string> Errors { get; set; } 
+        public IEnumerable<EditorError> Errors { get; set; } 
     }
 }

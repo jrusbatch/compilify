@@ -20,6 +20,10 @@
     font-style: normal;
 }
 
+html {
+    min-width: 1006px;
+}
+
 body {
     font-size: 14px;
 }
@@ -247,4 +251,8 @@ h1 {
     font-size: 200px;
     margin: 20px 0;
     line-height: 200px;
+}
+
+.editor .compilation-error {
+    background-color: #f00;
 }

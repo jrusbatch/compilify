@@ -1,14 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Compilify.Models;
 using Compilify.Services;
 using Compilify.Web.Models;
 using Compilify.Web.Services;
-using Roslyn.Compilers.CSharp;
 
 namespace Compilify.Web.Controllers
 {
@@ -59,11 +56,18 @@ namespace Compilify.Web.Controllers
             commandBuilder.AppendLine("return person.Greet();");
             
             var post = new Post { Content = commandBuilder.ToString(), Classes = classesBuilder.ToString() };
+            
+            var errors = compiler.GetCompilationErrors(post.Content, post.Classes)
+                                 .Select(x => new EditorError
+                                              {
+                                                  Location = x.Location.GetLineSpan(true),
+                                                  Message = x.Info.GetMessage()
+                                              });
 
             var viewModel = new PostViewModel
                             {
                                 Post = post,
-                                Errors = compiler.GetCompilationErrors(post.Content, post.Classes)
+                                Errors = errors
                             };
 
             return View("Show", viewModel);
@@ -99,10 +103,17 @@ namespace Compilify.Web.Controllers
                 return View("Error");
             }
 
+            var errors = compiler.GetCompilationErrors(post.Content, post.Classes)
+                                 .Select(x => new EditorError
+                                              {
+                                                  Location = x.Location.GetLineSpan(true),
+                                                  Message = x.Info.GetMessage()
+                                              });
+
             var viewModel = new PostViewModel
                             {
                                 Post = post, 
-                                Errors = compiler.GetCompilationErrors(post.Content, post.Classes)
+                                Errors = errors
                             };
 
             if (Request.IsAjaxRequest())
@@ -145,7 +156,11 @@ namespace Compilify.Web.Controllers
         public ActionResult Validate(ValidateViewModel viewModel)
         {
             var errors = compiler.GetCompilationErrors(viewModel.Command, viewModel.Classes)
-                                 .ToArray();
+                                 .Select(x => new EditorError
+                                              {
+                                                  Location = x.Location.GetLineSpan(true),
+                                                  Message = x.Info.GetMessage()
+                                              });
 
             return Json(new { status = "ok", data = errors });
         }

@@ -87,6 +87,8 @@ if (typeof String.prototype.trim !== 'function') {
         return false;
     }
 
+    var markedErrors = [];
+
     function validate(command, classes) {
         /// <summary>
         /// Sends code to the server for validation and displays the resulting
@@ -101,6 +103,12 @@ if (typeof String.prototype.trim !== 'function') {
             data: JSON.stringify({ 'Command': command, 'Classes': classes }),
             success: function(msg) {
                 var data = msg.data;
+                
+                for (var i = markedErrors.length - 1; i >= 0; i--) {
+                    markedErrors[i].clear();
+                }
+
+                markedErrors.length = 0;
 
                 if (_.isArray(data)) {
                     var $list = $('.messages ul').detach().empty();
@@ -111,8 +119,19 @@ if (typeof String.prototype.trim !== 'function') {
                     } else {
                         for (var i in msg.data) {
                             var error = msg.data[i];
+
+                            var start = error.Location.StartLinePosition;
+                            var end = error.Location.EndLinePosition;
+
+                            var markStart = { line: start.Line, ch: start.Character };
+                            var markEnd = { line: end.Line, ch: end.Character };
+                            
+                            var mark = Compilify[error.Location.FileName].markText(markStart, markEnd, 'compilation-error');
+
+                            markedErrors.push(mark);
+
                             $list.append('<li class="message error">' +
-                                htmlEscape(error) + '</li>');
+                                htmlEscape(error.Message) + '</li>');
                         }
                     }
 
