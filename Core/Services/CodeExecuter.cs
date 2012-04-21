@@ -97,7 +97,8 @@ namespace Compilify.Services
                                              {
                                                  result = loader.Run("EntryPoint", "Result", compiledAssembly);
                                              }
-                                             catch (Exception ex) {
+                                             catch (Exception ex)
+                                             {
                                                  result = ex.Message;
                                              }
                                          });
