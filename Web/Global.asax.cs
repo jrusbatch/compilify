@@ -22,6 +22,7 @@ namespace Compilify.Web {
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterBundles(BundleTable.Bundles);
             RegisterRoutes(RouteTable.Routes);
+
             MessageRelay = new JobDoneMessageRelay(DependencyResolver.Current.GetService<RedisConnectionGateway>());
         }
         
@@ -44,6 +45,12 @@ namespace Compilify.Web {
                 url: "about",
                 defaults: new { controller = "Home", action = "About" },
                 constraints: new { httpMethod = new HttpMethodConstraint("GET") }
+            );
+
+            routes.MapLowercaseRoute(
+                name: "Auth",
+                url: "auth/{action}",
+                defaults: new { controller = "Auth" }
             );
 
             routes.MapLowercaseRoute(

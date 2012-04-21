@@ -36,6 +36,11 @@
                 <ul class="nav">
                     <li>@Html.ActionLink("create", "Index", "Home")</li>
                     <li>@Html.ActionLink("about", "About", "Home")</li>
+                    <li>
+                        @(Request.IsAuthenticated 
+                             ? Html.ActionLink("Sign Out", "SignOut", "Auth") 
+                             : Html.ActionLink("Sign In", "SignIn", "Auth"))
+                    </li>
                 </ul>
                 <ul class="nav pull-right">
                     <li>
@@ -53,6 +58,10 @@
     
     <div id="content">
         @RenderBody()
+    </div>
+    
+    <div id="sign-in">
+        
     </div>
     
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>

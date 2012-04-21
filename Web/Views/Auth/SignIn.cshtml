@@ -1,0 +1,20 @@
+﻿@model Compilify.Web.Models.SignInViewModel
+
+@{ ViewBag.Title = "Sign In"; }
+
+<h2>SignIn</h2>
+
+@using (Html.BeginForm("OAuth", "Auth", FormMethod.Post))
+{
+    <fieldset>
+        <legend>Sign-in</legend>
+        
+        @Html.ValidationSummary()
+
+        <p>Please select an account provider:</p>
+        
+        @Html.TextBoxFor(x => x.OpenId)
+        
+        <button type="submit" class="btn">submit</button>
+    </fieldset>
+}
