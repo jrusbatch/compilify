@@ -21,9 +21,13 @@ namespace Compilify.Models
         public string Description { get; set; }
 
         /// <summary>
-        /// The ID of the user who created the post, or null if the post was 
-        /// created by an anonymous user.</summary>
+        /// The ID of the user who created the post, or null if the post was created by an anonymous user.</summary>
         public string AuthorId { get; set; }
+        
+        /// <summary>
+        /// If <c>true</c>, the post will not be displayed in search results. However, it will still be accessible via 
+        /// direct access.</summary>
+        public bool? IsPrivate { get; set; }
 
         /// <summary>
         /// The post content.</summary>
@@ -36,8 +40,7 @@ namespace Compilify.Models
         public HashSet<string> Tags { get; protected set; }
 
         /// <summary>
-        /// The UTC date and time that the post was first persisted to the 
-        /// data store.</summary>
+        /// The UTC date and time that the post was first persisted to the data store.</summary>
         public DateTime? Created { get; set; }
     }
 }

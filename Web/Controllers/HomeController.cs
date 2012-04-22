@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -99,9 +100,7 @@ namespace Compilify.Web.Controllers
 
             if (post == null)
             {
-                Response.StatusCode = 404;
-                ViewBag.Message = string.Format("code snippet of '{0}' ver. {1} was not found.", slug, version.Value);
-                return View("Error");
+                return PostNotFound();
             }
 
             var errors = compiler.GetCompilationErrors(post.Content, post.Classes)
@@ -124,7 +123,7 @@ namespace Compilify.Web.Controllers
             
             return View("Show", viewModel);
         }
-        
+
         [HttpGet]
         public ActionResult Latest(string slug)
         {
@@ -132,7 +131,7 @@ namespace Compilify.Web.Controllers
 
             if (latest < 1)
             {
-                return HttpNotFound();
+                return PostNotFound();
             }
 
             return RedirectToAction("Show", "Home", new { slug = slug, version = latest });
@@ -164,6 +163,13 @@ namespace Compilify.Web.Controllers
                                               });
 
             return Json(new { status = "ok", data = errors });
+        }
+
+        private ActionResult PostNotFound()
+        {
+            Response.StatusCode = 404;
+            ViewBag.Message = string.Format("sorry, we couldn't find that...");
+            return View("Error");
         }
     }
 }
