@@ -201,10 +201,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\CompilifyIdentity.cs" />
     <Compile Include="Infrastructure\Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Infrastructure\DependencyInjection\MongoDbModule.cs" />
     <Compile Include="Infrastructure\DependencyInjection\MvcModule.cs" />
     <Compile Include="Infrastructure\DependencyInjection\RedisModule.cs" />
+    <Compile Include="Infrastructure\Extensions\IdentityExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\RouteCollectionExtensions.cs" />
     <Compile Include="Infrastructure\LowercaseRoute.cs" />
     <Compile Include="Infrastructure\Providers\MongoDbMembershipProvider.cs" />

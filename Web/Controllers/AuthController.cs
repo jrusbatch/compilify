@@ -1,4 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.IO.Compression;
+using System.Text;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using Compilify.Web.Models;
@@ -56,12 +60,27 @@ namespace Compilify.Web.Controllers
                             email = fields.Email;
                         }
 
-                        if (Membership.GetUser(username) == null)
-                        {
-                            Membership.CreateUser(username, Guid.NewGuid().ToString("N"), email);
-                        }
+                        var user = Membership.GetUser(username) ??
+                                   Membership.CreateUser(username, Guid.NewGuid().ToString("N"), email);
 
-                        FormsAuthentication.SetAuthCookie(response.ClaimedIdentifier, false);
+                        var userId = ((Guid)user.ProviderUserKey).ToString("N");
+
+                        var issued = DateTime.Now;
+                        var expires = issued + FormsAuthentication.Timeout;
+                        var ticket = new FormsAuthenticationTicket(1, username, issued, expires, true, userId);
+
+                        var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, 
+                                                    FormsAuthentication.Encrypt(ticket))
+                                     {
+                                         Domain = FormsAuthentication.CookieDomain,
+                                         Path = FormsAuthentication.FormsCookiePath,
+                                         Secure = FormsAuthentication.RequireSSL,
+                                         Expires = ticket.Expiration,
+                                         HttpOnly = true,
+                                     };
+
+                        Response.Cookies.Add(cookie);
+
                         return Redirect(returnUrl ?? FormsAuthentication.DefaultUrl);
                     }
                     case AuthenticationStatus.Canceled:

@@ -1,19 +1,30 @@
-﻿using System.Web;
+﻿using System;
+using System.Security.Principal;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Web.Security;
 using Compilify.Web.EndPoints;
+using Compilify.Web.Infrastructure;
 using Compilify.Web.Infrastructure.Extensions;
 using Compilify.Web.Services;
 using SignalR.Hosting.AspNet.Routing;
 
 namespace Compilify.Web {
 
-    public class Application : HttpApplication {
-        
-        public static JobDoneMessageRelay MessageRelay;
+    public class Application : HttpApplication
+    {
+        protected static JobDoneMessageRelay MessageRelay;
 
-        protected void Application_Start() {
+        public override void Init()
+        {
+            PostAuthenticateRequest += OnPostAuthenticateRequest;
+            base.Init();
+        }
+
+        protected void Application_Start()
+        {
             ViewEngines.Engines.Clear();
             ViewEngines.Engines.Add(new RazorViewEngine());
 
@@ -25,8 +36,26 @@ namespace Compilify.Web {
 
             MessageRelay = new JobDoneMessageRelay(DependencyResolver.Current.GetService<RedisConnectionGateway>());
         }
+
+        protected void OnPostAuthenticateRequest(object sender, EventArgs e)
+        {
+            var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+
+            if (cookie != null)
+            {
+                var encryptedTicket = cookie.Value;
+                if (encryptedTicket != null)
+                {
+                    var ticket = FormsAuthentication.Decrypt(encryptedTicket);
+                    var identity = new CompilifyIdentity(ticket);
+                    var principal = new GenericPrincipal(identity, null);
+                    Context.User = principal;
+                }
+            }
+        }
         
-        private static void RegisterGlobalFilters(GlobalFilterCollection filters) {
+        private static void RegisterGlobalFilters(GlobalFilterCollection filters)
+        {
             filters.Add(new HandleErrorAttribute());
         }
 

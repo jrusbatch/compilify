@@ -22,7 +22,7 @@ namespace Compilify.Models
 
         /// <summary>
         /// The ID of the user who created the post, or null if the post was created by an anonymous user.</summary>
-        public string AuthorId { get; set; }
+        public Guid? AuthorId { get; set; }
         
         /// <summary>
         /// If <c>true</c>, the post will not be displayed in search results. However, it will still be accessible via 
