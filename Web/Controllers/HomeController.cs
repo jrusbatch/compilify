@@ -3,9 +3,9 @@ using System.Net;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Web.Security;
 using Compilify.Models;
 using Compilify.Services;
+using Compilify.Web.Infrastructure.Extensions;
 using Compilify.Web.Models;
 using Compilify.Web.Services;
 
@@ -116,6 +116,11 @@ namespace Compilify.Web.Controllers
                                 Errors = errors
                             };
 
+            if (Request.IsAuthenticated && User.Identity.ToCompilifyIdentity().UserId == post.AuthorId)
+            {
+                viewModel.CurrentUserIsAuthor = true;
+            }
+
             if (Request.IsAjaxRequest())
             {
                 return Json(new { status = "ok", data = viewModel }, JsonRequestBehavior.AllowGet);
@@ -140,6 +145,17 @@ namespace Compilify.Web.Controllers
         [HttpPost]
         public ActionResult Save(string slug, Post post)
         {
+            if (Request.IsAuthenticated)
+            {
+                var userId = User.Identity.ToCompilifyIdentity().UserId;
+                if (post.AuthorId != userId)
+                {
+                    slug = null;
+                }
+
+                post.AuthorId = userId;
+            }
+
             var result = db.Save(slug, post);
 
             var routeValues = new RouteValueDictionary { { "slug", result.Slug } };

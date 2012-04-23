@@ -38,8 +38,8 @@
                     <li>@Html.ActionLink("about", "About", "Home")</li>
                     <li>
                         @(Request.IsAuthenticated 
-                             ? Html.ActionLink("Sign Out", "SignOut", "Auth") 
-                             : Html.ActionLink("Sign In", "SignIn", "Auth"))
+                             ? Html.ActionLink("sign out", "SignOut", "Auth") 
+                             : Html.ActionLink("sign in", "SignIn", "Auth"))
                     </li>
                 </ul>
                 <ul class="nav pull-right">

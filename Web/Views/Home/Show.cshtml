@@ -10,7 +10,20 @@
                         <h1>
                             define
                             <small>
-                                <a class="js-save" href="#">save</a>
+                                @if (Model.HasSlug)
+                                {
+                                    <a class="js-save">fork</a>
+                                    
+                                    if (Model.CurrentUserIsAuthor)
+                                    {
+                                        <a class="js-save">update</a>
+                                    }
+                                }
+                                else
+                                {
+                                    <a class="js-save" href="#">save</a>
+                                }
+                                
                                 <a class="js-execute" href="#">run</a>
                             </small>
                         </h1>
