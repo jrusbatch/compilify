@@ -8,6 +8,7 @@ using Compilify.Services;
 using Compilify.Web.Infrastructure.Extensions;
 using Compilify.Web.Models;
 using Compilify.Web.Services;
+using Roslyn.Compilers;
 
 namespace Compilify.Web.Controllers
 {
@@ -61,7 +62,6 @@ namespace Compilify.Web.Controllers
 
             var viewModel = new PostViewModel
                             {
-                                Post = new Post(),
                                 Errors = Enumerable.Empty<EditorError>()
                             };
 
@@ -105,7 +105,6 @@ namespace Compilify.Web.Controllers
 
             var viewModel = new PostViewModel
                             {
-                                Post = post, 
                                 Errors = errors
                             };
 
@@ -166,6 +165,7 @@ namespace Compilify.Web.Controllers
         public ActionResult Validate(ValidateViewModel viewModel)
         {
             var errors = compiler.GetCompilationErrors(viewModel.Command, viewModel.Classes)
+                                 .Where(x => x.Info.Severity > DiagnosticSeverity.Warning)
                                  .Select(x => new EditorError
                                               {
                                                   Location = x.Location.GetLineSpan(true),
