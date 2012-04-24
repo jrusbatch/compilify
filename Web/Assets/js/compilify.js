@@ -213,9 +213,9 @@ if (typeof String.prototype.trim !== 'function') {
         Compilify.Prompt = root.CodeMirror.fromTextArea(prompt, editorOptions);
         Compilify.Prompt.save = save;
         
-        $('#define .js-save').on('click', save);
+        $('#content .js-save').on('click', save);
 
-        $('#define .js-execute').on('click', function() {
+        $('#content .js-execute').on('click', function() {
             var command = Compilify.Prompt.getValue().trim();
             var classes = Compilify.Editor.getValue().trim();
             
@@ -232,9 +232,7 @@ if (typeof String.prototype.trim !== 'function') {
             $("#define .js-execute").click();
         });
         
-        shortcut.add("Ctrl+S",function() {
-	        $("#define .js-save").click();
-        });
+        shortcut.add("Ctrl+S", save);
 
     });
 }).call(window, window.jQuery, window._, window.Compilify || {});

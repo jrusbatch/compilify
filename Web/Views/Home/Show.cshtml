@@ -2,33 +2,21 @@
 
 @using (Html.BeginForm())
 {
-    
     <div class="container-fluid">
+        <div class="page-header">
+            <h2>
+                @(Model.Post.Title ?? "Untitled")
+            
+                <small>
+                    <a class="js-save" href="#">save</a>
+                    <a class="js-execute" href="#">run</a>
+                </small>
+            </h2>
+        </div>
+
         <div class="row-fluid">
             <div class="span6">
                 <div id="define">
-                    <div class="page-header">
-                        <h1>
-                            define
-                            <small>
-                                @if (Model.HasSlug)
-                                {
-                                    <a class="js-save" href="#">fork</a>
-                                    
-                                    if (Model.CurrentUserIsAuthor)
-                                    {
-                                        <a class="js-save" href="#">update</a>
-                                    }
-                                }
-                                else
-                                {
-                                    <a class="js-save" href="#">save</a>
-                                }
-                                
-                                <a class="js-execute" href="#">run</a>
-                            </small>
-                        </h1>
-                    </div>
                     <div class="editor">
                         @Html.TextAreaFor(x => x.Post.Classes)
                     </div>
@@ -36,10 +24,6 @@
             </div>
             <div class="span6">
                 <div id="execute">
-                    <div class="page-header">
-                        <h1>execute</h1>
-                    </div>
-
                     <div class="editor">
                         @Html.TextAreaFor(x => x.Post.Content)
                     </div>
