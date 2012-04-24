@@ -182,20 +182,29 @@ h1 {
     height: 450px;
 }
 
+.editor :-webkit-scrollbar-track-piece {
+    background-color: #fff;
+}
+
+.editor ::-webkit-scrollbar {
+    width: 12px;
+    height: 8px;
+}
+
+.editor ::-webkit-scrollbar-thumb {
+    background-color: #efefef;
+    
+    border: 1px solid #fff;
+    border-top: none;
+    border-bottom: none;
+}
+
+.editor ::-webkit-scrollbar-thumb:hover {
+    background-color: #e0e0e0;
+}
+
 .editor {
     position: relative;
-}
-
-.editor .editor-label {
-    position: absolute;
-    bottom: -7px;
-    right: 5px;
-}
-
-.editor .editor-label h1 {
-    font-size: 96px;
-    line-height: 96px;
-    color: #efefef;
 }
 
 #define .editor {
