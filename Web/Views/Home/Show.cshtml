@@ -7,9 +7,10 @@
             <h2>
                 @(Model.Post.Title ?? "Untitled")
             
-                <small>
+                <small class="commands">
+                    <a class="js-new" href="/">new</a>
                     <a class="js-save" href="#">save</a>
-                    <a class="js-execute" href="#">run</a>
+                    <a class="js-run" href="#">run</a>
                 </small>
             </h2>
         </div>

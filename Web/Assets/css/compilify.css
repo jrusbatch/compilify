@@ -93,8 +93,8 @@ p {
 
 .navbar .brand {
     color: #444;
-    padding-top: 16px;
-    padding-bottom: 24px;
+    padding-top: 10px;
+    padding-bottom: 15px;
 }
 
 .navbar .brand h1 {
@@ -109,8 +109,8 @@ p {
 .navbar .nav li a {
     padding-top: 0;
     padding-bottom: 0;
-    height: 76px;
-    line-height: 76px;
+
+    margin-top: 11px;
 }
 
 .navbar .nav > li > a:hover {
@@ -132,6 +132,10 @@ p {
 
 h1 {
     font-weight: normal;
+}
+
+#content .page-header {
+    margin: 9px 0;
 }
 
 .page-header {

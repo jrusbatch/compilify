@@ -215,7 +215,7 @@ if (typeof String.prototype.trim !== 'function') {
         
         $('#content .js-save').on('click', save);
 
-        $('#content .js-execute').on('click', function() {
+        $('#content .js-run').on('click', function() {
             var command = Compilify.Prompt.getValue().trim();
             var classes = Compilify.Editor.getValue().trim();
             
@@ -229,7 +229,7 @@ if (typeof String.prototype.trim !== 'function') {
         //
 
         shortcut.add("Ctrl+B",function() {
-            $("#define .js-execute").click();
+            $("#define .js-run").click();
         });
         
         shortcut.add("Ctrl+S", save);
