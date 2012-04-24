@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 using Compilify.Models;
 
 namespace Compilify.Web.Models
@@ -30,8 +31,6 @@ namespace Compilify.Web.Models
             Errors = new List<EditorError>();
         }
 
-        public bool CurrentUserIsAuthor { get; set; }
-
         public string Slug { get; set; }
         
         public int Version { get; set; }
@@ -42,8 +41,10 @@ namespace Compilify.Web.Models
         
         public Guid? AuthorId { get; set; }
 
+        [AllowHtml]
         public string Content { get; set; }
-
+        
+        [AllowHtml]
         public string Classes { get; set; }
 
         public string Tags { get; set; }

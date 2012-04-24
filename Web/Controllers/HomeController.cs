@@ -108,11 +108,6 @@ namespace Compilify.Web.Controllers
                                 Errors = errors
                             };
 
-            if (Request.IsAuthenticated && User.Identity.ToCompilifyIdentity().UserId == post.AuthorId)
-            {
-                viewModel.CurrentUserIsAuthor = true;
-            }
-
             if (Request.IsAjaxRequest())
             {
                 return Json(new { status = "ok", data = viewModel }, JsonRequestBehavior.AllowGet);
@@ -135,7 +130,6 @@ namespace Compilify.Web.Controllers
         }
 
         [HttpPost]
-        [ValidateInput(false)]
         public ActionResult Save(string slug, Post post)
         {
             if (Request.IsAuthenticated)
