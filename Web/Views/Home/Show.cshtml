@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <div class="page-header">
             <h2>
-                @(Model.Post.Title ?? "Untitled")
+                @(Model.Title ?? "Untitled")
             
                 <small class="commands">
                     <a class="js-new" href="/">new</a>
@@ -19,14 +19,14 @@
             <div class="span6">
                 <div id="define">
                     <div class="editor">
-                        @Html.TextAreaFor(x => x.Post.Classes)
+                        @Html.TextAreaFor(x => x.Classes)
                     </div>
                 </div>
             </div>
             <div class="span6">
                 <div id="execute">
                     <div class="editor">
-                        @Html.TextAreaFor(x => x.Post.Content)
+                        @Html.TextAreaFor(x => x.Content)
                     </div>
                 </div>
             </div>
@@ -42,7 +42,7 @@
                 {
                     foreach (var error in Model.Errors)
                     {
-                        <li class="message error">@error</li>
+                        <li class="message error">@error.Message</li>
                     }
                 }
             </ul>
