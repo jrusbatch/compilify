@@ -211,6 +211,13 @@ h1 {
     position: relative;
 }
 
+.editor .compilation-error {
+    background-color: rgba(229, 20, 0, 0.3);
+    -webkit-box-shadow: 0 0 2px rgba(229, 20, 0, 0.3);
+       -moz-box-shadow: 0 0 2px rgba(229, 20, 0, 0.3);
+            box-shadow: 0 0 2px rgba(229, 20, 0, 0.3);
+}
+
 #define .editor {
     background: #fff url(/assets/img/define.png) no-repeat bottom right;
 }
@@ -313,11 +320,4 @@ h1 {
     font-size: 200px;
     margin: 20px 0;
     line-height: 200px;
-}
-
-.editor .compilation-error {
-    background-color: rgba(229, 20, 0, 0.3);
-    -webkit-box-shadow: 0 0 2px rgba(229, 20, 0, 0.3);
-       -moz-box-shadow: 0 0 2px rgba(229, 20, 0, 0.3);
-            box-shadow: 0 0 2px rgba(229, 20, 0, 0.3);
 }

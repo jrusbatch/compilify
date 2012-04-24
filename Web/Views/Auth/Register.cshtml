@@ -1,0 +1,58 @@
+﻿@model Compilify.Web.Models.RegisterViewModel
+
+@{ ViewBag.Title = "Register"; }
+
+<div id="register">
+    <div class="container">
+        <div class="page-header">
+            <h1>register</h1>
+        </div>
+        <div class="row">
+            <div class="span10 offset1">
+                @using (Html.BeginForm("Register", "Auth", FormMethod.Post, new { @class = "form-horizontal" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "Account creation was unsuccessful. Please correct the errors and try again.")
+                    <fieldset>
+                        <div class="control-group">
+                            @Html.LabelFor(x => x.UserName, new { @class = "control-label" })
+                            <div class="controls">
+                                @Html.TextBoxFor(x => x.UserName)
+                                @Html.ValidationMessageFor(x => x.UserName, null, new { @class = "help-inline" })
+                            </div>
+                        </div>
+            
+                        <div class="control-group">
+                            @Html.LabelFor(x => x.Email, new { @class = "control-label" })
+                            <div class="controls">
+                                @Html.TextBoxFor(x => x.Email)
+                                @Html.ValidationMessageFor(x => x.Email, null, new { @class = "help-inline" })
+                            </div>
+                        </div>
+            
+                        <div class="control-group">
+                            @Html.LabelFor(x=> x.Password, new { @class = "control-label" })
+                            <div class="controls">
+                                @Html.PasswordFor(x => x.Password)
+                                @Html.ValidationMessageFor(x => x.Password, null, new { @class = "help-inline" })
+                            </div>
+                        </div>
+            
+                        <div class="control-group">
+                            @Html.LabelFor(x => x.ConfirmPassword, new { @class = "control-label" })
+                            <div class="controls">
+                                @Html.TextBoxFor(x => x.ConfirmPassword)
+                                @Html.ValidationMessageFor(x => x.ConfirmPassword, null, new { @class = "help-inline" })
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit">Submit</button>
+                        </div>
+                    </fieldset>
+                }
+                
+            </div>
+        </div>
+    </div>
+</div>

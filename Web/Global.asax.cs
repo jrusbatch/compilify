@@ -57,6 +57,7 @@ namespace Compilify.Web {
         private static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
+            filters.Add(new RequireHttpsOnAppHarborAttribute());
         }
 
         private static void RegisterRoutes(RouteCollection routes) {
@@ -161,7 +162,13 @@ namespace Compilify.Web {
             js.AddFile("~/assets/js/vendor/codemirror-2.23.js");
             js.AddFile("~/assets/js/vendor/codemirror-clike-2.23.js");
             js.AddFile("~/assets/js/vendor/jquery.signalr.js");
+            js.AddFile("~/assets/js/vendor/jquery.validate-1.8.0.js");
+            js.AddFile("~/assets/js/vendor/jquery.validate.unobtrusive.js");
+            js.AddFile("~/assets/js/vendor/jquery.validate-hooks.js");
+            js.AddFile("~/assets/js/vendor/jquery.signalr.js");
             js.AddFile("~/assets/js/vendor/shortcut.js");
+
+            js.AddFile("~/assets/js/compilify.validation.js");
             js.AddFile("~/assets/js/compilify.js");
             bundles.Add(js);
 

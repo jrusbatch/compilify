@@ -5,24 +5,24 @@ namespace Compilify.Web.Models
 {
     public class SignInViewModel
     {
-        [Display(Name = "open id")]
+        [Display(Name = "Open id")]
         public string OpenId { get; set; }
-
-        [Display(Name = "user name")]
-        public string UserName { get; set; }
-
-        [Display(Name = "password")]
+        
+        [Required]
+        [Display(Name = "Username")]
+        [DataType(DataType.EmailAddress)]
+        public string Username { get; set; }
+        
+        [Required]
+        [Display(Name = "Password")]
         public string Password { get; set; }
 
-        [Display(Name = "remember me")]
+        [Display(Name = "Remember Me")]
         public bool RememberMe { get; set; }
     }
 
     public class RegisterViewModel
     {
-        [Display(Name = "OpenID")]
-        public string OpenID { get; set; }
-
         [Required]
         [Display(Name = "User name")]
         public string UserName { get; set; }
