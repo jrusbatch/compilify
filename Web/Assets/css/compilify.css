@@ -20,6 +20,34 @@
     font-style: normal;
 }
 
+* {
+    margin: 0;
+}
+
+html, 
+body {
+    height: 100%;
+}
+
+#wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -75px;
+}
+
+#push,
+#footer {
+    height: 75px;
+}
+
+#footer {
+}
+
+#footer .footer-inner {
+    padding-top: 15px;
+}
+
 html {
     min-width: 1006px;
 }
@@ -52,7 +80,7 @@ p {
 .navbar-inner {
     color: #000;
     filter: none;
-    background: #f1f1f1;
+    background: #efefef;
 
     -webkit-border-radius: 0;
        -moz-border-radius: 0;
@@ -70,7 +98,7 @@ p {
 }
 
 .navbar .brand h1 {
-    font-size: 36px;
+    font-size: 32px;
 }
 
 .navbar .brand h1 small {
@@ -155,6 +183,30 @@ h1 {
     min-height: 300px;
     overflow-x: auto;
     overflow-y: hidden;
+}
+
+.editor {
+    position: relative;
+}
+
+.editor .editor-label {
+    position: absolute;
+    bottom: -7px;
+    right: 5px;
+}
+
+.editor .editor-label h1 {
+    font-size: 96px;
+    line-height: 96px;
+    color: #efefef;
+}
+
+#define .editor {
+    background: #fff url(/assets/img/define.png) no-repeat bottom right;
+}
+
+#execute .editor {
+    background: #fff url(/assets/img/execute.png) no-repeat bottom right;
 }
 
 .messages ul {

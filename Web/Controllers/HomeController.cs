@@ -26,14 +26,7 @@ namespace Compilify.Web.Controllers
         {
             var classesBuilder = new StringBuilder();
 
-            classesBuilder.AppendLine("public interface IPerson");
-            classesBuilder.AppendLine("{");
-            classesBuilder.AppendLine("    string Name { get; }");
-            classesBuilder.AppendLine();
-            classesBuilder.AppendLine("    string Greet();");
-            classesBuilder.AppendLine("}");
-            classesBuilder.AppendLine();
-            classesBuilder.AppendLine("class Person : IPerson");
+            classesBuilder.AppendLine("class Person");
             classesBuilder.AppendLine("{");
             classesBuilder.AppendLine("    public Person(string name)");
             classesBuilder.AppendLine("    {");
@@ -53,7 +46,7 @@ namespace Compilify.Web.Controllers
             
             var commandBuilder = new StringBuilder();
 
-            commandBuilder.AppendLine("IPerson person = new Person(name: null);");
+            commandBuilder.AppendLine("var person = new Person(name: null);");
             commandBuilder.AppendLine("");
             commandBuilder.AppendLine("return person.Greet();");
             

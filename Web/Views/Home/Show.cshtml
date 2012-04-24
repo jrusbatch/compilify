@@ -2,6 +2,7 @@
 
 @using (Html.BeginForm())
 {
+    
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span6">
@@ -12,11 +13,11 @@
                             <small>
                                 @if (Model.HasSlug)
                                 {
-                                    <a class="js-save">fork</a>
+                                    <a class="js-save" href="#">fork</a>
                                     
                                     if (Model.CurrentUserIsAuthor)
                                     {
-                                        <a class="js-save">update</a>
+                                        <a class="js-save" href="#">update</a>
                                     }
                                 }
                                 else
@@ -28,7 +29,6 @@
                             </small>
                         </h1>
                     </div>
-            
                     <div class="editor">
                         @Html.TextAreaFor(x => x.Post.Classes)
                     </div>
