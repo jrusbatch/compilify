@@ -1,6 +1,4 @@
 ﻿using System.Linq;
-using System.Net;
-using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Compilify.Models;
@@ -25,41 +23,6 @@ namespace Compilify.Web.Controllers
 
         public ActionResult Index()
         {
-            //var classesBuilder = new StringBuilder();
-
-            //classesBuilder.AppendLine("class Person");
-            //classesBuilder.AppendLine("{");
-            //classesBuilder.AppendLine("    public Person(string name)");
-            //classesBuilder.AppendLine("    {");
-            //classesBuilder.AppendLine("        Name = name;");
-            //classesBuilder.AppendLine("    }");
-            //classesBuilder.AppendLine();
-            //classesBuilder.AppendLine("    public string Name { get; private set; }");
-            //classesBuilder.AppendLine();
-            //classesBuilder.AppendLine("    public string Greet()");
-            //classesBuilder.AppendLine("    {");
-            //classesBuilder.AppendLine("        if (Name == null)");
-            //classesBuilder.AppendLine("            return \"Hello, stranger!\";");
-            //classesBuilder.AppendLine();
-            //classesBuilder.AppendLine("        return string.Format(\"Hello, {0}!\", Name);");
-            //classesBuilder.AppendLine("    }");
-            //classesBuilder.AppendLine("}");
-            
-            //var commandBuilder = new StringBuilder();
-
-            //commandBuilder.AppendLine("var person = new Person(name: null);");
-            //commandBuilder.AppendLine("");
-            //commandBuilder.AppendLine("return person.Greet();");
-            
-            //var post = new Post { Content = commandBuilder.ToString(), Classes = classesBuilder.ToString() };
-            
-            //var errors = compiler.GetCompilationErrors(post.Content, post.Classes)
-            //                     .Select(x => new EditorError
-            //                                  {
-            //                                      Location = x.Location.GetLineSpan(true),
-            //                                      Message = x.Info.GetMessage()
-            //                                  });
-
             var viewModel = new PostViewModel
                             {
                                 Errors = Enumerable.Empty<EditorError>()
