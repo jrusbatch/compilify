@@ -179,10 +179,7 @@ h1 {
 }
 
 .editor .CodeMirror-scroll {
-    height: auto;
-    min-height: 300px;
-    overflow-x: auto;
-    overflow-y: hidden;
+    height: 450px;
 }
 
 .editor {
