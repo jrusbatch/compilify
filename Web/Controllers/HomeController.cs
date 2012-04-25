@@ -29,35 +29,32 @@ namespace Compilify.Web.Controllers
         {
             var post = new Post();
 
-            var classesBuilder = new StringBuilder();
+            var builder = new StringBuilder();
 
-            classesBuilder.AppendLine("class Person");
-            classesBuilder.AppendLine("{");
-            classesBuilder.AppendLine("    public Person(string name)");
-            classesBuilder.AppendLine("    {");
-            classesBuilder.AppendLine("        Name = name;");
-            classesBuilder.AppendLine("    }");
-            classesBuilder.AppendLine();
-            classesBuilder.AppendLine("    public string Name { get; private set; }");
-            classesBuilder.AppendLine();
-            classesBuilder.AppendLine("    public string Greet()");
-            classesBuilder.AppendLine("    {");
-            classesBuilder.AppendLine("        if (Name == null)");
-            classesBuilder.AppendLine("            return \"Hello, stranger!\";");
-            classesBuilder.AppendLine();
-            classesBuilder.AppendLine("        return string.Format(\"Hello, {0}!\", Name);");
-            classesBuilder.AppendLine("    }");
-            classesBuilder.AppendLine("}");
+            post.Classes = builder.AppendLine("class Person")
+                                  .AppendLine("{")
+                                  .AppendLine("    public Person(string name)")
+                                  .AppendLine("    {")
+                                  .AppendLine("        Name = name;")
+                                  .AppendLine("    }")
+                                  .AppendLine()
+                                  .AppendLine("    public string Name { get; private set; }")
+                                  .AppendLine()
+                                  .AppendLine("    public string Greet()")
+                                  .AppendLine("    {")
+                                  .AppendLine("        if (Name == null)")
+                                  .AppendLine("            return \"Hello, stranger!\";")
+                                  .AppendLine()
+                                  .AppendLine("        return string.Format(\"Hello, {0}!\", Name);")
+                                  .AppendLine("    }")
+                                  .AppendLine("}")
+                                  .ToString();
 
-            post.Classes = classesBuilder.ToString();
-
-            var commandBuilder = new StringBuilder();
-
-            commandBuilder.AppendLine("var person = new Person(name: null);");
-            commandBuilder.AppendLine("");
-            commandBuilder.AppendLine("return person.Greet();");
-            
-            post.Content = commandBuilder.ToString();
+            post.Content = builder.Clear()
+                                  .AppendLine("var person = new Person(name: null);")
+                                  .AppendLine("")
+                                  .AppendLine("return person.Greet();")
+                                  .ToString();
 
             var errors = compiler.GetCompilationErrors(post.Content, post.Classes)
                                  .Select(x => new EditorError
