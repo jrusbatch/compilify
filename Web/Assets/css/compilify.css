@@ -92,6 +92,51 @@ strong {
     bottom: 0;
 }
 
+#commands {
+    font-family: "Segoe UI Light", "Helvetica Neue", 'RobotoLight', "Segoe UI", "Segoe WP", sans-serif;
+    padding: 0 10px;
+    margin: 9px 0;
+    font-size: 18px;
+    line-height: 32px;
+    font-weight: normal;
+}
+
+#commands a {
+    padding-left: 10px;
+}
+
+#editors {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 150px;
+}
+
+#editors #define {
+    position: absolute;
+    padding-right: 10px;
+    left: 20px;
+    right: 50%;
+    top: 0;
+    bottom: 0;
+}
+#editors #execute {
+    position: absolute;
+    padding-left: 10px;
+    left: 50%;
+    right: 20px;
+    top: 0;
+    bottom: 0;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
 #results {
     position: absolute;
     padding: 0 20px 20px;

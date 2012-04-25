@@ -2,78 +2,54 @@
 
 @using (Html.BeginForm())
 {
-    <div id="editors">
-        
+    <div id="commands">
+        <a class="js-new" href="/">new</a>
+        <a class="js-save" href="#">save</a>
+        <a class="js-run" href="#">run</a>
     </div>
     
+    <div id="editors">
+        <div id="define">
+            <div class="editor">
+                @Html.TextAreaFor(x => x.Classes)
+            </div>
+        </div>
+
+        <div id="execute">
+            <div class="editor">
+                @Html.TextAreaFor(x => x.Content)
+            </div>
+        </div>
+    </div>
     
-    <div style="padding: 0 20px;">
-        <div class="page-header">
-            <h2>
-                @*@(Model.Title ?? "Untitled")*@
-            
-                <small class="commands">
-                    <a class="js-new" href="/">new</a>
-                    <a class="js-save" href="#">save</a>
-                    <a class="js-run" href="#">run</a>
-                </small>
-            </h2>
-        </div>
-
-        <div class="row-fluid">
-            <div class="span6">
-                <div id="define">
-                    <div class="editor">
-                        @Html.TextAreaFor(x => x.Classes)
-                    </div>
-                </div>
-            </div>
-            <div class="span6">
-                <div id="execute">
-                    <div class="editor">
-                        @Html.TextAreaFor(x => x.Content)
-                    </div>
-                </div>
-            </div>
-        </div>
-
+    <div class="footer">
         <div id="results">
-            @*<div class="messages">
-                <ul>
-                    @if (!Model.Errors.Any())
-                    {
-                        <li class="message success">Build completed successfully!</li>
-                    }
-                    else
-                    {
-                        foreach (var error in Model.Errors)
-                        {
-                            <li class="message error">@error.Message</li>
-                        }
-                    }
-                </ul>
-            </div>*@
             <pre></pre>
         </div>
         
-        
         <div id="status">
             @*
-                This should remain partially hidden most of the time. When the user hovers over it, it should appear to 
-                rise from below the browser window to display any messages it might contain.
+            This should remain partially hidden most of the time. When the user hovers over it, it should appear to 
+            rise from below the browser window to display any messages it might contain.
                 
-                An indicator could also be displayed here when loading content or waiting for the result of an execution.
+            An indicator could also be displayed here when loading content or waiting for the result of an execution.
                 
-                The color of the status bar should change based on the status of the user's code:
+            The color of the status bar should change based on the status of the user's code:
 
-                    * Red - there are errors in the user's code
-                    * Green - there are no errors in the user's code
+                * Red - there are errors in the user's code
+                * Green - there are no errors in the user's code
 
-                Other future possibilities include:
+            Other future possibilities include:
 
-                    * Yellow - there are warnings in the user's code 
+                * Yellow - there are warnings in the user's code 
             *@
                 
         </div>
     </div>
+}
+
+@section PageScripts {
+    <script>
+        
+    </script>
 }
