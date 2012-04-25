@@ -20,7 +20,7 @@ namespace Compilify.Web.Controllers
 
         private readonly IPostRepository db;
         private readonly CSharpCompiler compiler;
-
+        
         public ActionResult Index()
         {
             var viewModel = new PostViewModel
@@ -66,7 +66,7 @@ namespace Compilify.Web.Controllers
                                                   Message = x.Info.GetMessage()
                                               });
 
-            var viewModel = new PostViewModel
+            var viewModel = new PostViewModel(post)
                             {
                                 Errors = errors
                             };
@@ -82,17 +82,18 @@ namespace Compilify.Web.Controllers
         [HttpGet]
         public ActionResult Latest(string slug)
         {
-            var latest = db.GetLatestVersion(slug);
+            var version = db.GetLatestVersion(slug);
 
-            if (latest < 1)
+            if (version < 1)
             {
                 return PostNotFound();
             }
 
-            return RedirectToAction("Show", "Home", new { slug = slug, version = latest });
+            return RedirectToAction("Show", "Home", BuildRouteParametersForPost(slug, version));
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult Save(string slug, Post post)
         {
             if (Request.IsAuthenticated)
@@ -108,17 +109,11 @@ namespace Compilify.Web.Controllers
 
             var result = db.Save(slug, post);
 
-            var routeValues = new RouteValueDictionary { { "slug", result.Slug } };
-
-            if (result.Version > 1)
-            {
-                routeValues.Add("version", result.Version);
-            }
-
-            return RedirectToAction("Show", routeValues);
+            return RedirectToAction("Show", BuildRouteParametersForPost(result.Slug, result.Version));
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult Validate(ValidateViewModel viewModel)
         {
             var errors = compiler.GetCompilationErrors(viewModel.Command, viewModel.Classes)
@@ -130,6 +125,18 @@ namespace Compilify.Web.Controllers
                                               });
 
             return Json(new { status = "ok", data = errors });
+        }
+
+        private static RouteValueDictionary BuildRouteParametersForPost(string slug, int? version)
+        {
+            var routeValues = new RouteValueDictionary { { "slug", slug } };
+
+            if (version.HasValue && version > 1)
+            {
+                routeValues.Add("version", version);
+            }
+
+            return routeValues;
         }
 
         private ActionResult PostNotFound()
