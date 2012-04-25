@@ -30,5 +30,18 @@ namespace Compilify.Web.Infrastructure.Extensions
                       })();
                   </script>");
         }
+        
+        public static MvcHtmlString Insights(this HtmlHelper helper)
+        {
+            var accountId = ConfigurationManager.AppSettings["Compilify.FacebookInsightAccount"];
+
+            if (helper.ViewContext.HttpContext.IsDebuggingEnabled || string.IsNullOrWhiteSpace(accountId))
+            {
+                return MvcHtmlString.Empty;
+            }
+
+            return MvcHtmlString.Create("<meta property=\"fb:admins\" content=\"" + accountId + "\" />");
+        }
     }
+
 }
