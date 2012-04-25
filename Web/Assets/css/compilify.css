@@ -172,10 +172,10 @@ strong {
     background-color: #1BA1E2;
     opacity: 0.6;
     
-    -webkit-transition: height 0.1s;
+    /*-webkit-transition: height 0.1s;
        -moz-transition: height 0.1s;
          -o-transition: height 0.1s;
-            transition: height 0.1s;
+            transition: height 0.1s;*/
 }
 
 #footer .status .messages li {
