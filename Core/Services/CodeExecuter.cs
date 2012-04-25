@@ -99,7 +99,7 @@ namespace Compilify.Services
                                              }
                                              catch (Exception ex)
                                              {
-                                                 result = ex.Message;
+                                                 result = ex.ToString();
                                              }
                                          });
 
@@ -112,7 +112,7 @@ namespace Compilify.Services
             }
             catch (Exception ex)
             {
-                result = ex.Message;
+                result = ex.ToString();
             }
             
             if (!unloaded)
