@@ -63,7 +63,11 @@ namespace Compilify.Web.Controllers
 
             var request = openId.CreateRequest(Identifier.Parse(model.OpenId));
 
-            request.AddExtension(new ClaimsRequest { Email = DemandLevel.Require });
+            request.AddExtension(new ClaimsRequest
+                                 {
+                                     Email = DemandLevel.Require,
+                                     Nickname = DemandLevel.Require
+                                 });
 
             return request.RedirectingResponse.AsActionResult();
         }
@@ -73,58 +77,62 @@ namespace Compilify.Web.Controllers
         {
             var response = openId.GetResponse();
 
-            if (response != null)
+            if (response == null)
             {
-                switch (response.Status)
+                return RedirectToAction("SignIn", "Auth");
+            }
+
+            switch (response.Status)
+            {
+                case AuthenticationStatus.Authenticated:
                 {
-                    case AuthenticationStatus.Authenticated:
+                    var username = response.ClaimedIdentifier;
+                    string email = null;
+
+                    var fields = response.GetExtension<ClaimsResponse>();
+                    if (fields != null)
                     {
-                        var username = response.ClaimedIdentifier;
-                        string email = null;
-
-                        var fields = response.GetExtension<ClaimsResponse>();
-                        if (fields != null)
-                        {
-                            email = fields.Email;
-                        }
-
-                        var user = Membership.GetUser(username) ??
-                                   Membership.CreateUser(username, Guid.NewGuid().ToString("N"), email);
-
-                        var userId = ((Guid)user.ProviderUserKey).ToString("N");
-
-                        var issued = DateTime.Now;
-                        var expires = issued + FormsAuthentication.Timeout;
-                        var ticket = new FormsAuthenticationTicket(1, username, issued, expires, true, userId);
-
-                        var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, 
-                                                    FormsAuthentication.Encrypt(ticket))
-                                     {
-                                         Domain = FormsAuthentication.CookieDomain,
-                                         Path = FormsAuthentication.FormsCookiePath,
-                                         Secure = FormsAuthentication.RequireSSL,
-                                         Expires = ticket.Expiration,
-                                         HttpOnly = true,
-                                     };
-
-                        Response.Cookies.Add(cookie);
-
-                        return Redirect(returnUrl ?? FormsAuthentication.DefaultUrl);
+                        email = fields.Email;
                     }
-                    case AuthenticationStatus.Canceled:
-                    {
-                        ModelState.AddModelError("loginIdentifier", "Login was cancelled at the provider");
-                        break;
-                    }
-                    case AuthenticationStatus.Failed:
-                    {
-                        ModelState.AddModelError("loginIdentifier",  "Login failed using the provided OpenID identifier");
-                        break;
-                    }
+
+                    var user = Membership.GetUser(username) ??
+                               Membership.CreateUser(username, Guid.NewGuid().ToString("N"), email);
+                    var userId = ((Guid)user.ProviderUserKey).ToString("N");
+                    var cookie = CreateAuthenticationCookie(userId);
+
+                    Response.Cookies.Add(cookie);
+
+                    return Redirect(returnUrl ?? FormsAuthentication.DefaultUrl);
+                }
+                case AuthenticationStatus.Canceled:
+                {
+                    ModelState.AddModelError("loginIdentifier", "Login was cancelled at the provider");
+                    break;
+                }
+                case AuthenticationStatus.Failed:
+                {
+                    ModelState.AddModelError("loginIdentifier",  "Login failed using the provided OpenID identifier");
+                    break;
                 }
             }
 
             return RedirectToAction("SignIn", "Auth");
+        }
+
+        private HttpCookie CreateAuthenticationCookie(string userId)
+        {
+            var issued = DateTime.Now;
+            var expires = issued + FormsAuthentication.Timeout;
+            var ticket = new FormsAuthenticationTicket(1, userId, issued, expires, true, userId);
+
+            return new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket))
+                   {
+                       Domain = FormsAuthentication.CookieDomain,
+                       Path = FormsAuthentication.FormsCookiePath,
+                       Secure = FormsAuthentication.RequireSSL,
+                       Expires = ticket.Expiration,
+                       HttpOnly = true,
+                   };
         }
 
         public ActionResult SignOut()

@@ -150,8 +150,10 @@ h1 {
 #social {
     list-style: none;
     display: inline-block;
-    margin-top: 10px;
+    margin-top: 20px;
     width: 325px;
+    
+    
 }
 
 #social li {

@@ -37,12 +37,17 @@
                     <ul class="nav">
                         <li>@Html.ActionLink("about", "About", "Home")</li>
                     </ul>
+                    
+                    @Html.Partial("_Share")
+
+                    @*
                     <ul class="nav pull-right">
                         <li>
                             @(Request.IsAuthenticated ? Html.ActionLink("sign out", "SignOut", "Auth") 
                                                       : Html.ActionLink("sign in", "SignIn", "Auth"))
                         </li>
                     </ul>
+*@
                 </div>
             </div>
         </div>
@@ -57,7 +62,7 @@
     <div id="footer">
         <div class="footer-inner" style="">
             <div class="container-fluid">
-                @Html.Partial("_Share")
+                
                 <div class="pull-right">
                     <a href="http://appharbor.com">
                         <img src="~/assets/img/appharbor.png" alt="Hosted by AppHarbor"/>

@@ -60,7 +60,8 @@ namespace Compilify.Web {
             filters.Add(new RequireHttpsOnAppHarborAttribute());
         }
 
-        private static void RegisterRoutes(RouteCollection routes) {
+        private static void RegisterRoutes(RouteCollection routes)
+        {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapLowercaseRoute(
@@ -77,11 +78,11 @@ namespace Compilify.Web {
                 constraints: new { httpMethod = new HttpMethodConstraint("GET") }
             );
 
-            routes.MapLowercaseRoute(
-                name: "Auth",
-                url: "auth/{action}",
-                defaults: new { controller = "Auth" }
-            );
+            //routes.MapLowercaseRoute(
+            //    name: "Auth",
+            //    url: "auth/{action}",
+            //    defaults: new { controller = "Auth" }
+            //);
 
             routes.MapLowercaseRoute(
                 name: "validate",
@@ -96,7 +97,8 @@ namespace Compilify.Web {
                 name: "Update",
                 url: "{slug}/{version}",
                 defaults: new { controller = "Home", action = "Save", version = UrlParameter.Optional },
-                constraints: new {
+                constraints: new
+                             {
                                  httpMethod = new HttpMethodConstraint("POST"),
                                  slug = @"[a-z0-9]*",
                              }
@@ -106,7 +108,8 @@ namespace Compilify.Web {
                 name: "Save",
                 url: "{slug}",
                 defaults: new { controller = "Home", action = "Save", slug = UrlParameter.Optional },
-                constraints: new {
+                constraints: new
+                             {
                                  httpMethod = new HttpMethodConstraint("POST"),
                                  slug = @"[a-z0-9]*"
                              }
@@ -116,7 +119,8 @@ namespace Compilify.Web {
                 name: "Show",
                 url: "{slug}/{version}",
                 defaults: new { controller = "Home", action = "Show", version = UrlParameter.Optional },
-                constraints: new {
+                constraints: new
+                             {
                                  httpMethod = new HttpMethodConstraint("GET"),
                                  slug = @"[a-z0-9]+",
                                  version = @"\d*"
@@ -127,7 +131,8 @@ namespace Compilify.Web {
                 name: "Latest",
                 url: "{slug}/latest",
                 defaults: new { controller = "Home", action = "Latest" },
-                constraints: new {
+                constraints: new
+                             {
                                  httpMethod = new HttpMethodConstraint("GET"),
                                  slug = @"[a-z0-9]+"
                              }
