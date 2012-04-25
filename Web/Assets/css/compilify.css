@@ -118,11 +118,10 @@ strong {
     right: 0;
     top: 0;
 }
-#editors .CodeMirror,
-#editors .CodeMirror-scroll {
+#editors .CodeMirror {
     height: 100%;
-  overflow-y: hidden;
-  overflow-x: auto;
+    overflow-y: hidden;
+    overflow-x: auto;
     width: 100%;
 }
 
