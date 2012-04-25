@@ -29,29 +29,6 @@ body {
     height: 100%;
 }
 
-#wrapper {
-    min-height: 100%;
-    height: auto !important;
-    height: 100%;
-    margin: 0 auto -75px;
-}
-
-#push,
-#footer {
-    height: 75px;
-}
-
-#footer {
-}
-
-#footer .footer-inner {
-    padding-top: 15px;
-}
-
-html {
-    min-width: 1006px;
-}
-
 body {
     font-size: 14px;
     margin: 0;
@@ -72,6 +49,7 @@ strong {
     right: 0;
 
     height: 61px;
+    min-width: 600px;
 }
 
 #content {
@@ -107,6 +85,9 @@ strong {
 
 #editors {
     position: absolute;
+
+    margin: 0 20px;
+    
     top: 50px;
     left: 0;
     right: 0;
@@ -115,19 +96,34 @@ strong {
 
 #editors #define {
     position: absolute;
-    padding-right: 10px;
-    left: 20px;
+    margin-right: 10px;
+    left: 0;
     right: 50%;
     top: 0;
     bottom: 0;
 }
 #editors #execute {
     position: absolute;
-    padding-left: 10px;
+    margin-left: 10px;
     left: 50%;
-    right: 20px;
+    right: 0;
     top: 0;
     bottom: 0;
+}
+
+#editors .editor {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+#editors .CodeMirror,
+#editors .CodeMirror-scroll {
+    height: 100%;
+  overflow-y: hidden;
+  overflow-x: auto;
+    width: 100%;
 }
 
 .footer {
@@ -135,6 +131,7 @@ strong {
     bottom: 0;
     left: 0;
     right: 0;
+    height: 25%;
 }
 
 #results {
@@ -147,6 +144,7 @@ strong {
 }
 
 #results pre {
+    margin-bottom: 0;
     -webkit-border-radius: 0;
        -moz-border-radius: 0;
             border-radius: 0;
@@ -154,7 +152,7 @@ strong {
 
 #status {
     position: absolute;
-    height: 15px;
+    height: 10px;
     bottom: 0;
     left: 0;
     right: 0;
