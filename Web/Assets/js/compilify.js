@@ -111,12 +111,15 @@
                 markedErrors.length = 0;
 
                 if (_.isArray(data)) {
-                    var $list = $('.messages ul').detach().empty();
+                    var $list = $('#footer .status ul.messages').detach().empty();
 
                     if (data.length == 0) {
-                        $list.append('<li class="message success">Build ' +
-                            'completed successfully.</li>');
+                        $('#footer .status').removeClass('status-error').addClass('status-success');
+                        $list.html("<li>No errors!</li>");
+                        
                     } else {
+                        $('#footer .status').removeClass('status-success').addClass('status-error');
+                        
                         for (var index in msg.data) {
                             var error = msg.data[index];
 
@@ -132,12 +135,12 @@
 
                             var message = 'Line: ' + (start.Line + 1) + ' Column: ' + start.Character + ' - ' + error.Message;
 
-                            $list.append('<li class="message error" data-errorId="' + index + '">' +
+                            $list.append('<li data-errorId="' + index + '">' +
                                 htmlEscape(message) + '</li>');
                         }
                     }
 
-                    $('.messages').append($list);
+                    $('#footer .status').append($list);
                 }
             }
         });

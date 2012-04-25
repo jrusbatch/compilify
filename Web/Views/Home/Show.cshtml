@@ -27,9 +27,9 @@
             <pre></pre>
         </div>
         
-        <div class="status">
-            <p>No errors.</p>
-
+        @{ var hasErrors = Model.Errors != null && Model.Errors.Any(); }
+        
+        <div class="status @(hasErrors ? "status-error" : "status-success")">
             @*
             This should remain partially hidden most of the time. When the user hovers over it, it should appear to 
             rise from below the browser window to display any messages it might contain.
@@ -45,7 +45,20 @@
 
                 * Yellow - there are warnings in the user's code 
             *@
-                
+            
+            <ul class="messages">
+                @if (!hasErrors)
+                {
+                    <li>No errors!</li>
+                }
+                else
+                {
+                    foreach (var error in Model.Errors)
+                    {
+                        <li>@error.Message</li>
+                    }
+                }
+            </ul>
         </div>
     </div>
 }

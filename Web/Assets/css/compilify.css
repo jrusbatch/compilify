@@ -178,27 +178,26 @@ strong {
             transition: height 0.1s;
 }
 
-#footer .status p {
+#footer .status .messages li {
     font-family: "Segoe UI", "Segoe WP", "Helvetica Neue", 'RobotoRegular', sans-serif;
     color: white;
-    padding: 10px 20px;
     margin: 0;
     font-size: 16px;
 }
 
 #footer .status:hover {
-    height: 38px;
+    height: auto;
 }
 
-#footer .status .status-success {
+#footer .status.status-success {
     background-color: #339933;
 }
 
-#footer .status .status-warning {
+#footer .status.status-warning {
     background-color: #F09609;
 }
 
-#footer .status .status-error {
+#footer .status.status-error {
     background-color: #E51400;
 }
 
@@ -361,12 +360,12 @@ h1 {
     background: #fff url(/assets/img/execute.png) no-repeat bottom right;
 }
 
-.messages ul {
+#footer .status .messages  {
     list-style: none;
     margin-left: 0;
 }
 
-.messages .message {
+#footer .status .messages {
     padding: 5px 0 5px 25px;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -375,17 +374,6 @@ h1 {
     margin-bottom: 5px;
 
     color: white;
-        
-    -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-       -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-
-    opacity: .4;
-
-    -webkit-transition: opacity 0.15s linear;
-       -moz-transition: opacity 0.15s linear;
-         -o-transition: opacity 0.15s linear;
-            transition: opacity 0.15s linear;
 }
 
 .messages .message:hover {
