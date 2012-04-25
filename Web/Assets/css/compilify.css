@@ -126,7 +126,7 @@ strong {
     width: 100%;
 }
 
-.footer {
+#footer {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -134,7 +134,7 @@ strong {
     height: 25%;
 }
 
-#results {
+#footer .results {
     position: absolute;
     padding: 0 20px 20px;
     bottom: 0;
@@ -143,20 +143,32 @@ strong {
     right: 0;
 }
 
-#results pre {
+#footer .results pre {
+    
+}
+
+#footer .results pre {
+    min-height: 100px;
+
+    background: #f5f5f5 url(/assets/img/observe.png) no-repeat bottom right;
+
     margin-bottom: 0;
+    
+    border: none;
     -webkit-border-radius: 0;
        -moz-border-radius: 0;
             border-radius: 0;
 }
 
-#status {
+#footer .status {
     position: absolute;
+
     height: 10px;
+
     bottom: 0;
     left: 0;
     right: 0;
-    
+
     background-color: #1BA1E2;
     opacity: 0.6;
     
@@ -166,19 +178,27 @@ strong {
             transition: height 0.1s;
 }
 
-#status:hover {
-    height: 30px;
+#footer .status p {
+    font-family: "Segoe UI", "Segoe WP", "Helvetica Neue", 'RobotoRegular', sans-serif;
+    color: white;
+    padding: 10px 20px;
+    margin: 0;
+    font-size: 16px;
 }
 
-#status .status-success {
+#footer .status:hover {
+    height: 38px;
+}
+
+#footer .status .status-success {
     background-color: #339933;
 }
 
-#status .status-warning {
+#footer .status .status-warning {
     background-color: #F09609;
 }
 
-#status .status-error {
+#footer .status .status-error {
     background-color: #E51400;
 }
 
@@ -291,18 +311,6 @@ h1 {
     -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
        -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-}
-
-#results pre {
-    min-height: 100px;
-
-    background: #f5f5f5 url(/assets/img/observe.png) no-repeat bottom right;
-    
-    
-    border: none;
-    -webkit-border-radius: 0;
-       -moz-border-radius: 0;
-            border-radius: 0;
 }
 
 .CodeMirror pre.CodeMirror-cursor {
