@@ -130,6 +130,10 @@ p {
             transition: color 0.25s;
 }
 
+.navbar .appharbor {
+    margin-top: 5px;
+}
+
 h1 {
     font-weight: normal;
 }
@@ -150,10 +154,7 @@ h1 {
 #social {
     list-style: none;
     display: inline-block;
-    margin-top: 20px;
-    width: 325px;
-    
-    
+    margin-top: 25px;
 }
 
 #social li {
@@ -174,6 +175,11 @@ h1 {
 }
 
 #results pre {
+    min-height: 100px;
+
+    background: #f5f5f5 url(/assets/img/observe.png) no-repeat bottom right;
+    
+    
     border: none;
     -webkit-border-radius: 0;
        -moz-border-radius: 0;

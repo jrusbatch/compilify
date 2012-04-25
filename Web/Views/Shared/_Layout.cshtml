@@ -37,9 +37,13 @@
                     <ul class="nav">
                         <li>@Html.ActionLink("about", "About", "Home")</li>
                     </ul>
-                    
+                    <div class="appharbor pull-right">
+                        <a href="http://appharbor.com">
+                            <img src="~/assets/img/appharbor.png" alt="Hosted by AppHarbor"/>
+                        </a>
+                    </div>
                     @Html.Partial("_Share")
-
+                    
                     @*
                     <ul class="nav pull-right">
                         <li>
@@ -60,14 +64,17 @@
     </div>
 
     <div id="footer">
-        <div class="footer-inner" style="">
+        <div class="footer-inner">
             <div class="container-fluid">
-                
+            @*<p>
+                    
+                </p>
                 <div class="pull-right">
                     <a href="http://appharbor.com">
                         <img src="~/assets/img/appharbor.png" alt="Hosted by AppHarbor"/>
                     </a>
                 </div>
+                *@
             </div>
         </div>
     </div>
