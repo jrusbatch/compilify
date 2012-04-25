@@ -144,7 +144,8 @@ strong {
 }
 
 #footer .results pre {
-    
+    height: 100px;
+    overflow: auto;
 }
 
 #footer .results pre {
