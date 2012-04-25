@@ -159,7 +159,7 @@
     function setResult(result) {
         /// <summary>
         /// Sets the content displayed in the results section.</summary>
-        $('#results pre').html(result);
+        $('#footer .results pre').html(result);
     }
 
     $(function() {
