@@ -27,56 +27,37 @@
     @Html.Analytics()
 </head>
 <body dir="ltr">
-    <div id="wrapper">
-        <div class="navbar">
-            <div class="navbar-inner">
-                <div class="container-fluid">
-                    <a class="brand" href="@Url.Action("Index", "Home")">
-                        <h1>compilify<strong>.net</strong> <small>alpha</small></h1>
-                    </a>
-                    <ul class="nav">
-                        <li>@Html.ActionLink("about", "About", "Home")</li>
-                    </ul>
-                    <div class="appharbor pull-right">
-                        <a href="http://appharbor.com">
-                            <img src="~/assets/img/appharbor.png" alt="Hosted by AppHarbor"/>
-                        </a>
-                    </div>
-                    @Html.Partial("_Share")
-                    
-                    @*
-                    <ul class="nav pull-right">
-                        <li>
-                            @(Request.IsAuthenticated ? Html.ActionLink("sign out", "SignOut", "Auth") 
-                                                      : Html.ActionLink("sign in", "SignIn", "Auth"))
-                        </li>
-                    </ul>
-*@
-                </div>
-            </div>
-        </div>
-    
-        <div id="content">
-            @RenderBody()
-        </div>
-
-        <div id="push"></div>
-    </div>
-
-    <div id="footer">
-        <div class="footer-inner">
+    <div id="header" class="navbar">
+        <div class="navbar-inner">
             <div class="container-fluid">
-            @*<p>
-                    
-                </p>
-                <div class="pull-right">
+                <a class="brand" href="@Url.Action("Index", "Home")">
+                    <h1>compilify<strong>.net</strong> <small>alpha</small></h1>
+                </a>
+                <ul class="nav">
+                    <li>@Html.ActionLink("about", "About", "Home")</li>
+                </ul>
+                <div class="appharbor pull-right">
                     <a href="http://appharbor.com">
                         <img src="~/assets/img/appharbor.png" alt="Hosted by AppHarbor"/>
                     </a>
                 </div>
+
+                @Html.Partial("_Share")
+                    
+                @*
+                <ul class="nav pull-right">
+                    <li>
+                        @(Request.IsAuthenticated ? Html.ActionLink("sign out", "SignOut", "Auth") 
+                                                    : Html.ActionLink("sign in", "SignIn", "Auth"))
+                    </li>
+                </ul>
                 *@
             </div>
         </div>
+    </div>
+    
+    <div id="content">
+        @RenderBody()
     </div>
     
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>

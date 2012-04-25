@@ -54,12 +54,91 @@ html {
 
 body {
     font-size: 14px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 body, 
 strong {
     font-family: "Segoe UI", "Segoe WP", "Helvetica Neue", 'RobotoRegular', sans-serif;
 }
+
+#header {
+    position: absolute;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 61px;
+}
+
+#content {
+    position: absolute;
+    top: 61px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#content form {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#results {
+    position: absolute;
+    padding: 0 20px 20px;
+    bottom: 0;
+    
+    left: 0;
+    right: 0;
+}
+
+#results pre {
+    -webkit-border-radius: 0;
+       -moz-border-radius: 0;
+            border-radius: 0;
+}
+
+#status {
+    position: absolute;
+    height: 15px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    
+    background-color: #1BA1E2;
+    opacity: 0.6;
+    
+    -webkit-transition: height 0.1s;
+       -moz-transition: height 0.1s;
+         -o-transition: height 0.1s;
+            transition: height 0.1s;
+}
+
+#status:hover {
+    height: 30px;
+}
+
+#status .status-success {
+    background-color: #339933;
+}
+
+#status .status-warning {
+    background-color: #F09609;
+}
+
+#status .status-error {
+    background-color: #E51400;
+}
+
 
 /* Navbar 
  *****************************************************************************/
@@ -138,13 +217,10 @@ h1 {
     font-weight: normal;
 }
 
-#content .page-header {
-    margin: 9px 0;
-}
-
 .page-header {
     padding-bottom: 0;
     border: none;
+    margin: 9px 0;
 }
 
 .page-header small a {

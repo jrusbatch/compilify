@@ -213,9 +213,9 @@
         Compilify.Prompt = root.CodeMirror.fromTextArea(prompt, editorOptions);
         Compilify.Prompt.save = save;
         
-        $('#content .js-save').on('click', save);
+        $('.js-save').on('click', save);
 
-        $('#content .js-run').on('click', function() {
+        $('.js-run').on('click', function() {
             var command = Compilify.Prompt.getValue().trim();
             var classes = Compilify.Editor.getValue().trim();
             
@@ -229,7 +229,7 @@
         //
 
         shortcut.add("Ctrl+B",function() {
-            $("#define .js-run").click();
+            $(".js-run").click();
         });
         
         shortcut.add("Ctrl+S", save);
