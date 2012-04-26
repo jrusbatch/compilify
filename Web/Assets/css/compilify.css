@@ -20,20 +20,18 @@
     font-style: normal;
 }
 
-* {
-    margin: 0;
-}
-
 html, 
 body {
+    width: 100%;
     height: 100%;
-}
-
-body {
-    font-size: 14px;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+}
+
+p,
+body {
+    font-size: 14px;
+    /*overflow: hidden;*/
 }
 
 body, 
@@ -41,34 +39,20 @@ strong {
     font-family: "Segoe UI", "Segoe WP", "Helvetica Neue", 'RobotoRegular', sans-serif;
 }
 
-#header {
-    position: absolute;
-    z-index: 9999;
-    top: 0;
-    left: 0;
-    right: 0;
-
-    height: 61px;
-    min-width: 600px;
-}
-
-#content {
+#ide {
     position: absolute;
     top: 61px;
     left: 0;
     right: 0;
     bottom: 0;
     
+    overflow: hidden;
 }
 
-#content form {
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+#about {
+    width: 100%;
+    height: 100%;
+
 }
 
 #commands {
@@ -212,13 +196,9 @@ h1, h2, h3, h4, h5, h6, p {
     font-family: "Segoe UI Light", "Helvetica Neue", 'RobotoLight', "Segoe UI", "Segoe WP", sans-serif;
     font-weight: 100;
 }
-
-p {
-    font-size: 14px;
-}
-
 .navbar {
     margin-bottom: 0;
+    width: 100%;
 }
 
 .navbar-inner {
@@ -379,26 +359,6 @@ h1 {
     color: white;
 }
 
-.messages .message:hover {
-    opacity: 1;
-}
-    
-.messages .success {
-    background-color: #339933;
-}
-    
-.messages .warning {
-    background-color: #F09609;
-}
-    
-.messages .error {
-    background-color: #E51400;
-}
-    
-.messages .info {
-    background-color: #1BA1E2;
-}
-     
 #about .page-header {
     margin: 10px 0 3px;
 }
@@ -422,8 +382,7 @@ h1 {
 
 /* Error 
  *****************************************************************************/
-#error
-{
+#error {
     text-align: center;
 }
 

@@ -1,64 +1,66 @@
 @model Compilify.Web.Models.PostViewModel
 
-@using (Html.BeginForm())
-{
-    <div id="commands">
-        <a class="js-new" href="/">new</a>
-        <a class="js-save" href="#">save</a>
-        <a class="js-run" href="#">run</a>
-    </div>
+<div id="ide">
+    @using (Html.BeginForm())
+    {
+        <div id="commands">
+            <a class="js-new" href="/">new</a>
+            <a class="js-save" href="#">save</a>
+            <a class="js-run" href="#">run</a>
+        </div>
     
-    <div id="editors">
-        <div id="define">
-            <div class="editor">
-                @Html.TextAreaFor(x => x.Classes)
+        <div id="editors">
+            <div id="define">
+                <div class="editor">
+                    @Html.TextAreaFor(x => x.Classes)
+                </div>
+            </div>
+
+            <div id="execute">
+                <div class="editor">
+                    @Html.TextAreaFor(x => x.Content)
+                </div>
             </div>
         </div>
-
-        <div id="execute">
-            <div class="editor">
-                @Html.TextAreaFor(x => x.Content)
-            </div>
-        </div>
-    </div>
     
-    <div id="footer">
-        <div class="results">
-            <pre></pre>
-        </div>
+        <div id="footer">
+            <div class="results">
+                <pre></pre>
+            </div>
         
-        @{ var hasErrors = Model.Errors != null && Model.Errors.Any(); }
+            @{ var hasErrors = Model.Errors != null && Model.Errors.Any(); }
         
-        <div class="status @(hasErrors ? "status-error" : "status-success")">
-            @*
-            This should remain partially hidden most of the time. When the user hovers over it, it should appear to 
-            rise from below the browser window to display any messages it might contain.
+            <div class="status @(hasErrors ? "status-error" : "status-success")">
+                @*
+                This should remain partially hidden most of the time. When the user hovers over it, it should appear to 
+                rise from below the browser window to display any messages it might contain.
                 
-            An indicator could also be displayed here when loading content or waiting for the result of an execution.
+                An indicator could also be displayed here when loading content or waiting for the result of an execution.
                 
-            The color of the status bar should change based on the status of the user's code:
+                The color of the status bar should change based on the status of the user's code:
 
-                * Red - there are errors in the user's code
-                * Green - there are no errors in the user's code
+                    * Red - there are errors in the user's code
+                    * Green - there are no errors in the user's code
 
-            Other future possibilities include:
+                Other future possibilities include:
 
-                * Yellow - there are warnings in the user's code 
-            *@
+                    * Yellow - there are warnings in the user's code 
+                *@
             
-            <ul class="messages">
-                @if (!hasErrors)
-                {
-                    <li>No errors!</li>
-                }
-                else
-                {
-                    foreach (var error in Model.Errors)
+                <ul class="messages">
+                    @if (!hasErrors)
                     {
-                        <li>@error.Message</li>
+                        <li>No errors!</li>
                     }
-                }
-            </ul>
+                    else
+                    {
+                        foreach (var error in Model.Errors)
+                        {
+                            <li>@error.Message</li>
+                        }
+                    }
+                </ul>
+            </div>
         </div>
-    </div>
-}
+    }
+</div>

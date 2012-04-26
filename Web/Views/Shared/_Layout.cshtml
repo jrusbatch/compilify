@@ -45,22 +45,11 @@
                 </div>
 
                 @Html.Partial("_Share")
-                    
-                @*
-            <ul class="nav pull-right">
-                <li>
-                    @(Request.IsAuthenticated ? Html.ActionLink("sign out", "SignOut", "Auth") 
-                                                : Html.ActionLink("sign in", "SignIn", "Auth"))
-                </li>
-            </ul>
-            *@
             </div>
         </div>
     </div>
     
-    <div id="content">
         @RenderBody()
-    </div>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
     <script src="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/js")"></script>
