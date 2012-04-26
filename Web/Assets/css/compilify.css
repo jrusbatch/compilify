@@ -35,7 +35,7 @@ body {
 }
 
 body, 
-strong {
+strong, p {
     font-family: "Segoe UI", "Segoe WP", "Helvetica Neue", 'RobotoRegular', sans-serif;
 }
 
@@ -52,7 +52,6 @@ strong {
 #about {
     width: 100%;
     height: 100%;
-
 }
 
 #commands {
@@ -192,7 +191,7 @@ strong {
 /* Navbar 
  *****************************************************************************/
 .navbar,
-h1, h2, h3, h4, h5, h6, p {
+h1, h2, h3, h4, h5, h6 {
     font-family: "Segoe UI Light", "Helvetica Neue", 'RobotoLight', "Segoe UI", "Segoe WP", sans-serif;
     font-weight: 100;
 }
