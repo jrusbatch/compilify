@@ -25,37 +25,11 @@ namespace Compilify.Web.Controllers
         private readonly IPostRepository db;
         private readonly CSharpCompiler compiler;
         
+        [HttpGet]
         public ActionResult Index()
         {
-            var post = new Post();
-
-            var builder = new StringBuilder();
-
-            post.Classes = builder.AppendLine("class Person")
-                                  .AppendLine("{")
-                                  .AppendLine("    public Person(string name)")
-                                  .AppendLine("    {")
-                                  .AppendLine("        Name = name;")
-                                  .AppendLine("    }")
-                                  .AppendLine()
-                                  .AppendLine("    public string Name { get; private set; }")
-                                  .AppendLine()
-                                  .AppendLine("    public string Greet()")
-                                  .AppendLine("    {")
-                                  .AppendLine("        if (Name == null)")
-                                  .AppendLine("            return \"Hello, stranger!\";")
-                                  .AppendLine()
-                                  .AppendLine("        return string.Format(\"Hello, {0}!\", Name);")
-                                  .AppendLine("    }")
-                                  .AppendLine("}")
-                                  .ToString();
-
-            post.Content = builder.Clear()
-                                  .AppendLine("var person = new Person(name: null);")
-                                  .AppendLine("")
-                                  .AppendLine("return person.Greet();")
-                                  .ToString();
-
+            var post = BuildSamplePost();
+            
             var errors = compiler.GetCompilationErrors(post.Content, post.Classes)
                                  .Select(x => new EditorError
                                               {
@@ -177,6 +151,42 @@ namespace Compilify.Web.Controllers
             }
 
             return routeValues;
+        }
+
+        private static Post BuildSamplePost()
+        {
+            var post = new Post();
+            var builder = new StringBuilder();
+
+            post.Classes = builder.AppendLine("class Person")
+                                  .AppendLine("{")
+                                  .AppendLine("    public Person(string name)")
+                                  .AppendLine("    {")
+                                  .AppendLine("        Name = name;")
+                                  .AppendLine("    }")
+                                  .AppendLine()
+                                  .AppendLine("    public string Name { get; private set; }")
+                                  .AppendLine()
+                                  .AppendLine("    public string Greet()")
+                                  .AppendLine("    {")
+                                  .AppendLine("        if (Name == null)")
+                                  .AppendLine("            return \"Hello, stranger!\";")
+                                  .AppendLine()
+                                  .AppendLine("        return string.Format(\"Hello, {0}!\", Name);")
+                                  .AppendLine("    }")
+                                  .AppendLine("}")
+                                  .ToString();
+
+            post.Content = builder.Clear()
+                                  .AppendLine("var person = new Person(name: null);")
+                                  .AppendLine("")
+                                  .AppendLine("return person.Greet();")
+                                  .ToString();
+            
+
+            
+
+            return post;
         }
 
         private ActionResult PostNotFound()
