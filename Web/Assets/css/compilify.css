@@ -132,11 +132,13 @@ strong {
     bottom: 0;
     left: 0;
     right: 0;
+
+    z-index: 9999;
 }
 
 #footer .results {
     position: absolute;
-    padding: 0 20px 20px;
+    padding: 0 15px 15px;
     bottom: 0;
     
     left: 0;
@@ -174,11 +176,16 @@ strong {
     opacity: 0.6;
 }
 
+#footer .messages {
+    max-height: 150px;
+    margin: 10px 15px 10px 0;
+    overflow: auto;
+}
+
 #footer .status .messages li {
     font-family: "Segoe UI", "Segoe WP", "Helvetica Neue", 'RobotoRegular', sans-serif;
     color: white;
     margin: 0;
-    font-size: 16px;
 }
 
 #footer .status:hover {
