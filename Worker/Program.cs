@@ -27,10 +27,9 @@ namespace Compilify.Worker
 
             try
             {
-                using (var connection = GetOpenConnection())
-                {
-                    ProcessQueue(connection, new[] { "queue:execute" });
-                }
+                connection = GetOpenConnection();
+
+                ProcessQueue(new[] { "queue:execute" });
             }
             catch (Exception ex)
             {
@@ -46,8 +45,10 @@ namespace Compilify.Worker
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly CodeExecuter Executer = new CodeExecuter();
+
+        private static RedisConnection connection;
         
-        private static void ProcessQueue(RedisConnection connection, string[] queues)
+        private static void ProcessQueue(string[] queues)
         {
             var stopWatch = new Stopwatch();
             var formatter = new ObjectFormatter(maxLineLength: 5120);
@@ -56,15 +57,13 @@ namespace Compilify.Worker
 
             while (true)
             {
-                var message = connection.Lists.BlockingRemoveFirst(0, queues, DefaultTimeout);
+                var command = WaitForCommandFromQueue(queues);
 
-                if (message.Result == null)
+                if (command == null)
                 {
                     continue;
                 }
                 
-                var command = ExecuteCommand.Deserialize(message.Result.Item2);
-
                 var timeInQueue = DateTime.UtcNow - command.Submitted;
 
                 Logger.Info("Job received after {0:N3} seconds in queue.", timeInQueue.TotalSeconds);
@@ -95,7 +94,7 @@ namespace Compilify.Worker
                                    });
 
                     var bytes = Encoding.UTF8.GetBytes(response);
-                    var listeners = connection.Publish("workers:job-done:" + command.ClientId, bytes);
+                    var listeners = PublishToClient(command.ClientId, bytes);
 
                     Logger.Info("Work results published to {0} listeners.", listeners.Result);
                 }
@@ -136,6 +135,49 @@ namespace Compilify.Worker
             conn.Wait(conn.Open());
 
             return conn;
+        }
+
+        private static bool NeedsReset(RedisConnectionBase conn)
+		{
+			return conn == null || (conn.State != RedisConnectionBase.ConnectionState.Open &&
+				                    conn.State != RedisConnectionBase.ConnectionState.Opening);
+		}
+
+        private static ExecuteCommand WaitForCommandFromQueue(string[] queues)
+        {
+            if (NeedsReset(connection))
+            {
+                if (connection != null)
+                {
+                    connection.Dispose();
+                }
+
+                connection = GetOpenConnection();
+            }
+
+            var message = connection.Lists.BlockingRemoveFirst(0, queues, DefaultTimeout);
+
+            if (message.Result != null)
+            {
+                return ExecuteCommand.Deserialize(message.Result.Item2);
+            }
+
+            return null;
+        }
+
+        private static Task<long> PublishToClient(string clientId, byte[] message)
+        {
+            if (NeedsReset(connection))
+            {
+                if (connection != null)
+                {
+                    connection.Dispose();
+                }
+
+                connection = GetOpenConnection();
+            }
+
+            return connection.Publish("workers:job-done:" + clientId, message);
         }
     }
 }
