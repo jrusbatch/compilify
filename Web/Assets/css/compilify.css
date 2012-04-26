@@ -159,7 +159,74 @@ strong, p {
     opacity: 0.6;
 }
 
-#footer .messages {
+#footer .status:hover {
+    height: auto;
+}
+
+#footer .status .loading-indicator {
+    width: 100%;
+    height: 10px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+#footer .status .loading-indicator span {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: -100%;
+    
+    opacity: 0;
+    
+    
+    background: -moz-linear-gradient(left,  rgba(255,255,255,0) 0%, rgba(255,255,255,0.75) 35%, rgba(255,255,255,0.75) 65%, rgba(255,255,255,0) 100%);
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,0)), color-stop(35%,rgba(255,255,255,0.75)), color-stop(65%,rgba(255,255,255,0.75)), color-stop(100%,rgba(255,255,255,0)));
+    background: -webkit-linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(255,255,255,0.75) 35%,rgba(255,255,255,0.75) 65%,rgba(255,255,255,0) 100%);
+    background: -o-linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(255,255,255,0.75) 35%,rgba(255,255,255,0.75) 65%,rgba(255,255,255,0) 100%);
+    background: -ms-linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(255,255,255,0.75) 35%,rgba(255,255,255,0.75) 65%,rgba(255,255,255,0) 100%);
+    background: linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(255,255,255,0.75) 35%,rgba(255,255,255,0.75) 65%,rgba(255,255,255,0) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#00ffffff',GradientType=1 );
+
+    
+    -webkit-animation: loading 2.5s linear infinite;
+	   -moz-animation: loading 2.5s linear infinite;
+	    -ms-animation: loading 2.5s linear infinite;
+	        animation: loading 2.5s linear infinite;
+
+    z-index: 999999;
+    -webkit-transform: translateZ(0);
+
+    -webkit-transition: opacity 1s;
+       -moz-transition: opacity 1s;
+         -o-transition: opacity 1s;
+            transition: opacity 1s;
+}
+
+#footer .status.loading .loading-indicator span {
+    opacity: 1;
+}
+
+#footer .status .messages  {
+    list-style: none;
+    margin-left: 0;
+}
+
+#footer .status .messages {
+    padding: 5px 0 5px 25px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    color: white;
+}
+
+
+#footer .status .messages {
     max-height: 150px;
     margin: 10px 15px 10px 0;
     overflow: auto;
@@ -169,10 +236,6 @@ strong, p {
     font-family: "Segoe UI", "Segoe WP", "Helvetica Neue", 'RobotoRegular', sans-serif;
     color: white;
     margin: 0;
-}
-
-#footer .status:hover {
-    height: auto;
 }
 
 #footer .status.status-success {
@@ -204,6 +267,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #000;
     filter: none;
     background: #efefef;
+    padding: 0;
 
     -webkit-border-radius: 0;
        -moz-border-radius: 0;
@@ -342,22 +406,6 @@ h1 {
     background: #fff url(/assets/img/execute.png) no-repeat bottom right;
 }
 
-#footer .status .messages  {
-    list-style: none;
-    margin-left: 0;
-}
-
-#footer .status .messages {
-    padding: 5px 0 5px 25px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-
-    margin-top: 5px;
-    margin-bottom: 5px;
-
-    color: white;
-}
-
 #about .page-header {
     margin: 10px 0 3px;
 }
@@ -405,3 +453,21 @@ h1 {
     margin: 20px 0;
     line-height: 200px;
 }
+
+
+@-webkit-keyframes loading {
+  0% { left: -100%; }
+  100% { left: 150%; }
+}	
+@-moz-keyframes loading {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}	
+@-ms-keyframes loading {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}	
+@keyframes loading {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}	

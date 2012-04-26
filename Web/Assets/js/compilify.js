@@ -30,10 +30,11 @@
                 conn.stop();
                 isConnected = false;
                 timer = null;
+
+                $('#footer .status.loading').removeClass('loading');
             }
 
             conn.sending(function() {
-                /// 
                 if (timer != null) {
                     root.clearTimeout(timer);
                 }
@@ -135,8 +136,7 @@
 
                             var message = 'Line: ' + (start.Line + 1) + ' Column: ' + start.Character + ' - ' + error.Message;
 
-                            $list.append('<li data-errorId="' + index + '">' +
-                                htmlEscape(message) + '</li>');
+                            $list.append('<li data-errorId="' + index + '">' + _.escape(message) + '</li>');
                         }
                     }
 
@@ -153,6 +153,7 @@
         if (_.isString(command) && command.length > 0) {
             trackEvent('Code', 'Execute', window.location.pathname);
             connection.send(JSON.stringify({ 'Content': command, 'Classes': classes }));
+            $('#footer .status:not(.loading)').addClass('loading');
         }
     }
     
@@ -160,6 +161,7 @@
         /// <summary>
         /// Sets the content displayed in the results section.</summary>
         $('#footer .results pre').html(result);
+        $('#footer .status.loading').removeClass('loading');
     }
 
     $(function() {

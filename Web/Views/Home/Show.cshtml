@@ -31,6 +31,12 @@
             @{ var hasErrors = Model.Errors != null && Model.Errors.Any(); }
         
             <div class="status @(hasErrors ? "status-error" : "status-success")">
+                
+                <div class="loading-indicator">
+                    <span></span>
+                </div>
+                
+
                 @*
                 This should remain partially hidden most of the time. When the user hovers over it, it should appear to 
                 rise from below the browser window to display any messages it might contain.
