@@ -1,9 +1,10 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
+using Roslyn.Compilers.Common;
 
 namespace Compilify.Services
 {
@@ -33,35 +34,13 @@ namespace Compilify.Services
 
         public object Execute(string command, string classes)
         {
-            if (!Validator.Validate(command) || !Validator.Validate(classes))
-            {
-                return "Not supported";
-            } 
-
-            var sandbox = SecureAppDomainFactory.Create();
-
-            // Load basic .NET assemblies into our sandbox
-            var mscorlib = sandbox.Load("mscorlib,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
-            var system = sandbox.Load("System,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
-            var core = sandbox.Load("System.Core,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
-
             var script = "public static object Eval() {" + command + "}";
             
-            var options = new CompilationOptions(assemblyKind: AssemblyKind.ConsoleApplication, usings: ReadOnlyArray<string>.CreateFrom(Namespaces));
-
-            var compilation = Compilation.Create(Guid.NewGuid().ToString("N"), options,
-                new[]
-                {
-                    SyntaxTree.ParseCompilationUnit(EntryPoint),
-                    // This is the syntax tree represented in the `Script` variable.
-                    SyntaxTree.ParseCompilationUnit(script, options: new ParseOptions(kind: SourceCodeKind.Interactive)),
-                    SyntaxTree.ParseCompilationUnit(classes ?? string.Empty, options: new ParseOptions(kind: SourceCodeKind.Script))
-                },
-                new MetadataReference[] { 
-                    new AssemblyFileReference(core.Location), 
-                    new AssemblyFileReference(system.Location),
-                    new AssemblyFileReference(mscorlib.Location)
-                });
+            var compilation = CreateCompilation(
+                SyntaxTree.ParseCompilationUnit(EntryPoint),
+                SyntaxTree.ParseCompilationUnit(script, options: new ParseOptions(kind: SourceCodeKind.Interactive)),
+                SyntaxTree.ParseCompilationUnit(classes ?? string.Empty, options: new ParseOptions(kind: SourceCodeKind.Script))
+            );
 
             byte[] compiledAssembly;
             using (var output = new MemoryStream())
@@ -70,62 +49,43 @@ namespace Compilify.Services
 
                 if (!emitResult.Success)
                 {
-                    var errors = emitResult.Diagnostics.Select(x => x.Info.GetMessage().Replace("Eval()", "<Factory>()")).ToArray();
+                    var errors = emitResult.Diagnostics
+                                           .Select(x => x.Info.GetMessage().Replace("Eval()", "<Factory>()"))
+                                           .ToArray();
                     return string.Join(", ", errors);
                 }
 
                 compiledAssembly = output.ToArray();
             }
-
-            if (compiledAssembly.Length == 0)
+            
+            object result;
+            using (var sandbox = new Sandbox("Sandbox", compiledAssembly))
             {
-                // Not sure how this would happen?
-                return "Incorrect data";
-            }
-
-            var loader = (ByteCodeLoader)Activator.CreateInstance(sandbox, typeof(ByteCodeLoader).Assembly.FullName, typeof(ByteCodeLoader).FullName).Unwrap();
-
-            bool unloaded = false;
-            object result = null;
-            var timeout = TimeSpan.FromSeconds(5);
-            try
-            {
-                var task = Task.Factory
-                               .StartNew(() =>
-                                         {
-                                             try
-                                             {
-                                                 result = loader.Run("EntryPoint", "Result", compiledAssembly);
-                                             }
-                                             catch (Exception ex)
-                                             {
-                                                 result = ex.ToString();
-                                             }
-                                         });
-
-                if (!task.Wait(timeout))
-                {
-                    AppDomain.Unload(sandbox);
-                    unloaded = true;
-                    result = "[Execution timed out after 5 seconds]";
-                }
-            }
-            catch (Exception ex)
-            {
-                result = ex.ToString();
+                result = sandbox.Run("EntryPoint", "Result", TimeSpan.FromSeconds(5));
             }
             
-            if (!unloaded)
-            {
-                AppDomain.Unload(sandbox);
-            }
-            
-            if (result == null || string.IsNullOrEmpty(result.ToString()))
-            {
-                result = "null";
-            }
-
             return result;
+        }
+
+        private static ICompilation CreateCompilation(params SyntaxTree[] trees)
+        {
+            var options = new CompilationOptions(assemblyKind: AssemblyKind.ConsoleApplication, 
+                                                 usings: ReadOnlyArray<string>.CreateFrom(Namespaces));
+
+            // Load basic .NET assemblies into our sandbox
+            var mscorlib = Assembly.Load("mscorlib,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
+            var system = Assembly.Load("System,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
+            var core = Assembly.Load("System.Core,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
+
+            var compilation = Compilation.Create(Guid.NewGuid().ToString("N"), options,
+                trees,
+                new MetadataReference[] { 
+                    new AssemblyFileReference(core.Location), 
+                    new AssemblyFileReference(system.Location),
+                    new AssemblyFileReference(mscorlib.Location)
+                });
+
+            return compilation;
         }
     }
 }

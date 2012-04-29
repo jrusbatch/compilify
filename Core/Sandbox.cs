@@ -4,14 +4,17 @@ using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
+using System.Threading.Tasks;
 using Compilify.Services;
 
 namespace Compilify
 {
-    public sealed class Sandbox : IDisposable
+    internal sealed class Sandbox : IDisposable
     {
-        public Sandbox(string name = "Sandbox")
+        internal Sandbox(string name, byte[] compiledAssembly)
         {
+            assembly = compiledAssembly;
+
             var evidence = new Evidence();
             evidence.AddHostEvidence(new Zone(SecurityZone.Internet));
 
@@ -27,35 +30,47 @@ namespace Compilify
                             PrivateBinPathProbe = string.Empty
                         };
 
-            //var references = new[]
-            //{
-            //    Assembly.Load("mscorlib,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089").Evidence.GetHostEvidence<StrongName>(),
-            //    Assembly.Load("System,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089").Evidence.GetHostEvidence<StrongName>(),
-            //    Assembly.Load("System.Core,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089").Evidence.GetHostEvidence<StrongName>()
-            //};
-            
             var loaderType = typeof(ByteCodeLoader);
-            domain = AppDomain.CreateDomain(name, null, setup, permissions /*, references */);
+            domain = AppDomain.CreateDomain(name, null, setup, permissions);
             loader = (ByteCodeLoader)Activator.CreateInstance(domain, loaderType.Assembly.FullName, loaderType.FullName).Unwrap();
         }
 
+        private readonly byte[] assembly;
         private readonly ByteCodeLoader loader;
         private readonly AppDomain domain;
         private bool disposed;
 
-        public string Name
+        internal object Run(string className, string resultProperty, TimeSpan timeout)
         {
-            get { return domain.FriendlyName; }
+            object result = null;
+
+            try
+            {
+                var task = Task.Factory.StartNew(() => result = Execute(className, resultProperty));
+
+                if (!task.Wait(timeout))
+                {
+                    result = "[Execution timed out after 5 seconds]";
+                }
+            }
+            catch (Exception ex)
+            {
+                result = ex.ToString();
+            }
+
+            return result ?? "null";
         }
 
-        public AppDomain Domain
+        private object Execute(string className, string resultProperty)
         {
-            get { return domain; }
-        }
-
-        public ByteCodeLoader Loader
-        {
-            get { return loader; }
+            try
+            {
+                return loader.Run(className, resultProperty, assembly);
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
         }
 
         public void Dispose()

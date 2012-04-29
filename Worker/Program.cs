@@ -25,18 +25,9 @@ namespace Compilify.Worker
             TaskScheduler.UnobservedTaskException += 
                 (sender, e) => Logger.ErrorException("An unobserved task exception occurred", e.Exception);
 
-            try
-            {
-                connection = GetOpenConnection();
+            connection = GetOpenConnection();
 
-                ProcessQueue(new[] { "queue:execute" });
-            }
-            catch (Exception ex)
-            {
-                Logger.ErrorException("An error occured while processing the queue.", ex);
-            }
-
-            Logger.Info("Application ending.");
+            ProcessQueue(new[] { "queue:execute" });
 
             return -1; // Return a non-zero code so AppHarbor restarts the worker
         }
