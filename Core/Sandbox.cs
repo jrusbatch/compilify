@@ -6,12 +6,13 @@ using System.Security.Permissions;
 using System.Security.Policy;
 using System.Threading.Tasks;
 using Compilify.Services;
+using Roslyn.Scripting.CSharp;
 
 namespace Compilify
 {
-    internal sealed class Sandbox : IDisposable
+    public sealed class Sandbox : IDisposable
     {
-        internal Sandbox(string name, byte[] compiledAssembly)
+        public Sandbox(string name, byte[] compiledAssembly)
         {
             assembly = compiledAssembly;
 
@@ -34,42 +35,36 @@ namespace Compilify
             domain = AppDomain.CreateDomain(name, null, setup, permissions);
             loader = (ByteCodeLoader)Activator.CreateInstance(domain, loaderType.Assembly.FullName, loaderType.FullName).Unwrap();
         }
+        
+        private static readonly ObjectFormatter formatter = new ObjectFormatter(maxLineLength: 5120);
 
         private readonly byte[] assembly;
         private readonly ByteCodeLoader loader;
         private readonly AppDomain domain;
         private bool disposed;
 
-        internal object Run(string className, string resultProperty, TimeSpan timeout)
+        public string Run(string className, string resultProperty, TimeSpan timeout)
         {
             object result = null;
+            var task = Task.Factory.StartNew(() => result = Execute(className, resultProperty));
 
-            try
+            if (!task.Wait(timeout))
             {
-                var task = Task.Factory.StartNew(() => result = Execute(className, resultProperty));
-
-                if (!task.Wait(timeout))
-                {
-                    result = "[Execution timed out after 5 seconds]";
-                }
-            }
-            catch (Exception ex)
-            {
-                result = ex.ToString();
+                result = "[Execution timed out]";
             }
 
-            return result ?? "null";
+            return formatter.FormatObject(result) ?? "null";
         }
 
-        private object Execute(string className, string resultProperty)
+        public object Execute(string className, string resultProperty)
         {
             try
             {
                 return loader.Run(className, resultProperty, assembly);
             }
-            catch (Exception ex)
+            catch (TargetInvocationException ex)
             {
-                return ex.ToString();
+                return ex.InnerException.ToString();
             }
         }
 

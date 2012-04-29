@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using Roslyn.Compilers;
@@ -42,7 +40,7 @@ namespace Compilify.Services
                 new CompilationOptions(assemblyKind: AssemblyKind.DynamicallyLinkedLibrary, usings: namespaces),
                 new[]
                 {
-                    SyntaxTree.ParseCompilationUnit(CodeExecuter.EntryPoint), 
+                    SyntaxTree.ParseCompilationUnit(CSharpExecutor.EntryPoint), 
                     SyntaxTree.ParseCompilationUnit(script, fileName: "Prompt", options: new ParseOptions(kind: SourceCodeKind.Interactive)),
                     SyntaxTree.ParseCompilationUnit(classes ?? string.Empty, fileName: "Editor", options: new ParseOptions(kind: SourceCodeKind.Script))
                 },

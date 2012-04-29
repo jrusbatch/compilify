@@ -35,14 +35,13 @@ namespace Compilify.Worker
         private const int DefaultTimeout = 5000;
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly CodeExecuter Executer = new CodeExecuter();
+        private static readonly CSharpExecutor Executer = new CSharpExecutor();
 
         private static RedisConnection connection;
         
         private static void ProcessQueue(string[] queues)
         {
             var stopWatch = new Stopwatch();
-            var formatter = new ObjectFormatter(maxLineLength: 5120);
 
             Logger.Info("ProcessQueue started.");
 
@@ -79,7 +78,7 @@ namespace Compilify.Worker
                                    {
                                        code = command.Code,
                                        classes = command.Classes,
-                                       result = formatter.FormatObject(result), 
+                                       result = result, 
                                        time = DateTime.UtcNow,
                                        duration = stopWatch.ElapsedMilliseconds
                                    });
@@ -129,10 +128,10 @@ namespace Compilify.Worker
         }
 
         private static bool NeedsReset(RedisConnectionBase conn)
-		{
-			return conn == null || (conn.State != RedisConnectionBase.ConnectionState.Open &&
-				                    conn.State != RedisConnectionBase.ConnectionState.Opening);
-		}
+        {
+            return conn == null || (conn.State != RedisConnectionBase.ConnectionState.Open &&
+                                    conn.State != RedisConnectionBase.ConnectionState.Opening);
+        }
 
         private static ExecuteCommand WaitForCommandFromQueue(string[] queues)
         {

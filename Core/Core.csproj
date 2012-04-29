@@ -69,7 +69,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sandbox.cs" />
     <Compile Include="Services\ByteCodeLoader.cs" />
-    <Compile Include="Services\CodeExecuter.cs" />
+    <Compile Include="Services\CSharpExecutor.cs" />
+    <Compile Include="Services\CSharpCompilationProvider.cs" />
     <Compile Include="Services\CSharpCompiler.cs" />
     <Compile Include="Services\Validator.cs" />
   </ItemGroup>
