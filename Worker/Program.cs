@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BookSleeve;
 using Compilify.Services;
 using Newtonsoft.Json;
+using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 using NLog;
 
@@ -33,6 +34,8 @@ namespace Compilify.Worker
         }
         
         private const int DefaultTimeout = 5000;
+        
+        private static readonly ObjectFormatter formatter = new ObjectFormatter(maxLineLength: 5120);
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly CSharpExecutor Executer = new CSharpExecutor();
@@ -78,7 +81,7 @@ namespace Compilify.Worker
                                    {
                                        code = command.Code,
                                        classes = command.Classes,
-                                       result = result, 
+                                       result = formatter.FormatObject(result, quoteStrings: false, memberFormat: MemberDisplayFormat.Inline), 
                                        time = DateTime.UtcNow,
                                        duration = stopWatch.ElapsedMilliseconds
                                    });

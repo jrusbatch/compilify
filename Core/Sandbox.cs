@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
 using System.Threading.Tasks;
 using Compilify.Services;
-using Roslyn.Scripting.CSharp;
 
 namespace Compilify
 {
@@ -36,14 +36,12 @@ namespace Compilify
             loader = (ByteCodeLoader)Activator.CreateInstance(domain, loaderType.Assembly.FullName, loaderType.FullName).Unwrap();
         }
         
-        private static readonly ObjectFormatter formatter = new ObjectFormatter(maxLineLength: 5120);
-
         private readonly byte[] assembly;
         private readonly ByteCodeLoader loader;
         private readonly AppDomain domain;
         private bool disposed;
 
-        public string Run(string className, string resultProperty, TimeSpan timeout)
+        public object Run(string className, string resultProperty, TimeSpan timeout)
         {
             object result = null;
             var task = Task.Factory.StartNew(() => result = Execute(className, resultProperty));
@@ -53,7 +51,7 @@ namespace Compilify
                 result = "[Execution timed out]";
             }
 
-            return formatter.FormatObject(result) ?? "null";
+            return result ?? "null";
         }
 
         public object Execute(string className, string resultProperty)
@@ -61,6 +59,10 @@ namespace Compilify
             try
             {
                 return loader.Run(className, resultProperty, assembly);
+            }
+            catch (SerializationException ex)
+            {
+                return ex.Message;
             }
             catch (TargetInvocationException ex)
             {
