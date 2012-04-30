@@ -15,7 +15,7 @@
             /// <param name="url" type="String">
             /// The URL of the endpoint to connect to.</param>
             /// <param name="options" type="Object">
-            /// The URL of the endpoint to connect to.</param>
+            /// Options for the connection.</param>
             /// <returns type="EndpointConnection" />
             
             var timer, 
@@ -49,7 +49,7 @@
                         conn.send(data);
                     }
                     else {
-                        conn.start({ transport: [ 'serverSentEvents', 'foreverFrame', 'longPolling' ] }, function() {
+                        conn.start(function() {
                             isConnected = true;
                             conn.send(data);
                         });
@@ -57,18 +57,6 @@
                 }
             };
         };
-    
-    function htmlEscape(str) {
-        /// <summary>
-        /// Sanitizes a string for display as HTML content.</summary>
-        
-        return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;');
-    }
     
     function trackEvent(category, action, label) {
         /// <summary>
@@ -173,7 +161,7 @@
                 if (msg && msg.status === "ok") {
                     var data = msg.data;
                     if (data && data.result) {
-                        var result = htmlEscape(data.result.toString());
+                        var result = _.escape(data.result.toString());
                         setResult(result);
                     }
                 }

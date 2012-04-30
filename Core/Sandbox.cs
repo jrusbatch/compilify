@@ -12,9 +12,9 @@ namespace Compilify
 {
     public sealed class Sandbox : IDisposable
     {
-        public Sandbox(string name, byte[] compiledAssembly)
+        public Sandbox(string name, byte[] compiledAssemblyBytes)
         {
-            assembly = compiledAssembly;
+            assemblyBytes = compiledAssemblyBytes;
 
             var evidence = new Evidence();
             evidence.AddHostEvidence(new Zone(SecurityZone.Internet));
@@ -31,34 +31,32 @@ namespace Compilify
                             PrivateBinPathProbe = string.Empty
                         };
 
-            var loaderType = typeof(ByteCodeLoader);
             domain = AppDomain.CreateDomain(name, null, setup, permissions);
-            loader = (ByteCodeLoader)Activator.CreateInstance(domain, loaderType.Assembly.FullName, loaderType.FullName).Unwrap();
         }
         
-        private readonly byte[] assembly;
-        private readonly ByteCodeLoader loader;
+        private readonly byte[] assemblyBytes;
         private readonly AppDomain domain;
         private bool disposed;
 
         public object Run(string className, string resultProperty, TimeSpan timeout)
         {
-            object result = null;
-            var task = Task.Factory.StartNew(() => result = Execute(className, resultProperty));
+            var task = Task<object>.Factory.StartNew(() => Execute(className, resultProperty));
 
             if (!task.Wait(timeout))
             {
-                result = "[Execution timed out]";
+                return "[Execution timed out]";
             }
 
-            return result ?? "null";
+            return task.Result ?? "null";
         }
 
         public object Execute(string className, string resultProperty)
         {
             try
             {
-                return loader.Run(className, resultProperty, assembly);
+                var type = typeof(ByteCodeLoader);
+                var loader = (ByteCodeLoader)Activator.CreateInstance(domain, type.Assembly.FullName, type.FullName).Unwrap();
+                return loader.Run(className, resultProperty, assemblyBytes);
             }
             catch (SerializationException ex)
             {

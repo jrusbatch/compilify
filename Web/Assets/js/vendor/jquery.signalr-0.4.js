@@ -1,14 +1,4 @@
-﻿/*!
-* SignalR JavaScript Library v0.5
-* http://signalr.net/
-*
-* Copyright David Fowler and Damian Edwards 2012
-* Licensed under the MIT.
-* https://github.com/SignalR/SignalR/blob/master/LICENSE.md
-*
-*/
-
-/// <reference path="jquery-1.6.2.js" />
+﻿/// <reference path="jquery-1.6.2.js" />
 (function ($, window) {
     /// <param name="$" type="jQuery" />
     "use strict";
@@ -75,7 +65,6 @@
                 this.logging = logging;
             }
         },
-        ajaxDataType: "json",
 
         logging: false,
 
@@ -87,16 +76,15 @@
             /// <param name="callback" type="Function">A callback function to execute when the connection has started</param>
             var connection = this,
                 config = {
-                    transport: "auto",
-                    xdomain: false
+                    transport: "auto"
                 },
                 initialize,
-                deferred = $.Deferred();
+                promise = $.Deferred();
 
             if (connection.transport) {
                 // Already started, just return
-                deferred.resolve(connection);
-                return deferred.promise();
+                promise.resolve(connection);
+                return promise;
             }
 
             if ($.type(options) === "function") {
@@ -108,13 +96,12 @@
                     callback = config.callback;
                 }
             }
-            connection.ajaxDataType = config.xdomain ? "jsonp" : "json";
 
             $(connection).bind(events.onStart, function (e, data) {
                 if ($.type(callback) === "function") {
                     callback.call(connection);
                 }
-                deferred.resolve(connection);
+                promise.resolve(connection);
             });
 
             initialize = function (transports, index) {
@@ -122,7 +109,7 @@
                 if (index >= transports.length) {
                     if (!connection.transport) {
                         // No transport initialized successfully
-                        deferred.reject("SignalR: No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization.");
+                        promise.reject("SignalR: No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization.");
                     }
                     return;
                 }
@@ -143,10 +130,10 @@
                     global: false,
                     type: "POST",
                     data: {},
-                    dataType: connection.ajaxDataType,
+                    dataType: "json",
                     error: function (error) {
                         $(connection).trigger(events.onError, [error]);
-                        deferred.reject("SignalR: Error during negotiation request: " + error);
+                        promise.reject("SignalR: Error during negotiation request: " + error);
                     },
                     success: function (res) {
                         connection.appRelativeUrl = res.Url;
@@ -155,7 +142,7 @@
 
                         if (!res.ProtocolVersion || res.ProtocolVersion !== "1.0") {
                             $(connection).trigger(events.onError, "SignalR: Incompatible protocol version.");
-                            deferred.reject("SignalR: Incompatible protocol version.");
+                            promise.reject("SignalR: Incompatible protocol version.");
                             return;
                         }
 
@@ -192,7 +179,7 @@
                 });
             }, 0);
 
-            return deferred.promise();
+            return promise;
         },
 
         starting: function (callback) {
@@ -323,10 +310,10 @@
                 return url + "&" + connection.qs;
             }
 
-            return url + "&" + window.escape(connection.qs.toString());
+            return url + "&" + escape(connection.qs.toString());
         },
 
-        getUrl: function (connection, transport, reconnecting, appendReconnectUrl) {
+        getUrl: function (connection, transport, reconnecting) {
             /// <summary>Gets the url for making a GET based connect request</summary>
             var url = connection.url,
                 qs = "transport=" + transport + "&connectionId=" + window.escape(connection.id);
@@ -338,10 +325,6 @@
             if (!reconnecting) {
                 url = url + "/connect";
             } else {
-                if (appendReconnectUrl) {
-                    url = url + "/reconnect";
-                }
-
                 if (connection.messageId) {
                     qs += "&messageId=" + connection.messageId;
                 }
@@ -355,13 +338,12 @@
         },
 
         ajaxSend: function (connection, data) {
-
             var url = connection.url + "/send" + "?transport=" + connection.transport.name + "&connectionId=" + window.escape(connection.id);
             url = this.addQs(url, connection);
             $.ajax(url, {
                 global: false,
                 type: "POST",
-                dataType: connection.ajaxDataType,
+                dataType: "json",
                 data: {
                     data: data
                 },
@@ -371,11 +353,7 @@
                     }
                 },
                 error: function (errData, textStatus) {
-                    if (textStatus === "abort" ||
-                        (textStatus === "parsererror" && connection.ajaxDataType === "jsonp")) {
-                        // The parsererror happens for sends that don't return any data, and hence
-                        // don't write the jsonp callback to the response. This is harder to fix on the server
-                        // so just hack around it on the client for now.
+                    if (textStatus === "abort") {
                         return;
                     }
                     $(connection).trigger(events.onError, [errData]);
@@ -409,14 +387,8 @@
                         }
                     });
                 }
-
-                if (data.MessageId) {
-                    connection.messageId = data.MessageId;
-                }
-
-                if (data.TransportData) {
-                    connection.groups = data.TransportData.Groups;
-                }
+                connection.messageId = data.MessageId;
+                connection.groups = data.TransportData.Groups;
             }
         },
 
@@ -800,7 +772,7 @@
 
                         var messageId = instance.messageId,
                             connect = (messageId === null),
-                            url = transportLogic.getUrl(instance, that.name, !connect, raiseReconnect),
+                            url = transportLogic.getUrl(instance, that.name, !connect),
                             reconnectTimeOut = null,
                             reconnectFired = false;
 
@@ -809,7 +781,7 @@
 
                             type: "GET",
 
-                            dataType: connection.ajaxDataType,
+                            dataType: "json",
 
                             success: function (data) {
                                 var delay = 0,
@@ -824,9 +796,7 @@
                                 }
 
                                 transportLogic.processMessages(instance, data);
-                                if (data &&
-                                    data.TransportData &&
-                                    $.type(data.TransportData.LongPollDelay) === "number") {
+                                if (data && $.type(data.TransportData.LongPollDelay) === "number") {
                                     delay = data.TransportData.LongPollDelay;
                                 }
 
