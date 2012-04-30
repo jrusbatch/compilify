@@ -192,12 +192,12 @@
         var editor = $('#define .editor textarea')[0],
             prompt = $('#execute .editor textarea')[0];
 
-        var validateEnvironment = _.debounce(function() {
+        var validateEnvironment = _.throttle(function() {
             var classes = Compilify.Editor.getValue();
             var command = Compilify.Prompt.getValue();
 
             validate(command, classes);
-        }, 500);
+        }, 250);
         
         root.CodeMirror.commands.save = save;
 
@@ -206,8 +206,10 @@
             lineNumbers: true,
             theme: 'neat',
             mode: 'text/x-csharp',
-            onChange: function() {
+            onChange: function(cm, changes) {
                 validateEnvironment();
+
+                console.log({ 'editor': cm, 'args': changes });
             }
         };
         
@@ -224,8 +226,8 @@
         $('.js-save').on('click', save);
 
         $('.js-run').on('click', function() {
-            var command = Compilify.Prompt.getValue().trim();
-            var classes = Compilify.Editor.getValue().trim();
+            var command = Compilify.Prompt.getValue();
+            var classes = Compilify.Editor.getValue();
             
             execute(command, classes);
             
