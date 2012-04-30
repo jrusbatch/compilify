@@ -208,8 +208,6 @@
             mode: 'text/x-csharp',
             onChange: function(cm, changes) {
                 validateEnvironment();
-
-                console.log({ 'editor': cm, 'args': changes });
             }
         };
         
