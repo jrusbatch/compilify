@@ -20,12 +20,22 @@
             
             var timer, 
                 isConnected = false,
+                messageQueue = [],
                 conn = $.connection(url), 
                 opts = _.defaults(options, {
                     timeout: 30000,
                     onReceived: $.noop
                 });
-            
+
+            function onStarted() {
+                var next;
+                while ((next = messageQueue.shift()) !== undefined) {
+                    conn.send(next);
+                }
+
+                isConnected = true;
+            }
+
             function onTimeout() {
                 conn.stop();
                 isConnected = false;
@@ -42,6 +52,10 @@
             });
 
             conn.received(opts.onReceived);
+
+            conn.reconnected(function() {
+                console.log("Reconnected!");
+            });
             
             return {
                 send: function (data) {
@@ -49,10 +63,8 @@
                         conn.send(data);
                     }
                     else {
-                        conn.start(function() {
-                            isConnected = true;
-                            conn.send(data);
-                        });
+                        messageQueue.push(data);
+                        conn.start(onStarted);
                     }
                 }
             };
@@ -111,14 +123,17 @@
                         
                         for (var index in msg.data) {
                             var error = msg.data[index];
+                            var loc = error.Location;
 
-                            var start = error.Location.StartLinePosition;
-                            var end = error.Location.EndLinePosition;
+                            var file = loc.FileName;
+
+                            var start = loc.StartLinePosition;
+                            var end = loc.EndLinePosition;
 
                             var markStart = { line: start.Line, ch: start.Character };
                             var markEnd = { line: end.Line, ch: end.Character };
-                            
-                            var mark = Compilify[error.Location.FileName].markText(markStart, markEnd, 'compilation-error');
+
+                            var mark = Compilify[file].markText(markStart, markEnd, 'compilation-error');
 
                             markedErrors.push(mark);
 
