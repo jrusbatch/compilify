@@ -27,7 +27,7 @@ namespace Compilify.Web.Controllers
         {
             var post = BuildSamplePost();
             
-            var errors = compiler.GetCompilationErrors(post.Content, post.Classes)
+            var errors = compiler.GetCompilationErrors(post)
                                  .Select(x => new EditorError
                                               {
                                                   Location = x.Location.GetLineSpan(true),
@@ -70,7 +70,7 @@ namespace Compilify.Web.Controllers
                 return PostNotFound();
             }
 
-            var errors = compiler.GetCompilationErrors(post.Content, post.Classes)
+            var errors = compiler.GetCompilationErrors(post)
                                  .Select(x => new EditorError
                                               {
                                                   Location = x.Location.GetLineSpan(true),
@@ -127,7 +127,9 @@ namespace Compilify.Web.Controllers
         [ValidateInput(false)]
         public ActionResult Validate(ValidateViewModel viewModel)
         {
-            var errors = compiler.GetCompilationErrors(viewModel.Command, viewModel.Classes)
+            var post = new Post { Classes = viewModel.Classes, Content = viewModel.Command };
+
+            var errors = compiler.GetCompilationErrors(post)
                                  .Where(x => x.Info.Severity > DiagnosticSeverity.Warning)
                                  .Select(x => new EditorError
                                               {
