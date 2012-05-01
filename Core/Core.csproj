@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExecuteCommand.cs" />
+    <Compile Include="Extensions\CompilationExtensions.cs" />
     <Compile Include="Models\Incrementor.cs" />
     <Compile Include="Models\Post.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
