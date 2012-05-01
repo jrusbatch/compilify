@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BookSleeve;
+using Compilify.Models;
 using Compilify.Services;
 using Newtonsoft.Json;
 using Roslyn.Scripting;
@@ -50,26 +51,28 @@ namespace Compilify.Worker
 
             while (true)
             {
-                var command = WaitForCommandFromQueue(queues);
+                var cmd = WaitForCommandFromQueue(queues);
 
-                if (command == null)
+                if (cmd == null)
                 {
                     continue;
                 }
                 
-                var timeInQueue = DateTime.UtcNow - command.Submitted;
+                var timeInQueue = DateTime.UtcNow - cmd.Submitted;
 
                 Logger.Info("Job received after {0:N3} seconds in queue.", timeInQueue.TotalSeconds);
 
-                if (timeInQueue > command.TimeoutPeriod)
+                if (timeInQueue > cmd.TimeoutPeriod)
                 {
-                    Logger.Warn("Job was in queue for longer than {0} seconds, skipping!", command.TimeoutPeriod.Seconds);
+                    Logger.Warn("Job was in queue for longer than {0} seconds, skipping!", cmd.TimeoutPeriod.Seconds);
                     continue;
                 }
 
+                var post = new Post { Content = cmd.Code, Classes = cmd.Classes };
+
                 stopWatch.Start();
 
-                var result = Executer.Execute(command.Code, command.Classes);
+                var result = Executer.Execute(post);
 
                 stopWatch.Stop();
 
@@ -79,15 +82,16 @@ namespace Compilify.Worker
                 {
                     var response = JsonConvert.SerializeObject(new
                                    {
-                                       code = command.Code,
-                                       classes = command.Classes,
-                                       result = formatter.FormatObject(result, quoteStrings: false, memberFormat: MemberDisplayFormat.Inline), 
+                                       code = cmd.Code,
+                                       classes = cmd.Classes,
                                        time = DateTime.UtcNow,
-                                       duration = stopWatch.ElapsedMilliseconds
+                                       duration = stopWatch.ElapsedMilliseconds,
+                                       result = formatter.FormatObject(result, quoteStrings: false, 
+                                                                       memberFormat: MemberDisplayFormat.Inline), 
                                    });
 
                     var bytes = Encoding.UTF8.GetBytes(response);
-                    var listeners = PublishToClient(command.ClientId, bytes);
+                    var listeners = PublishToClient(cmd.ClientId, bytes);
 
                     Logger.Info("Work results published to {0} listeners.", listeners.Result);
                 }

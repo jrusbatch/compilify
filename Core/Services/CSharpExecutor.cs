@@ -9,16 +9,6 @@ namespace Compilify.Services
 {
     public class CSharpExecutor
     {
-        public const string EntryPoint = @"public class EntryPoint 
-                                           {
-                                               public static object Result { get; set; }
-                      
-                                               public static void Main()
-                                               {
-                                                   Result = Script.Eval();
-                                               }
-                                           }";
-
         public CSharpExecutor()
             : this(new CSharpCompilationProvider()) { }
 
@@ -31,43 +21,19 @@ namespace Compilify.Services
 
         public object Execute(Post post)
         {
-            if (post == null)
-            {
-                throw new ArgumentNullException("post");
-            }
-
-            return Execute(post.Content, post.Classes);
-        }
-
-        public object Execute(string command, string classes)
-        {
-
-            var script = "public static object Eval() {" + command + "}";
-
-            var name = "_" + Guid.NewGuid().ToString("N");
-            
-            var rewriter = new MissingSemicolonRewriter();
-            var compilation = compiler.Compile(name,
-                SyntaxTree.ParseCompilationUnit(EntryPoint),
-
-                SyntaxTree.ParseCompilationUnit(script, options: new ParseOptions(kind: SourceCodeKind.Interactive))
-                          .RewriteWith(rewriter),
-
-                SyntaxTree.ParseCompilationUnit(classes ?? string.Empty, options: new ParseOptions(kind: SourceCodeKind.Script))
-                          .RewriteWith(rewriter)
-            );
+            var compilation = compiler.Compile(post);
 
             byte[] compiledAssembly;
-            using (var output = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
-                var emitResult = compilation.Emit(output);
+                var emitResult = compilation.Emit(stream);
 
                 if (!emitResult.Success)
                 {
                     return "[Compilation failed]";
                 }
 
-                compiledAssembly = output.ToArray();
+                compiledAssembly = stream.ToArray();
             }
             
             object result;
