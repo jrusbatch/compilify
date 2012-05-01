@@ -18,12 +18,3 @@ In Visual Studio 2010:
 2.  Select "Set StartUp Projects".
 3.  Choose "Multiple startup projects".
 4.  Set the "Action" for "Web" and "Worker" to "Start".
-
-## Contributing
-
-Please keep the master branch deployable at all times. It's recommended that all but the most minor changes be implemented in their own branch and merged back into master when complete.
-
-### Coding Guidelines
-* Use spaces, not tabs
-* Follow existing conventions
-* To make it easier to look at your code through the Github interface, wrap at column 80 when possible. Try not to go past 120.
