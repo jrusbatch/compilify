@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using System.Linq;
+using Compilify.Extensions;
 using Compilify.Models;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
@@ -41,14 +41,20 @@ namespace Compilify.Services
 
         public object Execute(string command, string classes)
         {
+
             var script = "public static object Eval() {" + command + "}";
 
             var name = "_" + Guid.NewGuid().ToString("N");
-
+            
+            var rewriter = new MissingSemicolonRewriter();
             var compilation = compiler.Compile(name,
                 SyntaxTree.ParseCompilationUnit(EntryPoint),
-                SyntaxTree.ParseCompilationUnit(script, options: new ParseOptions(kind: SourceCodeKind.Interactive)),
+
+                SyntaxTree.ParseCompilationUnit(script, options: new ParseOptions(kind: SourceCodeKind.Interactive))
+                          .RewriteWith(rewriter),
+
                 SyntaxTree.ParseCompilationUnit(classes ?? string.Empty, options: new ParseOptions(kind: SourceCodeKind.Script))
+                          .RewriteWith(rewriter)
             );
 
             byte[] compiledAssembly;
