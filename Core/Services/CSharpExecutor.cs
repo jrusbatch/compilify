@@ -58,11 +58,7 @@ namespace Compilify.Services
 
                 if (!emitResult.Success)
                 {
-                    var errors = emitResult.Diagnostics
-                                           .Select(x => x.Info.GetMessage().Replace("Eval()", "<Factory>()"))
-                                           .ToArray();
-
-                    return string.Join(", ", errors);
+                    return "[Compilation failed]";
                 }
 
                 compiledAssembly = output.ToArray();
