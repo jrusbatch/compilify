@@ -1,8 +1,5 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Compilify.Models;
@@ -19,11 +16,11 @@ namespace Compilify.Web.Controllers
         public HomeController(IPostRepository contentRepository)
         {
             db = contentRepository;
-            compiler = new CSharpCompiler();
+            compiler = new CSharpValidator(new CSharpCompilationProvider());
         }
 
         private readonly IPostRepository db;
-        private readonly CSharpCompiler compiler;
+        private readonly CSharpValidator compiler;
         
         [HttpGet]
         public ActionResult Index()

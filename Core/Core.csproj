@@ -71,7 +71,7 @@
     <Compile Include="Services\ByteCodeLoader.cs" />
     <Compile Include="Services\CSharpExecutor.cs" />
     <Compile Include="Services\CSharpCompilationProvider.cs" />
-    <Compile Include="Services\CSharpCompiler.cs" />
+    <Compile Include="Services\CSharpValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Compilify.Models;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 
@@ -28,12 +29,22 @@ namespace Compilify.Services
 
         private readonly ICSharpCompilationProvider compiler;
 
+        public object Execute(Post post)
+        {
+            if (post == null)
+            {
+                throw new ArgumentNullException("post");
+            }
+
+            return Execute(post.Content, post.Classes);
+        }
+
         public object Execute(string command, string classes)
         {
             var script = "public static object Eval() {" + command + "}";
 
             var name = "_" + Guid.NewGuid().ToString("N");
-            
+
             var compilation = compiler.Compile(name,
                 SyntaxTree.ParseCompilationUnit(EntryPoint),
                 SyntaxTree.ParseCompilationUnit(script, options: new ParseOptions(kind: SourceCodeKind.Interactive)),
