@@ -72,7 +72,6 @@
     <Compile Include="Services\CSharpExecutor.cs" />
     <Compile Include="Services\CSharpCompilationProvider.cs" />
     <Compile Include="Services\CSharpCompiler.cs" />
-    <Compile Include="Services\Validator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
