@@ -50,7 +50,7 @@ namespace Compilify
             return task.Result ?? "null";
         }
 
-        public object Execute(string className, string resultProperty)
+        private object Execute(string className, string resultProperty)
         {
             try
             {
