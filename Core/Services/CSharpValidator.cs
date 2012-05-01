@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 using Roslyn.Compilers.Common;
+using Compilify.Extensions;
 
 namespace Compilify.Services
 {
@@ -37,18 +37,9 @@ namespace Compilify.Services
                 SyntaxTree.ParseCompilationUnit(classes ?? string.Empty, fileName: "Editor", options: new ParseOptions(kind: SourceCodeKind.Script))
             };
 
-            var compilation = compiler.Compile("foo", trees);
-            using (var output = new MemoryStream())
-            {
-                var emitResult = compilation.Emit(output);
+            var result = compiler.Compile("foo", trees).Emit();
 
-                if (!emitResult.Success)
-                {
-                    return emitResult.Diagnostics;
-                }
-            }
-
-            return Enumerable.Empty<IDiagnostic>();
+            return result.Diagnostics;
         } 
     }
 }
