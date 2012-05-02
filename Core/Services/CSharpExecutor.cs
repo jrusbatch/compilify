@@ -34,7 +34,7 @@ namespace Compilify.Services
             }
             
             object result;
-            using (var sandbox = new Sandbox("Sandbox", compiledAssembly))
+            using (var sandbox = new Sandbox(compiledAssembly))
             {
                 result = sandbox.Run("EntryPoint", "Result", TimeSpan.FromSeconds(5));
             }
