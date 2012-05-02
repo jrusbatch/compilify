@@ -20,11 +20,6 @@ namespace Compilify.Services
         {
             var compilation = compiler.Compile(post);
 
-            using (var fileStream = new FileStream(@"C:\output.dll", FileMode.OpenOrCreate))
-            {
-                compilation.Emit(fileStream);
-            }
-
             byte[] compiledAssembly;
             using (var stream = new MemoryStream())
             {
