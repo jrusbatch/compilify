@@ -66,8 +66,6 @@ namespace Compilify
 
                 var result = loader.Run(className, resultProperty, assemblyBytes);
 
-                
-
                 return result;
             }
             catch (SerializationException ex)

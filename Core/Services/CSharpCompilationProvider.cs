@@ -45,8 +45,10 @@ namespace Compilify.Services
                 throw new ArgumentNullException("post");
             }
 
-            
-            var entryPoint = SyntaxTree.ParseCompilationUnit(EntryPoint);
+            var console = SyntaxTree.ParseCompilationUnit("public static readonly StringWriter __Console = new StringWriter();", 
+                                                          options: new ParseOptions(kind: SourceCodeKind.Script));
+
+            var entry = SyntaxTree.ParseCompilationUnit(EntryPoint);
 
             var prompt = SyntaxTree.ParseCompilationUnit(BuildScript(post.Content), fileName: "Prompt",
                                                          options: new ParseOptions(kind: SourceCodeKind.Interactive))
@@ -56,13 +58,17 @@ namespace Compilify.Services
                                                          options: new ParseOptions(kind: SourceCodeKind.Script))
                                    .RewriteWith<MissingSemicolonRewriter>();
 
+            var compilation =  Compile(post.Title ?? "Untitled", new[] { entry, prompt, editor, console });
 
-            return Compile(post.Title ?? "Untitled", new[] { entryPoint, prompt, editor });
+            var newPrompt = prompt.RewriteWith(new ConsoleRewriter("__Console", compilation.GetSemanticModel(prompt)));
+            var newEditor = editor.RewriteWith(new ConsoleRewriter("__Console", compilation.GetSemanticModel(editor)));
+
+            return compilation.ReplaceSyntaxTree(prompt, newPrompt).ReplaceSyntaxTree(editor, newEditor);
         }
 
         public Compilation Compile(string compilationName, params SyntaxTree[] syntaxTrees)
         {
-            if (String.IsNullOrEmpty(compilationName))
+            if (string.IsNullOrEmpty(compilationName))
             {
                 throw new ArgumentNullException("compilationName");
             }

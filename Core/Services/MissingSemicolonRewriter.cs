@@ -2,7 +2,7 @@
 
 namespace Compilify.Services
 {
-    internal class MissingSemicolonRewriter : SyntaxRewriter
+    internal sealed class MissingSemicolonRewriter : SyntaxRewriter
     {
         protected override SyntaxToken VisitToken(SyntaxToken token)
         {
