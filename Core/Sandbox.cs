@@ -6,6 +6,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
 using System.Threading.Tasks;
+using Compilify.Models;
 using Compilify.Services;
 
 namespace Compilify
@@ -40,6 +41,11 @@ namespace Compilify
             domain = AppDomain.CreateDomain(name, null, setup, permissions);
         }
 
+        static Sandbox()
+        {
+            AppDomain.MonitoringIsEnabled = true;
+        }
+
         private readonly byte[] assemblyBytes;
         private readonly AppDomain domain;
         private bool disposed;
@@ -66,6 +72,9 @@ namespace Compilify
 
                 var result = loader.Run(className, resultProperty, assemblyBytes);
 
+                result.ProcessorTime = domain.MonitoringTotalProcessorTime;
+                result.TotalMemoryAllocated = domain.MonitoringTotalAllocatedMemorySize;
+
                 return result;
             }
             catch (SerializationException ex)
@@ -91,12 +100,20 @@ namespace Compilify
         {
             public ByteCodeLoader() { }
 
-            public object Run(string className, string resultProperty, byte[] compiledAssembly)
+            public ExecutionResult Run(string className, string resultProperty, byte[] compiledAssembly)
             {
                 var assembly = Assembly.Load(compiledAssembly);
                 assembly.EntryPoint.Invoke(null, new object[] { });
 
-                return assembly.GetType(className).GetProperty(resultProperty).GetValue(null, null);
+                var console = (StringWriter)assembly.GetType("Script").GetField("__Console").GetValue(null);
+
+                var result = new ExecutionResult
+                             {
+                                 ConsoleOutput = console.ToString(),
+                                 Result = assembly.GetType(className).GetProperty(resultProperty).GetValue(null, null)
+                             };
+
+                return result;
             }
         }
     }

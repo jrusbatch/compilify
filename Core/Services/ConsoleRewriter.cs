@@ -19,9 +19,10 @@ namespace Compilify.Services
 
             var method = (MethodSymbol)info.Symbol;
 
-            if (method.ContainingType.Name == "Console" && 
-                method.ContainingNamespace.Name == "System" && 
-                method.ContainingAssembly.Name == "mscorlib")
+            if (method != null &&
+                (method.ContainingType != null && method.ContainingType.Name == "Console") && 
+                (method.ContainingNamespace != null && method.ContainingNamespace.Name == "System") && 
+                (method.ContainingAssembly != null && method.ContainingAssembly.Name == "mscorlib"))
             {
                 var old = (MemberAccessExpressionSyntax)node.Expression;
 
