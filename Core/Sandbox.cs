@@ -12,6 +12,11 @@ namespace Compilify
 {
     public sealed class Sandbox : IDisposable
     {
+        private const string DefaultName = "Sandbox";
+
+        public Sandbox(byte[] compiledAssemblyBytes)
+            : this(DefaultName, compiledAssemblyBytes) { }
+
         public Sandbox(string name, byte[] compiledAssemblyBytes)
         {
             assemblyBytes = compiledAssemblyBytes;
@@ -20,20 +25,21 @@ namespace Compilify
             evidence.AddHostEvidence(new Zone(SecurityZone.Internet));
 
             var permissions = SecurityManager.GetStandardSandbox(evidence);
-            var security = new SecurityPermission(SecurityPermissionFlag.Execution);
-
-            permissions.AddPermission(security);
+            permissions.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
+            permissions.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.RestrictedMemberAccess));
 
             var setup = new AppDomainSetup
                         {
                             ApplicationBase = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                            PrivateBinPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                            PrivateBinPathProbe = string.Empty
+                            ApplicationName = name,
+                            DisallowBindingRedirects = true,
+                            DisallowCodeDownload = true,
+                            DisallowPublisherPolicy = true
                         };
 
             domain = AppDomain.CreateDomain(name, null, setup, permissions);
         }
-        
+
         private readonly byte[] assemblyBytes;
         private readonly AppDomain domain;
         private bool disposed;
@@ -52,11 +58,17 @@ namespace Compilify
 
         private object Execute(string className, string resultProperty)
         {
+            var type = typeof(ByteCodeLoader);
+
             try
             {
-                var type = typeof(ByteCodeLoader);
-                var loader = (ByteCodeLoader)Activator.CreateInstance(domain, type.Assembly.FullName, type.FullName).Unwrap();
-                return loader.Run(className, resultProperty, assemblyBytes);
+                var loader = (ByteCodeLoader)domain.CreateInstanceAndUnwrap(type.Assembly.FullName, type.FullName);
+
+                var result = loader.Run(className, resultProperty, assemblyBytes);
+
+                
+
+                return result;
             }
             catch (SerializationException ex)
             {
@@ -74,6 +86,19 @@ namespace Compilify
             {
                 disposed = true;
                 AppDomain.Unload(domain);
+            }
+        }
+
+        private sealed class ByteCodeLoader : MarshalByRefObject
+        {
+            public ByteCodeLoader() { }
+
+            public object Run(string className, string resultProperty, byte[] compiledAssembly)
+            {
+                var assembly = Assembly.Load(compiledAssembly);
+                assembly.EntryPoint.Invoke(null, new object[] { });
+
+                return assembly.GetType(className).GetProperty(resultProperty).GetValue(null, null);
             }
         }
     }

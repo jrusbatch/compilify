@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -70,7 +71,6 @@
     <Compile Include="Models\Post.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sandbox.cs" />
-    <Compile Include="Services\ByteCodeLoader.cs" />
     <Compile Include="Services\CSharpExecutor.cs" />
     <Compile Include="Services\CSharpCompilationProvider.cs" />
     <Compile Include="Services\CSharpValidator.cs" />
