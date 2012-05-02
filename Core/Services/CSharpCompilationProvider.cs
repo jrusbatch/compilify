@@ -15,15 +15,16 @@ namespace Compilify.Services
 
     public class CSharpCompilationProvider : ICSharpCompilationProvider
     {
-        private const string EntryPoint = @"public class EntryPoint 
-                                           {
-                                               public static object Result { get; set; }
-                      
-                                               public static void Main()
-                                               {
-                                                   Result = Script.Eval();
-                                               }
-                                           }";
+        private const string EntryPoint = 
+            @"public class EntryPoint 
+              {
+                  public static object Result { get; set; }
+                  
+                  public static void Main()
+                  {
+                      Result = Script.Eval();
+                  }
+              }";
 
         private static readonly ReadOnlyArray<string> DefaultNamespaces =
             ReadOnlyArray<string>.CreateFrom(new[]

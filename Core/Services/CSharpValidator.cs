@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Compilify.Extensions;
 using Compilify.Models;
 using Roslyn.Compilers.Common;
-using Compilify.Extensions;
 
 namespace Compilify.Services
 {
