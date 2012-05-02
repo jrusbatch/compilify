@@ -31,7 +31,6 @@ body {
 p,
 body {
     font-size: 14px;
-    /*overflow: hidden;*/
 }
 
 body, 
@@ -121,7 +120,7 @@ strong, p {
 
 #footer .results {
     position: absolute;
-    padding: 0 15px 15px;
+    padding: 0 20px 15px;
     bottom: 0;
     
     left: 0;
@@ -181,7 +180,6 @@ strong, p {
     
     opacity: 0;
     
-    
     background: -moz-linear-gradient(left,  rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 35%, rgba(255,255,255,0.9) 65%, rgba(255,255,255,0) 100%);
     background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,0)), color-stop(35%,rgba(255,255,255,0.9)), color-stop(65%,rgba(255,255,255,0.9)), color-stop(100%,rgba(255,255,255,0)));
     background: -webkit-linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(255,255,255,0.9) 35%,rgba(255,255,255,0.9) 65%,rgba(255,255,255,0) 100%);
@@ -190,14 +188,12 @@ strong, p {
     background: linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(255,255,255,0.9) 35%,rgba(255,255,255,0.9) 65%,rgba(255,255,255,0) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#00ffffff',GradientType=1 );
 
-    
     -webkit-animation: loading 2.5s linear infinite;
 	   -moz-animation: loading 2.5s linear infinite;
 	    -ms-animation: loading 2.5s linear infinite;
 	        animation: loading 2.5s linear infinite;
 
     z-index: 999999;
-    -webkit-transform: translateZ(0);
 
     -webkit-transition: opacity 1s;
        -moz-transition: opacity 1s;
@@ -266,7 +262,7 @@ h1, h2, h3, h4, h5, h6 {
 .navbar-inner {
     color: #000;
     filter: none;
-    background: #efefef;
+    background: #e6e6e6;
     padding: 0;
 
     -webkit-border-radius: 0;
@@ -376,7 +372,7 @@ h1 {
 }
 
 .editor ::-webkit-scrollbar-thumb {
-    background-color: #efefef;
+    background-color: #e6e6e6;
     
     border: 1px solid #fff;
     border-top: none;
@@ -453,7 +449,6 @@ h1 {
     margin: 20px 0;
     line-height: 200px;
 }
-
 
 @-webkit-keyframes loading {
   0% { left: -100%; }
