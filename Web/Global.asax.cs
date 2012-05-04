@@ -9,7 +9,7 @@ using Compilify.Web.EndPoints;
 using Compilify.Web.Infrastructure;
 using Compilify.Web.Infrastructure.Extensions;
 using Compilify.Web.Services;
-using SignalR.Hosting.AspNet.Routing;
+using SignalR;
 
 namespace Compilify.Web {
 
@@ -168,7 +168,7 @@ namespace Compilify.Web {
             js.AddFile("~/assets/js/vendor/bootstrap-2.0.2.js");
             js.AddFile("~/assets/js/vendor/codemirror-2.23.js");
             js.AddFile("~/assets/js/vendor/codemirror-clike-2.23.js");
-            js.AddFile("~/assets/js/vendor/jquery.signalr-0.4.js");
+            js.AddFile("~/assets/js/vendor/jquery.signalr-0.5rc.js");
             js.AddFile("~/assets/js/vendor/jquery.validate-1.8.0.js");
             js.AddFile("~/assets/js/vendor/jquery.validate.unobtrusive.js");
             js.AddFile("~/assets/js/vendor/jquery.validate-hooks.js");

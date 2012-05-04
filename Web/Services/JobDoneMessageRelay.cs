@@ -4,8 +4,6 @@ using BookSleeve;
 using Compilify.Web.EndPoints;
 using Newtonsoft.Json;
 using SignalR;
-using SignalR.Hosting.AspNet;
-using SignalR.Infrastructure;
 
 namespace Compilify.Web.Services {
     /// <summary>
@@ -53,12 +51,11 @@ namespace Compilify.Web.Services {
 
             if (!string.IsNullOrEmpty(clientId))
             {
-                var connectionManager = AspNetHost.DependencyResolver.Resolve<IConnectionManager>();
-                var connection = connectionManager.GetConnection<ExecuteEndPoint>();
+                var context = GlobalHost.ConnectionManager.GetConnectionContext<ExecuteEndPoint>();
                 var data = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(message));
 
                 // Forward the message to the user's browser with SignalR
-                connection.Broadcast(clientId, new { status = "ok", data = data });
+                context.Connection.Send(clientId, new { status = "ok", data = data });
             }
         }
     }
