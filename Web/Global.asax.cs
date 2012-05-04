@@ -151,9 +151,11 @@ namespace Compilify.Web {
             );
         }
 
-        private static void RegisterBundles(BundleCollection bundles) {
+        private static void RegisterBundles(BundleCollection bundles)
+        {
             var css = new Bundle("~/css");
             css.AddFile("~/assets/css/vendor/bootstrap-2.0.2.css");
+            css.AddFile("~/assets/css/vendor/font-awesome.css");
             css.AddFile("~/assets/css/vendor/codemirror-2.23.css");
             css.AddFile("~/assets/css/vendor/codemirror-neat-2.23.css");
             css.AddFile("~/assets/css/compilify.css");
@@ -176,7 +178,8 @@ namespace Compilify.Web {
             js.AddFile("~/assets/js/compilify.js");
             bundles.Add(js);
 
-            if (!HttpContext.Current.IsDebuggingEnabled) {
+            if (!HttpContext.Current.IsDebuggingEnabled)
+            {
                 css.Transform = new CssMinify();
                 js.Transform = new JsMinify();
             }
