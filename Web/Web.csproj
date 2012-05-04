@@ -243,7 +243,6 @@
     <Content Include="Assets\img\appharbor.png" />
     <Content Include="Assets\img\define.png" />
     <Content Include="Assets\img\execute.png" />
-    <Content Include="Assets\img\fork.png" />
     <Content Include="Assets\img\glyphicons-halflings-white.png" />
     <Content Include="Assets\img\glyphicons-halflings.png" />
     <Content Include="Assets\img\observe.png" />
