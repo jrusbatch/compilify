@@ -1,21 +1,21 @@
 ﻿@font-face {
     font-family: 'RobotoRegular';
-    src: url('/assets/fonts/Roboto-Regular-webfont.eot');
-    src: url('/assets/fonts/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('/assets/fonts/Roboto-Regular-webfont.woff') format('woff'),
-         url('/assets/fonts/Roboto-Regular-webfont.ttf') format('truetype'),
-         url('/assets/fonts/Roboto-Regular-webfont.svg#RobotoRegular') format('svg');
+    src: url('/assets/fonts/roboto-regular-webfont.eot');
+    src: url('/assets/fonts/roboto-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/assets/fonts/roboto-regular-webfont.woff') format('woff'),
+         url('/assets/fonts/roboto-regular-webfont.ttf') format('truetype'),
+         url('/assets/fonts/roboto-regular-webfont.svg#RobotoRegular') format('svg');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'RobotoLight';
-    src: url('/assets/fonts/Roboto-Light-webfont.eot');
-    src: url('/assets/fonts/Roboto-Light-webfont.eot?#iefix') format('embedded-opentype'),
-         url('/assets/fonts/Roboto-Light-webfont.woff') format('woff'),
-         url('/assets/fonts/Roboto-Light-webfont.ttf') format('truetype'),
-         url('/assets/fonts/Roboto-Light-webfont.svg#RobotoLight') format('svg');
+    src: url('/assets/fonts/roboto-light-webfont.eot');
+    src: url('/assets/fonts/roboto-light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/assets/fonts/roboto-light-webfont.woff') format('woff'),
+         url('/assets/fonts/roboto-light-webfont.ttf') format('truetype'),
+         url('/assets/fonts/roboto-light-webfont.svg#RobotoLight') format('svg');
     font-weight: normal;
     font-style: normal;
 }
