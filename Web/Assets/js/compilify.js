@@ -11,7 +11,7 @@
     
         EndpointConnection = function(url, options) {
             /// <summary>
-            /// Wraps a SignalR PersistentConnection object to close the connection after a set period of time.</summary>
+            /// A SignalR connection object that closes after a set period of time.</summary>
             /// <param name="url" type="String">
             /// The URL of the endpoint to connect to.</param>
             /// <param name="options" type="Object">
@@ -20,21 +20,11 @@
             
             var timer, 
                 isConnected = false,
-                messageQueue = [],
                 conn = $.connection(url), 
                 opts = _.defaults(options, {
                     timeout: 30000,
                     onReceived: $.noop
                 });
-
-            function onStarted() {
-                var next;
-                while ((next = messageQueue.shift()) !== undefined) {
-                    conn.send(next);
-                }
-
-                isConnected = true;
-            }
 
             function onTimeout() {
                 conn.stop();
@@ -63,8 +53,7 @@
                         conn.send(data);
                     }
                     else {
-                        messageQueue.push(data);
-                        conn.start(onStarted);
+                        conn.start().done(function() { conn.send(data); });
                     }
                 }
             };
@@ -137,7 +126,8 @@
 
                             markedErrors.push(mark);
 
-                            var message = 'Line: ' + (start.Line + 1) + ' Column: ' + start.Character + ' - ' + error.Message;
+                            var message = 'Line: ' + (start.Line + 1) +
+                                          ' Column: ' + start.Character + ' - ' + error.Message;
 
                             $list.append('<li data-errorId="' + index + '">' + _.escape(message) + '</li>');
                         }
