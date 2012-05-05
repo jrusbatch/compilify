@@ -76,17 +76,17 @@ namespace Compilify.Worker
 
                 try
                 {
-                    var response = JsonConvert.SerializeObject(new WorkerResult
+                    var response = new WorkerResult
                                    {
                                        // code = cmd.Code,
                                        // classes = cmd.Classes,
                                        Time = DateTime.UtcNow,
                                        Duration = stopWatch.ElapsedMilliseconds,
                                        ExecutionResult = result 
-                                   });
+                                   };
 
-                    var bytes = Encoding.UTF8.GetBytes(response);
-                    var listeners = PublishToClient(cmd.ClientId, bytes);
+
+                    var listeners = PublishToClient(cmd.ClientId, response.GetBytes());
 
                     Logger.Info("Work results published to {0} listeners.", listeners.Result);
                 }

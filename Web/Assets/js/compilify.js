@@ -55,6 +55,32 @@
             };
         };
     
+    function bytesToSize(bytes, precision) {
+        var kilobyte = 1024;
+        var megabyte = kilobyte * 1024;
+        var gigabyte = megabyte * 1024;
+        var terabyte = gigabyte * 1024;
+
+        if ((bytes >= 0) && (bytes < kilobyte)) {
+            return bytes + ' B';
+
+        } else if ((bytes >= kilobyte) && (bytes < megabyte)) {
+            return (bytes / kilobyte).toFixed(precision) + ' KB';
+
+        } else if ((bytes >= megabyte) && (bytes < gigabyte)) {
+            return (bytes / megabyte).toFixed(precision) + ' MB';
+
+        } else if ((bytes >= gigabyte) && (bytes < terabyte)) {
+            return (bytes / gigabyte).toFixed(precision) + ' GB';
+
+        } else if (bytes >= terabyte) {
+            return (bytes / terabyte).toFixed(precision) + ' TB';
+
+        } else {
+            return bytes + ' B';
+        }
+    }
+    
     function trackEvent(category, action, label) {
         /// <summary>
         /// Tracks an event in Google Analytics if it is initialized.</summary>
@@ -146,15 +172,24 @@
         }
     }
     
-    function setResult(result) {
+    function setResult(data) {
         /// <summary>
         /// Sets the content displayed in the results section.</summary>
 
+        var result = 'Execution Completed\r\n\r\n';
 
+        result += 'CPU Time: ' + data.ExecutionResult.ProcessorTime + '\r\n';
+        result += 'Memory Allocated: ' + bytesToSize(data.ExecutionResult.TotalMemoryAllocated) + '\r\n';
 
+        result += '\r\n';
+        
+        if (data.ExecutionResult.ConsoleOutput != null && data.ExecutionResult.ConsoleOutput.length > 0) {
+            result += _.escape(data.ExecutionResult.ConsoleOutput) + '\r\n';
+        }
+        
+        result += _.escape(data.ExecutionResult.Result);
 
         $('#footer .results pre').html(result);
-        $('#footer .status.loading').removeClass('loading');
     }
 
     $(function() {
@@ -162,13 +197,11 @@
         // Set up the SignalR connection
         //
         connection = new EndpointConnection('/execute', {
-            onReceived: function(msg) {
+            onReceived: function (msg) {
+                $('#footer .status.loading').removeClass('loading');
+                
                 if (msg && msg.status === "ok") {
-                    var data = msg.data;
-                    if (data && data.result) {
-                        var result = _.escape(data.result.toString());
-                        setResult(result);
-                    }
+                    setResult(msg.data);
                 }
             }
         });
