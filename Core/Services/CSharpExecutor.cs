@@ -16,7 +16,7 @@ namespace Compilify.Services
 
         private readonly ICSharpCompilationProvider compiler;
 
-        public object Execute(Post post)
+        public ExecutionResult Execute(Post post)
         {
             var compilation = compiler.Compile(post);
 
@@ -27,19 +27,16 @@ namespace Compilify.Services
 
                 if (!emitResult.Success)
                 {
-                    return "[Compilation failed]";
+                    return new ExecutionResult { Result = "[Compilation failed]" };
                 }
 
                 compiledAssembly = stream.ToArray();
             }
-            
-            object result;
+
             using (var sandbox = new Sandbox(compiledAssembly))
             {
-                result = sandbox.Run("EntryPoint", "Result", TimeSpan.FromSeconds(5));
+                return sandbox.Run("EntryPoint", "Result", TimeSpan.FromSeconds(5));
             }
-            
-            return result;
         }
     }
 }

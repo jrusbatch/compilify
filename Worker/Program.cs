@@ -8,8 +8,6 @@ using BookSleeve;
 using Compilify.Models;
 using Compilify.Services;
 using Newtonsoft.Json;
-using Roslyn.Scripting;
-using Roslyn.Scripting.CSharp;
 using NLog;
 
 namespace Compilify.Worker
@@ -36,8 +34,6 @@ namespace Compilify.Worker
         
         private const int DefaultTimeout = 5000;
         
-        private static readonly ObjectFormatter formatter = new ObjectFormatter(maxLineLength: 5120);
-
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly CSharpExecutor Executer = new CSharpExecutor();
 
@@ -80,14 +76,13 @@ namespace Compilify.Worker
 
                 try
                 {
-                    var response = JsonConvert.SerializeObject(new
+                    var response = JsonConvert.SerializeObject(new WorkerResult
                                    {
-                                       code = cmd.Code,
-                                       classes = cmd.Classes,
-                                       time = DateTime.UtcNow,
-                                       duration = stopWatch.ElapsedMilliseconds,
-                                       result = formatter.FormatObject(result, quoteStrings: false, 
-                                                                       memberFormat: MemberDisplayFormat.Inline), 
+                                       // code = cmd.Code,
+                                       // classes = cmd.Classes,
+                                       Time = DateTime.UtcNow,
+                                       Duration = stopWatch.ElapsedMilliseconds,
+                                       ExecutionResult = result 
                                    });
 
                     var bytes = Encoding.UTF8.GetBytes(response);

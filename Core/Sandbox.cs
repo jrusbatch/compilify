@@ -8,6 +8,7 @@ using System.Security.Policy;
 using System.Threading.Tasks;
 using Compilify.Models;
 using Compilify.Services;
+using Roslyn.Scripting.CSharp;
 
 namespace Compilify
 {
@@ -50,41 +51,45 @@ namespace Compilify
         private readonly AppDomain domain;
         private bool disposed;
 
-        public object Run(string className, string resultProperty, TimeSpan timeout)
+        public ExecutionResult Run(string className, string resultProperty, TimeSpan timeout)
         {
-            var task = Task<object>.Factory.StartNew(() => Execute(className, resultProperty));
+            var task = Task<ExecutionResult>.Factory.StartNew(() => Execute(className, resultProperty));
 
             if (!task.Wait(timeout))
             {
-                return "[Execution timed out]";
+                return new ExecutionResult { Result = "[Execution timed out]" };
             }
 
-            return task.Result ?? "null";
+            return task.Result ?? new ExecutionResult { Result = "null" };
         }
 
-        private object Execute(string className, string resultProperty)
+        private ExecutionResult Execute(string className, string resultProperty)
         {
+            var result = new ExecutionResult();
             var type = typeof(ByteCodeLoader);
+            var formatter = new ObjectFormatter(maxLineLength: 5120);
 
             try
             {
                 var loader = (ByteCodeLoader)domain.CreateInstanceAndUnwrap(type.Assembly.FullName, type.FullName);
+                
+                var unformattedResult = loader.Run(className, resultProperty, assemblyBytes);
 
-                var result = loader.Run(className, resultProperty, assemblyBytes);
-
+                result.Result = (unformattedResult != null) ? formatter.FormatObject(unformattedResult.ReturnValue) : "null";
+                result.ConsoleOutput = (unformattedResult != null) ? unformattedResult.ConsoleOutput : string.Empty;
                 result.ProcessorTime = domain.MonitoringTotalProcessorTime;
                 result.TotalMemoryAllocated = domain.MonitoringTotalAllocatedMemorySize;
-
-                return result;
             }
             catch (SerializationException ex)
             {
-                return ex.Message;
+                result.Result = ex.Message;
             }
             catch (TargetInvocationException ex)
             {
-                return ex.InnerException.ToString();
+                result.Result = ex.InnerException.ToString();
             }
+
+            return result;
         }
 
         public void Dispose()
@@ -100,17 +105,17 @@ namespace Compilify
         {
             public ByteCodeLoader() { }
 
-            public ExecutionResult Run(string className, string resultProperty, byte[] compiledAssembly)
+            public SandboxResult Run(string className, string resultProperty, byte[] compiledAssembly)
             {
                 var assembly = Assembly.Load(compiledAssembly);
                 assembly.EntryPoint.Invoke(null, new object[] { });
 
                 var console = (StringWriter)assembly.GetType("Script").GetField("__Console").GetValue(null);
 
-                var result = new ExecutionResult
+                var result = new SandboxResult
                              {
                                  ConsoleOutput = console.ToString(),
-                                 Result = assembly.GetType(className).GetProperty(resultProperty).GetValue(null, null)
+                                 ReturnValue = assembly.GetType(className).GetProperty(resultProperty).GetValue(null, null)
                              };
 
                 return result;

@@ -43,10 +43,6 @@
 
             conn.received(opts.onReceived);
 
-            conn.reconnected(function() {
-                console.log("Reconnected!");
-            });
-            
             return {
                 send: function (data) {
                     if (isConnected === true) {
@@ -153,6 +149,10 @@
     function setResult(result) {
         /// <summary>
         /// Sets the content displayed in the results section.</summary>
+
+
+
+
         $('#footer .results pre').html(result);
         $('#footer .status.loading').removeClass('loading');
     }
