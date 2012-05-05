@@ -66,10 +66,12 @@
   <ItemGroup>
     <Compile Include="ExecuteCommand.cs" />
     <Compile Include="Extensions\CompilationExtensions.cs" />
+    <Compile Include="Extensions\GeneralExtensions.cs" />
     <Compile Include="Extensions\SyntaxTreeExtensions.cs" />
     <Compile Include="Models\ExecutionResult.cs" />
     <Compile Include="Models\Incrementor.cs" />
     <Compile Include="Models\Post.cs" />
+    <Compile Include="Models\SandboxResult.cs" />
     <Compile Include="Models\WorkerResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sandbox.cs" />
