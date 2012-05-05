@@ -35,8 +35,9 @@ body {
     font-size: 14px;
 }
 
-body, 
-strong, p {
+p,
+body,
+strong {
     font-family: "Segoe UI", "Segoe WP", "Helvetica Neue", 'RobotoLight', sans-serif;
 }
 
@@ -191,9 +192,9 @@ strong, p {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#00ffffff',GradientType=1 );
 
     -webkit-animation: loading 2.5s linear infinite;
-	   -moz-animation: loading 2.5s linear infinite;
-	    -ms-animation: loading 2.5s linear infinite;
-	        animation: loading 2.5s linear infinite;
+       -moz-animation: loading 2.5s linear infinite;
+        -ms-animation: loading 2.5s linear infinite;
+            animation: loading 2.5s linear infinite;
 
     z-index: 999999;
 
@@ -203,7 +204,7 @@ strong, p {
             transition: opacity 1s;
 }
 
-#footer .status.loading .loading-indicator span {
+.loading .loading-indicator span {
     opacity: 1;
 }
 

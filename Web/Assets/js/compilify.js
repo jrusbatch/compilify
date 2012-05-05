@@ -31,7 +31,7 @@
                 isConnected = false;
                 timer = null;
 
-                $('#footer .status.loading').removeClass('loading');
+                $('#footer').removeClass('loading');
             }
 
             conn.sending(function() {
@@ -54,32 +54,6 @@
                 }
             };
         };
-    
-    function bytesToSize(bytes, precision) {
-        var kilobyte = 1024;
-        var megabyte = kilobyte * 1024;
-        var gigabyte = megabyte * 1024;
-        var terabyte = gigabyte * 1024;
-
-        if ((bytes >= 0) && (bytes < kilobyte)) {
-            return bytes + ' B';
-
-        } else if ((bytes >= kilobyte) && (bytes < megabyte)) {
-            return (bytes / kilobyte).toFixed(precision) + ' KB';
-
-        } else if ((bytes >= megabyte) && (bytes < gigabyte)) {
-            return (bytes / megabyte).toFixed(precision) + ' MB';
-
-        } else if ((bytes >= gigabyte) && (bytes < terabyte)) {
-            return (bytes / gigabyte).toFixed(precision) + ' GB';
-
-        } else if (bytes >= terabyte) {
-            return (bytes / terabyte).toFixed(precision) + ' TB';
-
-        } else {
-            return bytes + ' B';
-        }
-    }
     
     function trackEvent(category, action, label) {
         /// <summary>
@@ -168,7 +142,7 @@
         if (_.isString(command) && command.length > 0) {
             trackEvent('Code', 'Execute', window.location.pathname);
             connection.send(JSON.stringify({ 'Content': command, 'Classes': classes }));
-            $('#footer .status:not(.loading)').addClass('loading');
+            $('#footer:not(.loading)').addClass('loading');
         }
     }
     
@@ -176,20 +150,7 @@
         /// <summary>
         /// Sets the content displayed in the results section.</summary>
 
-        var result = 'Execution Completed\r\n\r\n';
-
-        result += 'CPU Time: ' + data.ExecutionResult.ProcessorTime + '\r\n';
-        result += 'Memory Allocated: ' + bytesToSize(data.ExecutionResult.TotalMemoryAllocated) + '\r\n';
-
-        result += '\r\n';
-        
-        if (data.ExecutionResult.ConsoleOutput != null && data.ExecutionResult.ConsoleOutput.length > 0) {
-            result += _.escape(data.ExecutionResult.ConsoleOutput) + '\r\n';
-        }
-        
-        result += _.escape(data.ExecutionResult.Result);
-
-        $('#footer .results pre').html(result);
+        $('#footer .results pre').html(data);
     }
 
     $(function() {
@@ -198,11 +159,10 @@
         //
         connection = new EndpointConnection('/execute', {
             onReceived: function (msg) {
-                $('#footer .status.loading').removeClass('loading');
-                
                 if (msg && msg.status === "ok") {
                     setResult(msg.data);
                 }
+                $('#footer').removeClass('loading');
             }
         });
         
@@ -251,6 +211,8 @@
             var classes = Compilify.Editor.getValue();
             
             execute(command, classes);
+
+            $('.results pre').html('');
             
             return false;
         });
