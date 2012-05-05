@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Text;
 using BookSleeve;
 using Compilify.Models;
 using Compilify.Web.EndPoints;
-using Newtonsoft.Json;
 using SignalR;
 
-namespace Compilify.Web.Services {
+namespace Compilify.Web.Services
+{
     /// <summary>
     /// Processes messages sent by workers over Redis and forwards them to the client
     /// that originally initiated the request.</summary>
     public class JobDoneMessageRelay
     {
-
         private const string ChannelPattern = "workers:job-done:*";
 
         public JobDoneMessageRelay(RedisConnectionGateway redisConnectionGateway)
@@ -34,7 +32,8 @@ namespace Compilify.Web.Services {
 
         public void OnChannelClosed(object sender, EventArgs e)
         {
-            if (channel != null) {
+            if (channel != null)
+            {
                 channel.Closed -= OnChannelClosed;
                 channel.Dispose();
                 channel = null;
@@ -61,7 +60,7 @@ namespace Compilify.Web.Services {
                 var response = WorkerResult.Deserialize(message);
 
                 // Forward the message to the user's browser with SignalR
-                context.Connection.Send(clientId, new { status = "ok", data = response });
+                context.Connection.Send(clientId, new { status = "ok", data = response.ToResultString() });
             }
         }
     }
