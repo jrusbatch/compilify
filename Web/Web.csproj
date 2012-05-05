@@ -292,20 +292,20 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\fonts\fontawesome-webfont.eot" />
-    <None Include="Assets\fonts\fontawesome-webfont.svgz" />
-    <None Include="Assets\fonts\fontawesome-webfont.ttf" />
-    <None Include="Assets\fonts\fontawesome-webfont.woff" />
-    <None Include="Assets\fonts\roboto-light-webfont.eot" />
-    <None Include="Assets\fonts\roboto-light-webfont.ttf" />
-    <None Include="Assets\fonts\roboto-light-webfont.woff" />
+    <Content Include="Assets\fonts\fontawesome-webfont.eot" />
+    <Content Include="Assets\fonts\fontawesome-webfont.svgz" />
+    <Content Include="Assets\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Assets\fonts\fontawesome-webfont.woff" />
+    <Content Include="Assets\fonts\roboto-light-webfont.eot" />
+    <Content Include="Assets\fonts\roboto-light-webfont.ttf" />
+    <Content Include="Assets\fonts\roboto-light-webfont.woff" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Shared\_Share.cshtml" />
     <Content Include="Views\Auth\SignIn.cshtml" />
     <Content Include="Views\Auth\Register.cshtml" />
-    <None Include="Assets\fonts\roboto-thin-webfont.eot" />
-    <None Include="Assets\fonts\roboto-thin-webfont.ttf" />
-    <None Include="Assets\fonts\roboto-thin-webfont.woff" />
+    <Content Include="Assets\fonts\roboto-thin-webfont.eot" />
+    <Content Include="Assets\fonts\roboto-thin-webfont.ttf" />
+    <Content Include="Assets\fonts\roboto-thin-webfont.woff" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
