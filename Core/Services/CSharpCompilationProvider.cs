@@ -16,7 +16,7 @@ namespace Compilify.Services
     public class CSharpCompilationProvider : ICSharpCompilationProvider
     {
         private const string EntryPoint = 
-            @"public class EntryPoint 
+            @"public static class EntryPoint 
               {
                   public static object Result { get; set; }
                   
@@ -45,19 +45,20 @@ namespace Compilify.Services
                 throw new ArgumentNullException("post");
             }
 
-            var consoleOptions = ParseOptions.Default.WithKind(SourceCodeKind.Script);
+            var asScript = ParseOptions.Default.WithKind(SourceCodeKind.Script);
+            var asInteractive = ParseOptions.Default.WithKind(SourceCodeKind.Interactive);
+            var asRegular = ParseOptions.Default.WithKind(SourceCodeKind.Regular);
+
+
             var console = SyntaxTree.ParseCompilationUnit("public static readonly StringWriter __Console = new StringWriter();", 
-                                                          options: consoleOptions);
+                                                          options: asScript);
 
             var entry = SyntaxTree.ParseCompilationUnit(EntryPoint);
 
-            var promptOptions = ParseOptions.Default.WithKind(SourceCodeKind.Interactive);
-            var prompt = SyntaxTree.ParseCompilationUnit(BuildScript(post.Content), path: "Prompt",
-                                                         options: promptOptions)
+            var prompt = SyntaxTree.ParseCompilationUnit(BuildScript(post.Content), path: "Prompt", options: asScript)
                                    .RewriteWith<MissingSemicolonRewriter>();
 
-            var editor = SyntaxTree.ParseCompilationUnit(post.Classes ?? string.Empty, path: "Editor", 
-                                                         options: consoleOptions)
+            var editor = SyntaxTree.ParseCompilationUnit(post.Classes ?? string.Empty, path: "Editor", options: asScript)
                                    .RewriteWith<MissingSemicolonRewriter>();
 
             var compilation =  Compile(post.Title ?? "Untitled", new[] { entry, prompt, editor, console });
@@ -75,7 +76,7 @@ namespace Compilify.Services
                 throw new ArgumentNullException("compilationName");
             }
             
-            var options = new CompilationOptions(OutputKind.ConsoleApplication).WithUsings(DefaultNamespaces);
+            var options = new CompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithUsings(DefaultNamespaces);
 
             // Load basic .NET assemblies into our sandbox
             var mscorlib = Assembly.Load("mscorlib,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");

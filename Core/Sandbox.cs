@@ -110,7 +110,8 @@ namespace Compilify
             public SandboxResult Run(string className, string resultProperty, byte[] compiledAssembly)
             {
                 var assembly = Assembly.Load(compiledAssembly);
-                assembly.EntryPoint.Invoke(null, new object[] { });
+                // assembly.EntryPoint.Invoke(null, new object[] { });
+                assembly.GetType("EntryPoint").GetMethod("Main").Invoke(null, new object[] { });
 
                 var console = (StringWriter)assembly.GetType("Script").GetField("__Console").GetValue(null);
 

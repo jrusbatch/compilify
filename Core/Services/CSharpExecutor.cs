@@ -22,6 +22,7 @@ namespace Compilify.Services
 
             byte[] compiledAssembly;
             using (var stream = new MemoryStream())
+            using (var fileStream = new FileStream("C:\\output2.dll", FileMode.Truncate))
             {
                 var emitResult = compilation.Emit(stream);
 
@@ -29,6 +30,8 @@ namespace Compilify.Services
                 {
                     return new ExecutionResult { Result = "[Compilation failed]" };
                 }
+
+                compilation.Emit(fileStream);
 
                 compiledAssembly = stream.ToArray();
             }

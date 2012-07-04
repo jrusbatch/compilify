@@ -20,7 +20,7 @@ namespace Compilify.Services
         {
             var result = compiler.Compile(post).Emit();
 
-            return result.Diagnostics.Where(x => x.Info.Severity > DiagnosticSeverity.Error);
+            return result.Diagnostics.Where(x => x.Info.Severity == DiagnosticSeverity.Error);
         }
     }
 }
