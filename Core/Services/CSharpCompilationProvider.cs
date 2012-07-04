@@ -45,17 +45,19 @@ namespace Compilify.Services
                 throw new ArgumentNullException("post");
             }
 
+            var consoleOptions = ParseOptions.Default.WithKind(SourceCodeKind.Script);
             var console = SyntaxTree.ParseCompilationUnit("public static readonly StringWriter __Console = new StringWriter();", 
-                                                          options: new ParseOptions(kind: SourceCodeKind.Script));
+                                                          options: consoleOptions);
 
             var entry = SyntaxTree.ParseCompilationUnit(EntryPoint);
 
-            var prompt = SyntaxTree.ParseCompilationUnit(BuildScript(post.Content), fileName: "Prompt",
-                                                         options: new ParseOptions(kind: SourceCodeKind.Interactive))
+            var promptOptions = ParseOptions.Default.WithKind(SourceCodeKind.Interactive);
+            var prompt = SyntaxTree.ParseCompilationUnit(BuildScript(post.Content), path: "Prompt",
+                                                         options: promptOptions)
                                    .RewriteWith<MissingSemicolonRewriter>();
 
-            var editor = SyntaxTree.ParseCompilationUnit(post.Classes ?? string.Empty, fileName: "Editor", 
-                                                         options: new ParseOptions(kind: SourceCodeKind.Script))
+            var editor = SyntaxTree.ParseCompilationUnit(post.Classes ?? string.Empty, path: "Editor", 
+                                                         options: consoleOptions)
                                    .RewriteWith<MissingSemicolonRewriter>();
 
             var compilation =  Compile(post.Title ?? "Untitled", new[] { entry, prompt, editor, console });
@@ -73,8 +75,7 @@ namespace Compilify.Services
                 throw new ArgumentNullException("compilationName");
             }
             
-            var options = new CompilationOptions(assemblyKind: AssemblyKind.ConsoleApplication, 
-                                                 usings: DefaultNamespaces);
+            var options = new CompilationOptions(OutputKind.ConsoleApplication).WithUsings(DefaultNamespaces);
 
             // Load basic .NET assemblies into our sandbox
             var mscorlib = Assembly.Load("mscorlib,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");

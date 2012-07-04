@@ -1,3 +1,4 @@
+using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 
 namespace Compilify.Services
@@ -13,9 +14,10 @@ namespace Compilify.Services
         private readonly SemanticModel model;
         private readonly IdentifierNameSyntax name;
 
-        protected override SyntaxNode VisitInvocationExpression(InvocationExpressionSyntax node)
+        public override SyntaxNode VisitInvocationExpression(InvocationExpressionSyntax node)
         {
-            var info = model.GetSemanticInfo(node);
+            // var info = model.GetSemanticInfo(node);
+            var info = model.GetSymbolInfo(node);
 
             var method = (MethodSymbol)info.Symbol;
 

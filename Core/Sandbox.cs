@@ -8,6 +8,7 @@ using System.Security.Policy;
 using System.Threading.Tasks;
 using Compilify.Models;
 using Compilify.Services;
+using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
 namespace Compilify
@@ -67,7 +68,8 @@ namespace Compilify
         {
             var result = new ExecutionResult();
             var type = typeof(ByteCodeLoader);
-            var formatter = new ObjectFormatter(maxLineLength: 5120);
+            var formatter = ObjectFormatter.Instance;
+            var formattingOptions = new ObjectFormattingOptions(maxOutputLength: 5120);
 
             try
             {
@@ -75,7 +77,7 @@ namespace Compilify
                 
                 var unformattedResult = loader.Run(className, resultProperty, assemblyBytes);
 
-                result.Result = (unformattedResult != null) ? formatter.FormatObject(unformattedResult.ReturnValue) : "null";
+                result.Result = (unformattedResult != null) ? formatter.FormatObject(unformattedResult.ReturnValue, formattingOptions) : "null";
                 result.ConsoleOutput = (unformattedResult != null) ? unformattedResult.ConsoleOutput : string.Empty;
                 result.ProcessorTime = domain.MonitoringTotalProcessorTime;
                 result.TotalMemoryAllocated = domain.MonitoringTotalAllocatedMemorySize;

@@ -14,7 +14,7 @@ namespace Compilify.Services
 
         private readonly ICSharpCompilationProvider compiler;
 
-        public IEnumerable<IDiagnostic> GetCompilationErrors(Post post)
+        public IEnumerable<CommonDiagnostic> GetCompilationErrors(Post post)
         {
             var result = compiler.Compile(post).Emit();
 
