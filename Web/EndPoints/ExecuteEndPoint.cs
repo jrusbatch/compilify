@@ -26,9 +26,7 @@ namespace Compilify.Web.EndPoints
 
         private static readonly TimeSpan ExecutionTimeout;
 
-        /// <summary>
-        /// Handle messages sent by the client.</summary>
-        protected override Task OnReceivedAsync(string connectionId, string data)
+        protected override Task OnReceivedAsync(IRequest request, string connectionId, string data)
         {
             var post = JsonConvert.DeserializeObject<Post>(data);
 
@@ -49,13 +47,13 @@ namespace Compilify.Web.EndPoints
             return redis.Lists.AddLast(0, "queue:execute", message)
                               .ContinueWith(t => {
                                   if (t.IsFaulted) {
-                                      return Send(new {
+                                      return Connection.Send(connectionId, new {
                                           status = "error",
                                           message = t.Exception != null ? t.Exception.Message : null
                                       });
                                   }
 
-                                  return Send(new { status = "ok" });
+                                  return Connection.Send(connectionId, new { status = "ok" });
                               });
         }
     }

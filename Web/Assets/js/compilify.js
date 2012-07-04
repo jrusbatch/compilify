@@ -7,53 +7,7 @@
 
 (function($, _, Compilify) {
     var root = this,
-        connection,
-    
-        EndpointConnection = function(url, options) {
-            /// <summary>
-            /// A SignalR connection object that closes after a set period of time.</summary>
-            /// <param name="url" type="String">
-            /// The URL of the endpoint to connect to.</param>
-            /// <param name="options" type="Object">
-            /// Options for the connection.</param>
-            /// <returns type="EndpointConnection" />
-            
-            var timer, 
-                isConnected = false,
-                conn = $.connection(url), 
-                opts = _.defaults(options, {
-                    timeout: 30000,
-                    onReceived: $.noop
-                });
-
-            function onTimeout() {
-                conn.stop();
-                isConnected = false;
-                timer = null;
-
-                $('#footer').removeClass('loading');
-            }
-
-            conn.sending(function() {
-                if (timer != null) {
-                    root.clearTimeout(timer);
-                }
-                timer = root.setTimeout(onTimeout, opts.timeout);
-            });
-
-            conn.received(opts.onReceived);
-
-            return {
-                send: function (data) {
-                    if (isConnected === true) {
-                        conn.send(data);
-                    }
-                    else {
-                        conn.start().done(function() { conn.send(data); });
-                    }
-                }
-            };
-        };
+        connection;
     
     function trackEvent(category, action, label) {
         /// <summary>
@@ -157,14 +111,17 @@
         //
         // Set up the SignalR connection
         //
-        connection = new EndpointConnection('/execute', {
-            onReceived: function (msg) {
-                if (msg && msg.status === "ok") {
-                    setResult(msg.data);
-                }
-                $('#footer').removeClass('loading');
+        connection = $.connection('/execute');
+
+        connection.received(function(msg) {
+            if (msg && msg.status === "ok") {
+                setResult(msg.data);
             }
+            
+            $('#footer').removeClass('loading');
         });
+
+        connection.start();
         
         //
         // Set up CodeMirror editor
