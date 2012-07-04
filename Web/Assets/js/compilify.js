@@ -49,6 +49,7 @@
                 }
 
                 markedErrors.length = 0;
+                console.log(msg);
 
                 if (_.isArray(data)) {
                     var $list = $('#footer .status ul.messages').detach().empty();
@@ -59,12 +60,11 @@
                         
                     } else {
                         $('#footer .status').removeClass('status-success').addClass('status-error');
-                        
                         for (var index in msg.data) {
                             var error = msg.data[index];
                             var loc = error.Location;
 
-                            var file = loc.FileName;
+                            var file = loc.Path;
 
                             var start = loc.StartLinePosition;
                             var end = loc.EndLinePosition;
