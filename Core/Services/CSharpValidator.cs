@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Compilify.Extensions;
 using Compilify.Models;
+using Roslyn.Compilers;
 using Roslyn.Compilers.Common;
 
 namespace Compilify.Services
@@ -18,7 +20,7 @@ namespace Compilify.Services
         {
             var result = compiler.Compile(post).Emit();
 
-            return result.Diagnostics;
+            return result.Diagnostics.Where(x => x.Info.Severity > DiagnosticSeverity.Error);
         }
     }
 }

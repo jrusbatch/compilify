@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -26,13 +27,8 @@ namespace Compilify.Web.Controllers
         public ActionResult Index()
         {
             var post = BuildSamplePost();
-            
-            var errors = compiler.GetCompilationErrors(post)
-                                 .Select(x => new EditorError
-                                              {
-                                                  Location = x.Location.GetLineSpan(true),
-                                                  Message = x.Info.GetMessage()
-                                              });
+
+            var errors = GetErrorsInPost(post);
 
             var viewModel = new PostViewModel(post)
                             {
@@ -69,13 +65,8 @@ namespace Compilify.Web.Controllers
             {
                 return PostNotFound();
             }
-
-            var errors = compiler.GetCompilationErrors(post)
-                                 .Select(x => new EditorError
-                                              {
-                                                  Location = x.Location.GetLineSpan(true),
-                                                  Message = x.Info.GetMessage()
-                                              });
+            
+            var errors = GetErrorsInPost(post);
 
             var viewModel = new PostViewModel(post)
                             {
@@ -129,15 +120,19 @@ namespace Compilify.Web.Controllers
         {
             var post = new Post { Classes = viewModel.Classes, Content = viewModel.Command };
 
-            var errors = compiler.GetCompilationErrors(post)
-                                 .Where(x => x.Info.Severity > DiagnosticSeverity.Warning)
-                                 .Select(x => new EditorError
-                                              {
-                                                  Location = x.Location.GetLineSpan(true),
-                                                  Message = x.Info.GetMessage()
-                                              });
+            var errors = GetErrorsInPost(post);
 
             return Json(new { status = "ok", data = errors });
+        }
+
+        private IEnumerable<EditorError> GetErrorsInPost(Post post)
+        {
+            return compiler.GetCompilationErrors(post)
+                           .Select(x => new EditorError
+                                        {
+                                            Location = x.Location.GetLineSpan(true),
+                                            Message = x.Info.GetMessage()
+                                        });
         }
 
         private static RouteValueDictionary BuildRouteParametersForPost(string slug, int? version)
