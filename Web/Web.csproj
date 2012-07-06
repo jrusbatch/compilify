@@ -198,12 +198,12 @@
     <Compile Include="Infrastructure\Extensions\RouteCollectionExtensions.cs" />
     <Compile Include="Infrastructure\LowercaseRoute.cs" />
     <Compile Include="Infrastructure\RequireHttpsOnAppHarborAttribute.cs" />
-    <Compile Include="Infrastructure\TaskAsyncHelper.cs" />
     <Compile Include="Models\PostViewModel.cs" />
     <Compile Include="Models\SignInViewModel.cs" />
     <Compile Include="Models\ValidateViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Base32Encoder.cs" />
+    <Compile Include="Services\RedisExecutionQueue.cs" />
     <Compile Include="Services\JobDoneMessageRelay.cs" />
     <Compile Include="Services\PageContentRepository.cs" />
     <Compile Include="Services\RedisConnectionException.cs" />

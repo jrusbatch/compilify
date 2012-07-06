@@ -3,7 +3,7 @@ using System.Configuration;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Compilify.Models;
-using Compilify.Web.Services;
+using Compilify.Services;
 using Newtonsoft.Json;
 using SignalR;
 
@@ -39,22 +39,19 @@ namespace Compilify.Web.EndPoints
                               TimeoutPeriod = ExecutionTimeout
                           };
 
-            var message = command.GetBytes();
+            var queue = DependencyResolver.Current.GetService<IExecutionQueue>();
 
-            var gateway = DependencyResolver.Current.GetService<RedisConnectionGateway>();
-            var redis = gateway.GetConnection();
+            return queue.QueueForExecution(command)
+                        .ContinueWith(t => {
+                            if (t.IsFaulted) {
+                                return Connection.Send(connectionId, new {
+                                    status = "error",
+                                    message = t.Exception != null ? t.Exception.Message : null
+                                });
+                            }
 
-            return redis.Lists.AddLast(0, "queue:execute", message)
-                              .ContinueWith(t => {
-                                  if (t.IsFaulted) {
-                                      return Connection.Send(connectionId, new {
-                                          status = "error",
-                                          message = t.Exception != null ? t.Exception.Message : null
-                                      });
-                                  }
-
-                                  return Connection.Send(connectionId, new { status = "ok" });
-                              });
+                            return Connection.Send(connectionId, new { status = "ok" });
+                        });
         }
     }
 }

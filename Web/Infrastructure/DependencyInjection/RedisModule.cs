@@ -1,4 +1,5 @@
 using Autofac;
+using Compilify.Services;
 using Compilify.Web.Services;
 
 namespace Compilify.Web.Infrastructure.DependencyInjection
@@ -13,6 +14,8 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
 
             builder.Register(x => x.Resolve<RedisConnectionGateway>().GetConnection())
                    .ExternallyOwned();
+
+            builder.RegisterType<RedisExecutionQueue>().As<IExecutionQueue>();
         }
     }
 }
