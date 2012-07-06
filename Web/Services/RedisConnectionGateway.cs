@@ -100,5 +100,12 @@ namespace Compilify.Web.Services
                 return connection;
             }
         }
+
+        public void Close(bool immediate)
+        {
+            connection.Close(immediate);
+            connection.Dispose();
+            connection = null;
+        }
     }
 }

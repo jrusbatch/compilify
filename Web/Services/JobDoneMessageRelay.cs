@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web.Hosting;
 using BookSleeve;
 using Compilify.Models;
 using Compilify.Web.EndPoints;
@@ -9,9 +10,14 @@ namespace Compilify.Web.Services
     /// <summary>
     /// Processes messages sent by workers over Redis and forwards them to the client
     /// that originally initiated the request.</summary>
-    public class JobDoneMessageRelay
+    public class JobDoneMessageRelay : IRegisteredObject
     {
         private const string ChannelPattern = "workers:job-done:*";
+
+        public JobDoneMessageRelay()
+        {
+            HostingEnvironment.RegisterObject(this);
+        }
 
         public JobDoneMessageRelay(RedisConnectionGateway redisConnectionGateway)
         {
@@ -62,6 +68,14 @@ namespace Compilify.Web.Services
                 // Forward the message to the user's browser with SignalR
                 context.Connection.Send(clientId, new { status = "ok", data = response.ToResultString() });
             }
+        }
+
+        public void Stop(bool immediate)
+        {
+            channel.Closed -= OnChannelClosed;
+            channel.Close(immediate);
+            gateway.Close(immediate);
+            HostingEnvironment.UnregisterObject(this);
         }
     }
 }
