@@ -12,7 +12,7 @@ namespace Compilify.Web.Services
     /// that originally initiated the request.</summary>
     public class JobDoneMessageRelay : IRegisteredObject
     {
-        private const string ChannelPattern = "workers:job-done:*";
+        private const string ChannelPattern = "workers:job-done";
 
         public JobDoneMessageRelay()
         {
@@ -56,18 +56,11 @@ namespace Compilify.Web.Services
         /// A JSON message.</param>
         public void OnMessageRecieved(string key, byte[] message)
         {
-            // Retrieve the client's connection ID from the key
-            var parts = key.Split(new[] { ':' });
-            var clientId = parts[parts.Length - 1];
+            var context = GlobalHost.ConnectionManager.GetConnectionContext<ExecuteEndPoint>();
+            var response = WorkerResult.Deserialize(message);
 
-            if (!string.IsNullOrEmpty(clientId))
-            {
-                var context = GlobalHost.ConnectionManager.GetConnectionContext<ExecuteEndPoint>();
-                var response = WorkerResult.Deserialize(message);
-
-                // Forward the message to the user's browser with SignalR
-                context.Connection.Send(clientId, new { status = "ok", data = response.ToResultString() });
-            }
+            // Forward the message to the user's browser with SignalR
+            context.Connection.Send(response.ClientId, new { status = "ok", data = response.ToResultString() });
         }
 
         public void Stop(bool immediate)

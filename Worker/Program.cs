@@ -80,13 +80,14 @@ namespace Compilify.Worker
                                    {
                                        // code = cmd.Code,
                                        // classes = cmd.Classes,
+                                       ClientId = cmd.ClientId,
                                        Time = DateTime.UtcNow,
                                        Duration = stopWatch.ElapsedMilliseconds,
                                        ExecutionResult = result 
                                    };
 
 
-                    var listeners = PublishToClient(cmd.ClientId, response.GetBytes());
+                    var listeners = Publish(response.GetBytes());
 
                     Logger.Info("Work results published to {0} listeners.", listeners.Result);
                 }
@@ -157,7 +158,7 @@ namespace Compilify.Worker
             return null;
         }
 
-        private static Task<long> PublishToClient(string clientId, byte[] message)
+        private static Task<long> Publish(byte[] message)
         {
             if (NeedsReset(connection))
             {
@@ -169,7 +170,7 @@ namespace Compilify.Worker
                 connection = GetOpenConnection();
             }
 
-            return connection.Publish("workers:job-done:" + clientId, message);
+            return connection.Publish("workers:job-done", message);
         }
     }
 }

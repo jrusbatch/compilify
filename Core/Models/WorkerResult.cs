@@ -11,12 +11,15 @@ namespace Compilify.Models
     public class WorkerResult
     {
         [ProtoMember(1)]
-        public DateTime Time { get; set; }
+        public string ClientId { get; set; }
 
         [ProtoMember(2)]
+        public DateTime Time { get; set; }
+
+        [ProtoMember(3)]
         public long Duration { get; set; }
 
-        [ProtoMember(3, AsReference = true)]
+        [ProtoMember(4, AsReference = true)]
         public ExecutionResult ExecutionResult { get; set; }
 
         public string ToResultString()
