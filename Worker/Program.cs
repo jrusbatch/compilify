@@ -78,18 +78,14 @@ namespace Compilify.Worker
                 {
                     var response = new WorkerResult
                                    {
-                                       // code = cmd.Code,
-                                       // classes = cmd.Classes,
                                        ClientId = cmd.ClientId,
                                        Time = DateTime.UtcNow,
                                        Duration = stopWatch.ElapsedMilliseconds,
                                        ExecutionResult = result 
                                    };
 
-
-                    var listeners = Publish(response.GetBytes());
-
-                    Logger.Info("Work results published to {0} listeners.", listeners.Result);
+                    Publish(response.GetBytes())
+                        .ContinueWith(t => Logger.Info("Work results published to {0} listeners.", t.Result));
                 }
                 catch (JsonSerializationException ex)
                 {

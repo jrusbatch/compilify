@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Web.Hosting;
 using BookSleeve;
 using Compilify.Models;
@@ -12,7 +13,7 @@ namespace Compilify.Web.Services
     /// that originally initiated the request.</summary>
     public class JobDoneMessageRelay : IRegisteredObject
     {
-        private const string ChannelPattern = "workers:job-done";
+        private const string EventKey = "workers:job-done";
 
         public JobDoneMessageRelay()
         {
@@ -33,7 +34,7 @@ namespace Compilify.Web.Services
             channel = gateway.GetConnection().GetOpenSubscriberChannel();
             channel.Closed += OnChannelClosed;
 
-            channel.PatternSubscribe(ChannelPattern, OnMessageRecieved);
+            channel.Subscribe(EventKey, OnMessageRecieved);
         }
 
         public void OnChannelClosed(object sender, EventArgs e)
@@ -57,10 +58,10 @@ namespace Compilify.Web.Services
         public void OnMessageRecieved(string key, byte[] message)
         {
             var context = GlobalHost.ConnectionManager.GetConnectionContext<ExecuteEndPoint>();
-            var response = WorkerResult.Deserialize(message);
+            var result = WorkerResult.Deserialize(message);
 
             // Forward the message to the user's browser with SignalR
-            context.Connection.Send(response.ClientId, new { status = "ok", data = response.ToResultString() });
+            context.Connection.Send(result.ClientId, new { status = "ok", data = result.ToResultString() });
         }
 
         public void Stop(bool immediate)
