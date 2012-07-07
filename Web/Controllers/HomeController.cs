@@ -3,12 +3,11 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Compilify.Data;
 using Compilify.Models;
 using Compilify.Services;
 using Compilify.Web.Infrastructure.Extensions;
 using Compilify.Web.Models;
-using Compilify.Web.Services;
-using Roslyn.Compilers;
 
 namespace Compilify.Web.Controllers
 {
@@ -98,17 +97,6 @@ namespace Compilify.Web.Controllers
         [ValidateInput(false)]
         public ActionResult Save(string slug, Post post)
         {
-            if (Request.IsAuthenticated)
-            {
-                var userId = User.Identity.ToCompilifyIdentity().UserId;
-                if (post.AuthorId != userId)
-                {
-                    slug = null;
-                }
-
-                post.AuthorId = userId;
-            }
-
             var result = db.Save(slug, post);
 
             return RedirectToAction("Show", BuildRouteParametersForPost(result.Slug, result.Version));
@@ -176,9 +164,6 @@ namespace Compilify.Web.Controllers
                                   .AppendLine("")
                                   .AppendLine("return person.Greet();")
                                   .ToString();
-            
-
-            
 
             return post;
         }

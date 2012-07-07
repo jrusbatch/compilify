@@ -46,9 +46,6 @@ namespace Compilify.Services
             }
 
             var asScript = ParseOptions.Default.WithKind(SourceCodeKind.Script);
-            var asInteractive = ParseOptions.Default.WithKind(SourceCodeKind.Interactive);
-            var asRegular = ParseOptions.Default.WithKind(SourceCodeKind.Regular);
-
 
             var console = SyntaxTree.ParseCompilationUnit("public static readonly StringWriter __Console = new StringWriter();", 
                                                           options: asScript);

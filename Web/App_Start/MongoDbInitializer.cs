@@ -7,12 +7,14 @@ using WebActivator;
 
 [assembly: PreApplicationStartMethod(typeof(MongoDbInitializer), "Initialize")]
 
-namespace Compilify.Web {
-    public static class MongoDbInitializer {
-
-        public static void Initialize() {
-
-            BsonClassMap.RegisterClassMap<Post>(x => {
+namespace Compilify.Web
+{
+    public static class MongoDbInitializer
+    {
+        public static void Initialize()
+        {
+            BsonClassMap.RegisterClassMap<Post>(x =>
+            {
                 x.AutoMap();
 
                 x.SetIdMember(x.GetMemberMap(y => y.Id));
@@ -24,8 +26,8 @@ namespace Compilify.Web {
                 x.GetMemberMap(y => y.Version).SetDefaultValue(1);
             });
 
-
-            BsonClassMap.RegisterClassMap<Incrementor>(x => {
+            BsonClassMap.RegisterClassMap<Incrementor>(x =>
+            {
                 x.AutoMap();
 
                 x.SetIdMember(x.GetMemberMap(y => y.Id));
@@ -37,6 +39,5 @@ namespace Compilify.Web {
                 x.GetMemberMap(y => y.Current).SetDefaultValue(0);
             });
         }
-
     }
 }

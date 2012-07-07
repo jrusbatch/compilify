@@ -89,6 +89,7 @@
     <Compile Include="Services\CSharpExecutor.cs" />
     <Compile Include="Services\CSharpCompilationProvider.cs" />
     <Compile Include="Services\CSharpValidator.cs" />
+    <Compile Include="Data\IPostRepository.cs" />
     <Compile Include="Services\MissingSemicolonRewriter.cs" />
   </ItemGroup>
   <ItemGroup>

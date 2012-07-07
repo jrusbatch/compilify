@@ -20,7 +20,7 @@ namespace Compilify.Web
             builder.RegisterModule(new RedisModule());
             builder.RegisterModule(new MvcModule());
             
-            builder.RegisterType<PostRepository>()
+            builder.RegisterType<MongoDbPostRepository>()
                    .AsImplementedInterfaces()
                    .InstancePerHttpRequest();
 
