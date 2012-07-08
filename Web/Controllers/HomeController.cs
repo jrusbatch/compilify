@@ -6,7 +6,6 @@ using System.Web.Routing;
 using Compilify.Data;
 using Compilify.Models;
 using Compilify.Services;
-using Compilify.Web.Infrastructure.Extensions;
 using Compilify.Web.Models;
 
 namespace Compilify.Web.Controllers

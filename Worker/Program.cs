@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using BookSleeve;
+using Compilify.Common.Redis;
+using Compilify.Messaging;
+using Compilify.Messaging.Redis;
 using Compilify.Models;
 using Compilify.Services;
 using Newtonsoft.Json;
@@ -24,21 +25,25 @@ namespace Compilify.Worker
             TaskScheduler.UnobservedTaskException += 
                 (sender, e) => Logger.ErrorException("An unobserved task exception occurred", e.Exception);
 
-            connection = GetOpenConnection();
+            var gateway = new RedisConnectionGateway(ConfigurationManager.AppSettings["REDISTOGO_URL"]);
 
-            ProcessQueue(new[] { "queue:execute" });
+            queue = new RedisExecutionQueue(gateway, 0, "queue:execute");
+            messenger = new RedisMessenger(gateway);
+
+            ProcessQueue();
 
             return -1; // Return a non-zero code so AppHarbor restarts the worker
         }
-        
+
         private const int DefaultTimeout = 5000;
         
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly CSharpExecutor Executer = new CSharpExecutor();
 
-        private static RedisConnection connection;
+        private static IQueue<ExecuteCommand> queue;
+        private static IMessenger messenger;
         
-        private static void ProcessQueue(string[] queues)
+        private static void ProcessQueue()
         {
             var stopWatch = new Stopwatch();
 
@@ -46,7 +51,7 @@ namespace Compilify.Worker
 
             while (true)
             {
-                var cmd = WaitForCommandFromQueue(queues);
+                var cmd = queue.Dequeue();
 
                 if (cmd == null)
                 {
@@ -83,8 +88,7 @@ namespace Compilify.Worker
                                        ExecutionResult = result 
                                    };
 
-                    Publish(response.GetBytes())
-                        .ContinueWith(t => Logger.Info("Work results published to {0} listeners.", t.Result));
+                    messenger.Publish("workers:job-done", response.GetBytes());
                 }
                 catch (JsonSerializationException ex)
                 {
@@ -107,65 +111,6 @@ namespace Compilify.Worker
             {
                 Logger.ErrorException("An unhandled exception occurred in the worker process.", exception);
             }
-        }
-
-        private static RedisConnection GetOpenConnection()
-        {
-            var connectionString = ConfigurationManager.AppSettings["REDISTOGO_URL"];
-            var uri = new Uri(connectionString);
-            var password = uri.UserInfo.Split(':').LastOrDefault();
-
-            var conn = new RedisConnection(uri.Host, uri.Port, password: password, allowAdmin: false,
-                                           syncTimeout: DefaultTimeout, ioTimeout: DefaultTimeout);
-
-            conn.Error += (sender, e) => Logger.ErrorException(e.Cause, e.Exception);
-
-            conn.Wait(conn.Open());
-
-            return conn;
-        }
-
-        private static bool NeedsReset(RedisConnectionBase conn)
-        {
-            return conn == null || (conn.State != RedisConnectionBase.ConnectionState.Open &&
-                                    conn.State != RedisConnectionBase.ConnectionState.Opening);
-        }
-
-        private static ExecuteCommand WaitForCommandFromQueue(string[] queues)
-        {
-            if (NeedsReset(connection))
-            {
-                if (connection != null)
-                {
-                    connection.Dispose();
-                }
-
-                connection = GetOpenConnection();
-            }
-
-            var message = connection.Lists.BlockingRemoveFirst(0, queues, DefaultTimeout);
-
-            if (message.Result != null)
-            {
-                return ExecuteCommand.Deserialize(message.Result.Item2);
-            }
-
-            return null;
-        }
-
-        private static Task<long> Publish(byte[] message)
-        {
-            if (NeedsReset(connection))
-            {
-                if (connection != null)
-                {
-                    connection.Dispose();
-                }
-
-                connection = GetOpenConnection();
-            }
-
-            return connection.Publish("workers:job-done", message);
         }
     }
 }

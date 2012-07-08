@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Web.Hosting;
+using System.Threading.Tasks;
 using BookSleeve;
-using Compilify.Messaging;
+using Compilify.Common.Redis;
 
-namespace Compilify.Web.Services
+namespace Compilify.Messaging.Redis
 {
-    public class RedisMessenger : IMessenger, IRegisteredObject
+    public class RedisMessenger : IMessenger
     {
         private const string EventKey = "workers:job-done";
 
         public RedisMessenger(RedisConnectionGateway redisConnectionGateway)
         {
-            HostingEnvironment.RegisterObject(this);
             gateway = redisConnectionGateway;
             Subscribe();
         }
@@ -51,15 +50,11 @@ namespace Compilify.Web.Services
             Subscribe();
         }
 
-        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
-
-        public void Stop(bool immediate)
+        public Task Publish(string eventKey, byte[] message)
         {
-            channel.Closed -= OnChannelClosed;
-            channel.Close(immediate);
-            channel.Dispose();
-            gateway.Close(immediate);
-            HostingEnvironment.UnregisterObject(this);
+            return gateway.GetConnection().Publish(eventKey, message);
         }
+
+        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
     }
 }

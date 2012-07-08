@@ -37,9 +37,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BookSleeve">
-      <HintPath>..\packages\BookSleeve.1.1.0.7\lib\BookSleeve.dll</HintPath>
-    </Reference>
     <Reference Include="le_nlog">
       <HintPath>..\packages\le_nlog.1.5.3\lib\4.0\le_nlog.dll</HintPath>
     </Reference>

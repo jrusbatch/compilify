@@ -34,6 +34,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BookSleeve">
+      <HintPath>..\packages\BookSleeve.1.1.0.7\lib\BookSleeve.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Bson">
+      <HintPath>..\packages\mongocsharpdriver.1.5\lib\net35\MongoDB.Bson.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Driver">
+      <HintPath>..\packages\mongocsharpdriver.1.5\lib\net35\MongoDB.Driver.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>..\packages\protobuf-net.2.0.0.480\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
@@ -66,20 +75,23 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Redis\RedisConnectionException.cs" />
+    <Compile Include="Common\Redis\RedisConnectionGateway.cs" />
+    <Compile Include="Common\Redis\RedisExecutionQueue.cs" />
+    <Compile Include="Data\Mongo\MongoDbInitializer.cs" />
+    <Compile Include="Data\Mongo\MongoDbPostRepository.cs" />
     <Compile Include="ExecuteCommand.cs" />
     <Compile Include="Extensions\CompilationExtensions.cs" />
     <Compile Include="Extensions\GeneralExtensions.cs" />
     <Compile Include="Extensions\SyntaxTreeExtensions.cs" />
     <Compile Include="Messaging\IMessenger.cs" />
     <Compile Include="Messaging\MessageReceivedEventArgs.cs" />
-    <Compile Include="Services\IExecutionQueue.cs" />
+    <Compile Include="IQueue.cs" />
+    <Compile Include="Messaging\Redis\RedisMessenger.cs" />
     <Compile Include="Models\ExecutionResult.cs" />
     <Compile Include="Models\Incrementor.cs" />
     <Compile Include="Models\Post.cs" />

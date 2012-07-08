@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Configuration;
 using System.Linq;
 using System.Net.Sockets;
 using BookSleeve;
 
-namespace Compilify.Web.Services
+namespace Compilify.Common.Redis
 {
     /// <summary>
     /// Maintains an open connection to a Redis server.</summary>
@@ -12,40 +11,20 @@ namespace Compilify.Web.Services
     /// http://stackoverflow.com/a/8777999/145831 </remarks>
     public sealed class RedisConnectionGateway
     {
-        private RedisConnectionGateway()
+        public RedisConnectionGateway(string connectionString)
         {
+            this.connectionString = connectionString;
             connection = CreateConnection();
         }
 
+        private readonly string connectionString;
         private const string RedisConnectionFailed = "Redis connection failed.";
         private RedisConnection connection;
-        private static volatile RedisConnectionGateway instance;
 
-        private static readonly object syncLock = new object();
         private static readonly object syncConnectionLock = new object();
 
-        public static RedisConnectionGateway Current
+        private RedisConnection CreateConnection()
         {
-            get
-            {
-                if (instance == null)
-                {
-                    lock (syncLock)
-                    {
-                        if (instance == null)
-                        {
-                            instance = new RedisConnectionGateway();
-                        }
-                    }
-                }
-
-                return instance;
-            }
-        }
-
-        private static RedisConnection CreateConnection()
-        {
-            var connectionString = ConfigurationManager.AppSettings["REDISTOGO_URL"];
             var uri = new Uri(connectionString);
             var password = uri.UserInfo.Split(':').LastOrDefault();
 

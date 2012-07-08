@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using Autofac;
 using Autofac.Integration.Mvc;
-using Compilify.Web.Services;
+using Compilify.Data.Mongo;
 using MongoDB.Driver;
 
 namespace Compilify.Web.Infrastructure.DependencyInjection

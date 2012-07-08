@@ -3,7 +3,6 @@ using System.Configuration;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Compilify.Models;
-using Compilify.Services;
 using Newtonsoft.Json;
 using SignalR;
 
@@ -39,9 +38,9 @@ namespace Compilify.Web.EndPoints
                               TimeoutPeriod = ExecutionTimeout
                           };
 
-            var queue = DependencyResolver.Current.GetService<IExecutionQueue>();
+            var queue = DependencyResolver.Current.GetService<IQueue<ExecuteCommand>>();
 
-            return queue.QueueForExecution(command)
+            return queue.EnqueueAsync(command)
                         .ContinueWith(t => {
                             if (t.IsFaulted) {
                                 return Connection.Send(connectionId, new {

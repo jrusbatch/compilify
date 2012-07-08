@@ -1,7 +1,8 @@
+using System.Configuration;
 using Autofac;
+using Compilify.Common.Redis;
 using Compilify.Messaging;
-using Compilify.Services;
-using Compilify.Web.Services;
+using Compilify.Messaging.Redis;
 
 namespace Compilify.Web.Infrastructure.DependencyInjection
 {
@@ -9,14 +10,12 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(x => RedisConnectionGateway.Current)
+            builder.Register(x => new RedisConnectionGateway(ConfigurationManager.AppSettings["REDISTOGO_URL"]))
                    .SingleInstance()
                    .AsSelf();
 
-            builder.Register(x => x.Resolve<RedisConnectionGateway>().GetConnection())
-                   .ExternallyOwned();
-
-            builder.RegisterType<RedisExecutionQueue>().As<IExecutionQueue>();
+            builder.Register(x => new RedisExecutionQueue(x.Resolve<RedisConnectionGateway>(), 0, "queue:execute"))
+                   .As<IQueue<ExecuteCommand>>();
 
             builder.RegisterType<RedisMessenger>().As<IMessenger>();
         }
