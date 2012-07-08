@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-namespace Compilify.Web.Services
+
+namespace Compilify.Utilities
 {
     public static class Base32Encoder
     {
@@ -34,8 +35,7 @@ namespace Compilify.Web.Services
             }
 
             var @base = Characters.Length;
-            return str.ToLowerInvariant()
-                      .Aggregate(0, (current, c) => current * @base + Characters.IndexOf(c));
+            return str.ToLowerInvariant().Aggregate(0, (current, c) => current * @base + Characters.IndexOf(c));
         }
     }
 }
