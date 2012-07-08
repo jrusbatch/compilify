@@ -77,6 +77,8 @@
     <Compile Include="Extensions\CompilationExtensions.cs" />
     <Compile Include="Extensions\GeneralExtensions.cs" />
     <Compile Include="Extensions\SyntaxTreeExtensions.cs" />
+    <Compile Include="Messaging\IMessenger.cs" />
+    <Compile Include="Messaging\MessageReceivedEventArgs.cs" />
     <Compile Include="Services\IExecutionQueue.cs" />
     <Compile Include="Models\ExecutionResult.cs" />
     <Compile Include="Models\Incrementor.cs" />

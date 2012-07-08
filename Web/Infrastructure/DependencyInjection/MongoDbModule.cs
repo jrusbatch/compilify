@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using Autofac;
 using Autofac.Integration.Mvc;
+using Compilify.Web.Services;
 using MongoDB.Driver;
 
 namespace Compilify.Web.Infrastructure.DependencyInjection
@@ -12,6 +13,10 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
             builder.Register(CreateConnection)
                    .InstancePerHttpRequest()
                    .AsSelf();
+
+            builder.RegisterType<MongoDbPostRepository>()
+                   .AsImplementedInterfaces()
+                   .InstancePerHttpRequest();
         }
 
         private static MongoDatabase CreateConnection(IComponentContext context)

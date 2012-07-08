@@ -1,6 +1,7 @@
 ﻿using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Compilify.Messaging;
 using Compilify.Web.Services;
 
 namespace Compilify.Web
@@ -22,7 +23,7 @@ namespace Compilify.Web
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            MessageRelay = new JobDoneMessageRelay(DependencyResolver.Current.GetService<RedisConnectionGateway>());
+            MessageRelay = new JobDoneMessageRelay(DependencyResolver.Current.GetService<IMessenger>());
         }
     }
 }

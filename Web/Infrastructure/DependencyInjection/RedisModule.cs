@@ -1,4 +1,5 @@
 using Autofac;
+using Compilify.Messaging;
 using Compilify.Services;
 using Compilify.Web.Services;
 
@@ -16,6 +17,8 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
                    .ExternallyOwned();
 
             builder.RegisterType<RedisExecutionQueue>().As<IExecutionQueue>();
+
+            builder.RegisterType<RedisMessenger>().As<IMessenger>();
         }
     }
 }
