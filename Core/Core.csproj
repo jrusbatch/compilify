@@ -94,6 +94,7 @@
     <Compile Include="Data\IPostRepository.cs" />
     <Compile Include="Services\MissingSemicolonRewriter.cs" />
     <Compile Include="Utilities\Base32Encoder.cs" />
+    <Compile Include="Utilities\TaskAsyncHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

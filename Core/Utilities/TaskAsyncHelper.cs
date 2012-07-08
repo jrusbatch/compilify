@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Compilify.Web.Infrastructure
+namespace Compilify.Utilities
 {
     internal static class TaskAsyncHelper
     {
