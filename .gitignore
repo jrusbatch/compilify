@@ -12,6 +12,7 @@ _ReSharper.*
 *.resharper
 packages/
 *.ncrunchsolution
+*.ncrunchproject
 *.DotSettings
 UpgradeLog*.xml
 _Upgrade*
