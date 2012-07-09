@@ -212,7 +212,6 @@
     <Compile Include="Models\SignInViewModel.cs" />
     <Compile Include="Models\ValidateViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\JobDoneMessageRelay.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />

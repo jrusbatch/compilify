@@ -49,7 +49,7 @@ namespace Compilify.Web.EndPoints
                                     });
                                 }
 
-                                return Connection.Send(connectionId, new { status = "ok", executionId = t.Result.ExecutionId });
+                                return Connection.Send(connectionId, new { status = "ok", data = t.Result.ToResultString() });
                             });
         }
     }

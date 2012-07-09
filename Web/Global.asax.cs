@@ -1,15 +1,11 @@
 ﻿using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using Compilify.Messaging;
-using Compilify.Web.Services;
 
 namespace Compilify.Web
 {
     public class Application : System.Web.HttpApplication
     {
-        protected static JobDoneMessageRelay MessageRelay;
-
         protected void Application_Start()
         {
             ViewEngines.Engines.Clear();
@@ -22,8 +18,6 @@ namespace Compilify.Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            MessageRelay = new JobDoneMessageRelay(DependencyResolver.Current.GetService<IMessenger>());
         }
     }
 }

@@ -24,29 +24,42 @@ namespace Compilify
 
         public Task<WorkerResult> Handle(ExecuteCommand command)
         {
-            return queue.EnqueueAsync(command)
-                        .Then(() =>
-                        {
-                            var tcs = new TaskCompletionSource<WorkerResult>();
-                            EventHandler<MessageReceivedEventArgs> handler = null;
-                            
-                            handler = (sender, e) =>
-                            {
-                                // TODO: This approach means every result we get will be deserialized more 
-                                // than once. So... how about we find another way.
-                                var result = WorkerResult.Deserialize(e.Payload);
+            var tcs = new TaskCompletionSource<WorkerResult>();
+            EventHandler<MessageReceivedEventArgs> handler = null;
+
+            handler = (sender, e) =>
+            {
+                // TODO: This approach means every result we get will be deserialized more 
+                // than once. So... how about we find another way.
+                var result = WorkerResult.Deserialize(e.Payload);
                                 
-                                if (result.ExecutionId == command.ExecutionId)
-                                {
-                                    // Unregister the event handler
-                                    bus.MessageReceived -= handler;
-                                    tcs.TrySetResult(result);
-                                }
-                            };
-                            
-                            bus.MessageReceived += handler;
+                if (result.ExecutionId == command.ExecutionId)
+                {
+                    // Unregister the event handler
+                    bus.MessageReceived -= handler;
+                    tcs.TrySetResult(result);
+                }
+            };
+
+            bus.MessageReceived += handler;
+
+            return queue.EnqueueAsync(command)
+                        .ContinueWith(t =>
+                        {
+                            if (t.IsFaulted)
+                            {
+                                tcs.SetException(t.Exception);
+                                bus.MessageReceived -= handler;
+                            }
+                            else if (t.IsCanceled)
+                            {
+                                tcs.TrySetCanceled();
+                                bus.MessageReceived -= handler;
+                            }
+
                             return tcs.Task;
-                        });
+                        })
+                        .Unwrap();
         }
     }
 }
