@@ -82,6 +82,7 @@ namespace Compilify.Worker
                 {
                     var response = new WorkerResult
                                    {
+                                       ExecutionId = cmd.ExecutionId,
                                        ClientId = cmd.ClientId,
                                        Time = DateTime.UtcNow,
                                        Duration = stopWatch.ElapsedMilliseconds,

@@ -33,7 +33,6 @@ namespace Compilify.Utilities
             return task;
         }
 
-
         public static void ContinueWithNotComplete(this Task task, TaskCompletionSource<object> tcs)
         {
             task.ContinueWith(t =>

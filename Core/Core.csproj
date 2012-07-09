@@ -84,6 +84,7 @@
     <Compile Include="Common\Redis\RedisExecutionQueue.cs" />
     <Compile Include="Data\Mongo\MongoDbInitializer.cs" />
     <Compile Include="Data\Mongo\MongoDbPostRepository.cs" />
+    <Compile Include="Evaluator.cs" />
     <Compile Include="ExecuteCommand.cs" />
     <Compile Include="Extensions\CompilationExtensions.cs" />
     <Compile Include="Extensions\GeneralExtensions.cs" />

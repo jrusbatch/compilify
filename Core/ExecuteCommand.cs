@@ -9,29 +9,31 @@ namespace Compilify
     public sealed class ExecuteCommand
     {
         public ExecuteCommand() { }
+        
+        [ProtoMember(1)]
+        private Guid id = Guid.NewGuid();
 
-        public ExecuteCommand(string clientId, string code)
+        public Guid ExecutionId
         {
-            ClientId = clientId;
-            Code = code;
+            get { return id; }
         }
 
-        [ProtoMember(1)]
+        [ProtoMember(2)]
         public string ClientId { get; set; }
 
-        [ProtoMember(2)]
+        [ProtoMember(3)]
         public string Code { get; set; }
 
-        [ProtoMember(3)]
+        [ProtoMember(4)]
         public string Classes { get; set; }
 
-        [ProtoMember(4)]
+        [ProtoMember(5)]
         public string Result { get; set; }
 
-        [ProtoMember(5)]
+        [ProtoMember(6)]
         public DateTime Submitted { get; set; }
 
-        [ProtoMember(6)]
+        [ProtoMember(7)]
         public TimeSpan TimeoutPeriod { get; set; }
 
         public byte[] GetBytes()

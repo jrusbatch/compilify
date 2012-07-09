@@ -18,6 +18,10 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
                    .As<IQueue<ExecuteCommand>>();
 
             builder.RegisterType<RedisMessenger>().As<IMessenger>();
+
+            builder.RegisterType<DefaultEvaluator>()
+                   .As<IEvaluator>()
+                   .SingleInstance();
         }
     }
 }

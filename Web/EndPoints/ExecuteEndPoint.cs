@@ -38,19 +38,19 @@ namespace Compilify.Web.EndPoints
                               TimeoutPeriod = ExecutionTimeout
                           };
 
-            var queue = DependencyResolver.Current.GetService<IQueue<ExecuteCommand>>();
+            var evaluator = DependencyResolver.Current.GetService<IEvaluator>();
 
-            return queue.EnqueueAsync(command)
-                        .ContinueWith(t => {
-                            if (t.IsFaulted) {
-                                return Connection.Send(connectionId, new {
-                                    status = "error",
-                                    message = t.Exception != null ? t.Exception.Message : null
-                                });
-                            }
+            return evaluator.Handle(command)
+                            .ContinueWith(t => {
+                                if (t.IsFaulted) {
+                                    return Connection.Send(connectionId, new {
+                                        status = "error",
+                                        message = t.Exception != null ? t.Exception.Message : null
+                                    });
+                                }
 
-                            return Connection.Send(connectionId, new { status = "ok" });
-                        });
+                                return Connection.Send(connectionId, new { status = "ok", executionId = t.Result.ExecutionId });
+                            });
         }
     }
 }
