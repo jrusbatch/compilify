@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Compilify.Common.Redis
 {
-    public class RedisExecutionQueue : IQueue<ExecuteCommand>
+    public class RedisExecutionQueue : IQueue<EvaluateCodeCommand>
     {
         public RedisExecutionQueue(RedisConnectionGateway redisConnectionGateway, int dbNumber, string queueName)
         {
@@ -21,12 +21,12 @@ namespace Compilify.Common.Redis
         private readonly int db;
         private readonly string queue;
 
-        public void Enqueue(ExecuteCommand message)
+        public void Enqueue(EvaluateCodeCommand message)
         {
             gateway.GetConnection().Wait(EnqueueAsync(message));
         }
 
-        public Task EnqueueAsync(ExecuteCommand command)
+        public Task EnqueueAsync(EvaluateCodeCommand command)
         {
             if (command == null)
             {
@@ -37,22 +37,22 @@ namespace Compilify.Common.Redis
             return gateway.GetConnection().Lists.AddLast(db, queue, message);
         }
 
-        public ExecuteCommand Dequeue()
+        public EvaluateCodeCommand Dequeue()
         {
             var message = gateway.GetConnection().Lists.BlockingRemoveFirst(db, new[] { queue }, 0).Result;
 
             if (message != null)
             {
-                return ExecuteCommand.Deserialize(message.Item2);
+                return EvaluateCodeCommand.Deserialize(message.Item2);
             }
 
             return null;
         }
 
-        public Task<ExecuteCommand> DequeueAsync()
+        public Task<EvaluateCodeCommand> DequeueAsync()
         {
             return gateway.GetConnection().Lists.RemoveFirst(db, queue)
-                          .ContinueWith(t => ExecuteCommand.Deserialize(t.Result));
+                          .ContinueWith(t => EvaluateCodeCommand.Deserialize(t.Result));
         }
     }
 }

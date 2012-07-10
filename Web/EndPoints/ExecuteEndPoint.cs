@@ -24,12 +24,12 @@ namespace Compilify.Web.EndPoints
         private const int DefaultExecutionTimeout = 30;
 
         private static readonly TimeSpan ExecutionTimeout;
-
+        
         protected override Task OnReceivedAsync(IRequest request, string connectionId, string data)
         {
             var post = JsonConvert.DeserializeObject<Post>(data);
 
-            var command = new ExecuteCommand
+            var command = new EvaluateCodeCommand
                           {
                               ClientId = connectionId,
                               Code = post.Content,
@@ -38,7 +38,7 @@ namespace Compilify.Web.EndPoints
                               TimeoutPeriod = ExecutionTimeout
                           };
 
-            var evaluator = DependencyResolver.Current.GetService<IEvaluator>();
+            var evaluator = DependencyResolver.Current.GetService<ICodeEvaluator>();
 
             return evaluator.Handle(command)
                             .ContinueWith(t => {

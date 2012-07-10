@@ -1,5 +1,6 @@
 using System.Configuration;
 using Autofac;
+using Compilify.Common;
 using Compilify.Common.Redis;
 using Compilify.Messaging;
 using Compilify.Messaging.Redis;
@@ -15,12 +16,12 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
                    .AsSelf();
 
             builder.Register(x => new RedisExecutionQueue(x.Resolve<RedisConnectionGateway>(), 0, "queue:execute"))
-                   .As<IQueue<ExecuteCommand>>();
+                   .As<IQueue<EvaluateCodeCommand>>();
 
             builder.RegisterType<RedisMessenger>().As<IMessenger>();
 
-            builder.RegisterType<DefaultEvaluator>()
-                   .As<IEvaluator>()
+            builder.RegisterType<DefaultCodeEvaluator>()
+                   .As<ICodeEvaluator>()
                    .SingleInstance();
         }
     }

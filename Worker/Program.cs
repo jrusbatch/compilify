@@ -40,7 +40,7 @@ namespace Compilify.Worker
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly CSharpExecutor Executer = new CSharpExecutor();
 
-        private static IQueue<ExecuteCommand> queue;
+        private static IQueue<EvaluateCodeCommand> queue;
         private static IMessenger messenger;
         
         private static void ProcessQueue()

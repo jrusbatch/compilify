@@ -24,6 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -84,8 +85,9 @@
     <Compile Include="Common\Redis\RedisExecutionQueue.cs" />
     <Compile Include="Data\Mongo\MongoDbInitializer.cs" />
     <Compile Include="Data\Mongo\MongoDbPostRepository.cs" />
-    <Compile Include="Evaluator.cs" />
-    <Compile Include="ExecuteCommand.cs" />
+    <Compile Include="Common\DefaultCodeEvaluator.cs" />
+    <Compile Include="ICodeEvaluator.cs" />
+    <Compile Include="EvaluateCodeCommand.cs" />
     <Compile Include="Extensions\CompilationExtensions.cs" />
     <Compile Include="Extensions\GeneralExtensions.cs" />
     <Compile Include="Extensions\SyntaxTreeExtensions.cs" />

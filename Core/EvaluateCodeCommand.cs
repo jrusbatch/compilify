@@ -6,9 +6,9 @@ namespace Compilify
 {
     [Serializable]
     [ProtoContract]
-    public sealed class ExecuteCommand
+    public sealed class EvaluateCodeCommand
     {
-        public ExecuteCommand() { }
+        public EvaluateCodeCommand() { }
         
         [ProtoMember(1)]
         private Guid id = Guid.NewGuid();
@@ -45,7 +45,7 @@ namespace Compilify
             }
         }
 
-        public static ExecuteCommand Deserialize(byte[] data)
+        public static EvaluateCodeCommand Deserialize(byte[] data)
         {
             if (data == null)
             {
@@ -54,7 +54,7 @@ namespace Compilify
 
             using (var stream = new MemoryStream(data))
             {
-                return Serializer.Deserialize<ExecuteCommand>(stream);
+                return Serializer.Deserialize<EvaluateCodeCommand>(stream);
             }
         }
     }
