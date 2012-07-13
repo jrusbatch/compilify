@@ -21,20 +21,40 @@ namespace Compilify.Common.Redis
         private readonly int db;
         private readonly string queue;
 
-        public void Enqueue(EvaluateCodeCommand message)
+        public EvaluateCodeCommand Enqueue(EvaluateCodeCommand message)
         {
             gateway.GetConnection().Wait(EnqueueAsync(message));
+            return message;
         }
 
-        public Task EnqueueAsync(EvaluateCodeCommand command)
+        public Task<EvaluateCodeCommand> EnqueueAsync(EvaluateCodeCommand command)
         {
             if (command == null)
             {
                 throw new ArgumentNullException("command");
             }
 
+            var tcs = new TaskCompletionSource<EvaluateCodeCommand>();
+
             var message = command.GetBytes();
-            return gateway.GetConnection().Lists.AddLast(db, queue, message);
+            gateway.GetConnection().Lists.AddLast(db, queue, message)
+                .ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        tcs.TrySetException(t.Exception);
+                    }
+                    else if (t.IsCanceled)
+                    {
+                        tcs.TrySetCanceled();
+                    }
+                    else
+                    {
+                        tcs.TrySetResult(command);
+                    }
+                });
+
+            return tcs.Task;
         }
 
         public EvaluateCodeCommand Dequeue()

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Compilify.Messaging;
 using Compilify.Models;
@@ -10,50 +11,54 @@ namespace Compilify.Common
         public DefaultCodeEvaluator(IMessenger messenger, IQueue<EvaluateCodeCommand> messageQueue)
         {
             commandQueue = messageQueue;
-            messageBus = messenger;
+            // messageBus = messenger;
+            messenger.MessageReceived += OnMessageReceived;
         }
 
-        private readonly IMessenger messageBus;
+        // private readonly IMessenger messageBus;
         private readonly IQueue<EvaluateCodeCommand> commandQueue;
+
+        private static readonly ConcurrentDictionary<Guid, TaskCompletionSource<WorkerResult>> outstandingTasks =
+            new ConcurrentDictionary<Guid, TaskCompletionSource<WorkerResult>>();
+
+        private static void OnMessageReceived(object sender, MessageReceivedEventArgs e)
+        {
+            var result = WorkerResult.Deserialize(e.Payload);
+
+            TaskCompletionSource<WorkerResult> tcs;
+            if (outstandingTasks.TryRemove(result.ExecutionId, out tcs))
+            {
+                tcs.TrySetResult(result);
+            }
+        }
 
         public Task<WorkerResult> Handle(EvaluateCodeCommand command)
         {
-            var tcs = new TaskCompletionSource<WorkerResult>();
-
-            // Initialize an event handler that will be called after a worker has completed this command.
-            EventHandler<MessageReceivedEventArgs> handler = null;
-            handler = (sender, e) =>
-            {
-                // TODO: This approach means every result we get will be deserialized more than once.
-                var result = WorkerResult.Deserialize(e.Payload);
-                
-                if (result.ExecutionId == command.ExecutionId)
-                {
-                    // Stop listening for messages for workers - this is the message we've been waiting for
-                    messageBus.MessageReceived -= handler;
-                    tcs.TrySetResult(result);
-                }
-            };
-
-            messageBus.MessageReceived += handler;
+            var tcs = outstandingTasks.GetOrAdd(command.ExecutionId, _ => new TaskCompletionSource<WorkerResult>());
 
             return commandQueue.EnqueueAsync(command)
-                .ContinueWith(t => // ReSharper is complaining about an implicitly captured variable 'command' here
-                {
-                    if (t.IsFaulted)
-                    {
-                        tcs.SetException(t.Exception);
-                        messageBus.MessageReceived -= handler;
-                    }
-                    else if (t.IsCanceled)
-                    {
-                        tcs.TrySetCanceled();
-                        messageBus.MessageReceived -= handler;
-                    }
+                               .ContinueWith(t =>
+                               {
+                                   if (t.IsFaulted)
+                                   {
+                                       tcs.SetException(t.Exception);
+                                       RemoveOutstandingTask(command.ExecutionId);
+                                   }
+                                   else if (t.IsCanceled)
+                                   {
+                                       tcs.TrySetCanceled();
+                                       RemoveOutstandingTask(command.ExecutionId);
+                                   }
 
-                    return tcs.Task;
-                })
-                .Unwrap();
+                                   return tcs.Task;
+                               })
+                               .Unwrap();
+        }
+
+        private static bool RemoveOutstandingTask(Guid executionId)
+        {
+            TaskCompletionSource<WorkerResult> tcs;
+            return outstandingTasks.TryRemove(executionId, out tcs);
         }
     }
 }
