@@ -1,9 +1,11 @@
 ﻿
-;if (typeof String.prototype.trim !== 'function') {
-    String.prototype.trim = function() {
-        return this.replace(/^\s+|\s+$/g, '');
-    };
-}
+(function() {
+    if (typeof String.prototype.trim !== 'function') {
+        String.prototype.trim = function() {
+            return this.replace(/^\s+|\s+$/g, '');
+        };
+    }
+})(window);
 
 (function($, _, Compilify) {
     var root = this,
@@ -113,7 +115,9 @@
         //
         connection = $.connection('/execute');
 
-        connection.received(function(msg) {
+        connection.received(function (msg) {
+            console.log(msg);
+
             if (msg && msg.status === "ok") {
                 setResult(msg.data);
             }

@@ -236,7 +236,6 @@
     <Content Include="Assets\img\octocat.png" />
     <Content Include="Assets\img\twitter.png" />
     <Content Include="Assets\js\compilify.js" />
-    <Content Include="Assets\js\Compilify.Validation.js" />
     <Content Include="Assets\js\vendor\bootstrap-2.0.2.js" />
     <Content Include="Assets\js\vendor\codemirror-2.23.js" />
     <Content Include="Assets\js\vendor\codemirror-clike-2.23.js" />
