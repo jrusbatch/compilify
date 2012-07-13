@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Compilify.Messaging;
 using Compilify.Models;
@@ -11,54 +10,48 @@ namespace Compilify.Common
         public DefaultCodeEvaluator(IMessenger messenger, IQueue<EvaluateCodeCommand> messageQueue)
         {
             commandQueue = messageQueue;
-            // messageBus = messenger;
-            messenger.MessageReceived += OnMessageReceived;
+            messageBus = messenger;
         }
 
-        // private readonly IMessenger messageBus;
         private readonly IQueue<EvaluateCodeCommand> commandQueue;
-
-        private static readonly ConcurrentDictionary<Guid, TaskCompletionSource<WorkerResult>> outstandingTasks =
-            new ConcurrentDictionary<Guid, TaskCompletionSource<WorkerResult>>();
-
-        private static void OnMessageReceived(object sender, MessageReceivedEventArgs e)
-        {
-            var result = WorkerResult.Deserialize(e.Payload);
-
-            TaskCompletionSource<WorkerResult> tcs;
-            if (outstandingTasks.TryRemove(result.ExecutionId, out tcs))
-            {
-                tcs.TrySetResult(result);
-            }
-        }
+        private readonly IMessenger messageBus;
 
         public Task<WorkerResult> Handle(EvaluateCodeCommand command)
         {
-            var tcs = outstandingTasks.GetOrAdd(command.ExecutionId, _ => new TaskCompletionSource<WorkerResult>());
+            var tcs = new TaskCompletionSource<WorkerResult>();
+            var executionId = command.ExecutionId;
 
-            return commandQueue.EnqueueAsync(command)
-                               .ContinueWith(t =>
-                               {
-                                   if (t.IsFaulted)
-                                   {
-                                       tcs.SetException(t.Exception);
-                                       RemoveOutstandingTask(command.ExecutionId);
-                                   }
-                                   else if (t.IsCanceled)
-                                   {
-                                       tcs.TrySetCanceled();
-                                       RemoveOutstandingTask(command.ExecutionId);
-                                   }
+            // Create an anonymous event handler to be called if and when a worker finishes executing our code
+            EventHandler<MessageReceivedEventArgs> handler = null;
+            handler = (sender, e) =>
+            {
+                var result = WorkerResult.Deserialize(e.Payload);
+                if (result.ExecutionId == executionId)
+                {
+                    messageBus.MessageReceived -= handler;
+                    tcs.TrySetResult(result);
+                }
+            };
 
-                                   return tcs.Task;
-                               })
-                               .Unwrap();
-        }
+            messageBus.MessageReceived += handler;
 
-        private static bool RemoveOutstandingTask(Guid executionId)
-        {
-            TaskCompletionSource<WorkerResult> tcs;
-            return outstandingTasks.TryRemove(executionId, out tcs);
+            // Queue the command for processing
+            commandQueue.EnqueueAsync(command)
+                        .ContinueWith(t =>
+                        {
+                            // If anything goes wrong, stop listening for the completion event and update the task
+                            messageBus.MessageReceived -= handler;
+                            if (t.IsFaulted)
+                            {
+                                tcs.TrySetException(t.Exception);
+                            }
+                            else if (t.IsCanceled)
+                            {
+                                tcs.TrySetCanceled();
+                            }
+                        }, TaskContinuationOptions.NotOnRanToCompletion);
+
+            return tcs.Task;
         }
     }
 }
