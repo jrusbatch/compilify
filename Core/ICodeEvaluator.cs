@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Compilify.Models;
 
 namespace Compilify
 {
     public interface ICodeEvaluator
     {
-        Task<WorkerResult> Handle(EvaluateCodeCommand command);
+        Task<WorkerResult> Handle(EvaluateCodeCommand command, CancellationToken cancellationToken);
     }
 }

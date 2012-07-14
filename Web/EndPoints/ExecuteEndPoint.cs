@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Compilify.Models;
@@ -37,9 +38,11 @@ namespace Compilify.Web.EndPoints
                               TimeoutPeriod = ExecutionTimeout
                           };
 
+            var tokenSource = new CancellationTokenSource();
+
             var evaluator = DependencyResolver.Current.GetService<ICodeEvaluator>();
 
-            return evaluator.Handle(command)
+            return evaluator.Handle(command, tokenSource.Token)
                             .ContinueWith(t =>
                             {
                                 if (t.IsFaulted)
@@ -50,6 +53,17 @@ namespace Compilify.Web.EndPoints
                                         {
                                             status = "error",
                                             message = t.Exception != null ? t.Exception.Message : null
+                                        });
+                                }
+                                
+                                if (t.IsCanceled)
+                                {
+                                    return Connection.Send(
+                                        connectionId,
+                                        new
+                                        {
+                                            status = "error",
+                                            message = "Evaluation timed out or was cancelled."
                                         });
                                 }
 

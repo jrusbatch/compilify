@@ -42,7 +42,7 @@ namespace Compilify
         {
             if (data == null)
             {
-                throw new ArgumentNullException("data");
+                return null;
             }
 
             using (var stream = new MemoryStream(data))

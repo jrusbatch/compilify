@@ -21,52 +21,26 @@ namespace Compilify.Common.Redis
             db = dbNumber;
         }
 
-        public EvaluateCodeCommand Enqueue(EvaluateCodeCommand message)
+        public void Enqueue(EvaluateCodeCommand message)
         {
             gateway.GetConnection().Wait(EnqueueAsync(message));
-            return message;
         }
 
-        public Task<EvaluateCodeCommand> EnqueueAsync(EvaluateCodeCommand command)
+        public Task EnqueueAsync(EvaluateCodeCommand command)
         {
             if (command == null)
             {
                 throw new ArgumentNullException("command");
             }
 
-            var tcs = new TaskCompletionSource<EvaluateCodeCommand>();
-
             var message = command.GetBytes();
-            gateway.GetConnection().Lists.AddLast(db, queue, message)
-                .ContinueWith(t =>
-                {
-                    if (t.IsFaulted)
-                    {
-                        tcs.TrySetException(t.Exception);
-                    }
-                    else if (t.IsCanceled)
-                    {
-                        tcs.TrySetCanceled();
-                    }
-                    else
-                    {
-                        tcs.TrySetResult(command);
-                    }
-                });
-
-            return tcs.Task;
+            return gateway.GetConnection().Lists.AddLast(db, queue, message);
         }
 
         public EvaluateCodeCommand Dequeue()
         {
             var message = gateway.GetConnection().Lists.BlockingRemoveFirst(db, new[] { queue }, 0).Result;
-
-            if (message != null)
-            {
-                return EvaluateCodeCommand.Deserialize(message.Item2);
-            }
-
-            return null;
+            return EvaluateCodeCommand.Deserialize(message.Item2);
         }
 
         public Task<EvaluateCodeCommand> DequeueAsync()

@@ -4,9 +4,9 @@ namespace Compilify
 {
     public interface IQueue<T>
     {
-        T Enqueue(T message);
+        void Enqueue(T message);
 
-        Task<T> EnqueueAsync(T message);
+        Task EnqueueAsync(T message);
 
         T Dequeue();
 
