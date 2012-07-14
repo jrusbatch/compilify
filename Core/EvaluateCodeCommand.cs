@@ -8,10 +8,12 @@ namespace Compilify
     [ProtoContract]
     public sealed class EvaluateCodeCommand
     {
-        public EvaluateCodeCommand() { }
-        
         [ProtoMember(1)]
         private Guid id = Guid.NewGuid();
+
+        public EvaluateCodeCommand()
+        {
+        }
 
         public Guid ExecutionId
         {
@@ -35,16 +37,7 @@ namespace Compilify
 
         [ProtoMember(7)]
         public TimeSpan TimeoutPeriod { get; set; }
-
-        public byte[] GetBytes()
-        {
-            using (var stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, this);
-                return stream.ToArray();
-            }
-        }
-
+        
         public static EvaluateCodeCommand Deserialize(byte[] data)
         {
             if (data == null)
@@ -55,6 +48,15 @@ namespace Compilify
             using (var stream = new MemoryStream(data))
             {
                 return Serializer.Deserialize<EvaluateCodeCommand>(stream);
+            }
+        }
+
+        public byte[] GetBytes()
+        {
+            using (var stream = new MemoryStream())
+            {
+                Serializer.Serialize(stream, this);
+                return stream.ToArray();
             }
         }
     }

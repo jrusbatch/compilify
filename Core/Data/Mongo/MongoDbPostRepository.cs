@@ -8,29 +8,26 @@ namespace Compilify.Data.Mongo
 {
     public class MongoDbPostRepository : IPostRepository
     {
+        private readonly MongoDatabase db;
+
         public MongoDbPostRepository(MongoDatabase mongoDatabase)
         {
             db = mongoDatabase;
 
             db.GetCollection("posts").EnsureIndex(
                 IndexKeys.Descending("Slug", "Version"), 
-                IndexOptions.SetUnique(true)
-            );
+                IndexOptions.SetUnique(true));
 
             db.GetCollection("sequences").EnsureIndex(
                 IndexKeys.Descending("Name"), 
-                IndexOptions.SetUnique(true)
-            );
+                IndexOptions.SetUnique(true));
         }
-
-        private readonly MongoDatabase db;
 
         public Post GetVersion(string slug, int version)
         {
             var query = Query.And(
                 Query.EQ("Slug", slug),
-                Query.EQ("Version", version)
-            );
+                Query.EQ("Version", version));
 
             return db.GetCollection<Post>("posts").FindOne(query);
         }

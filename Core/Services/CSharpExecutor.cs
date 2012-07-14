@@ -6,15 +6,17 @@ namespace Compilify.Services
 {
     public class CSharpExecutor
     {
+        private readonly ICSharpCompilationProvider compiler;
+
         public CSharpExecutor()
-            : this(new CSharpCompilationProvider()) { }
+            : this(new CSharpCompilationProvider())
+        {
+        }
 
         public CSharpExecutor(ICSharpCompilationProvider compilationProvider)
         {
             compiler = compilationProvider;
         }
-
-        private readonly ICSharpCompilationProvider compiler;
 
         public ExecutionResult Execute(Post post)
         {

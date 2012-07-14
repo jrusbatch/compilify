@@ -5,6 +5,10 @@ namespace Compilify.Common.Redis
 {
     public class RedisExecutionQueue : IQueue<EvaluateCodeCommand>
     {
+        private readonly RedisConnectionGateway gateway;
+        private readonly int db;
+        private readonly string queue;
+
         public RedisExecutionQueue(RedisConnectionGateway redisConnectionGateway, int dbNumber, string queueName)
         {
             if (redisConnectionGateway == null)
@@ -16,10 +20,6 @@ namespace Compilify.Common.Redis
             queue = queueName;
             db = dbNumber;
         }
-
-        private readonly RedisConnectionGateway gateway;
-        private readonly int db;
-        private readonly string queue;
 
         public EvaluateCodeCommand Enqueue(EvaluateCodeCommand message)
         {

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Compilify.Web.Controllers
@@ -21,15 +19,11 @@ namespace Compilify.Web.Controllers
             switch (httpCode)
             {
                 case 404:
-                {
                     ViewBag.Message = "The page you were looking for could not be found.";
                     break;
-                }
                 default:
-                {
                     ViewBag.Message = "An error occurred while processing your request.";
                     break;
-                }
             }
             
             return View("Error");

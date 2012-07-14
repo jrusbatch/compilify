@@ -7,14 +7,14 @@ namespace Compilify.Common
 {
     public sealed class DefaultCodeEvaluator : ICodeEvaluator
     {
+        private readonly IQueue<EvaluateCodeCommand> commandQueue;
+        private readonly IMessenger messageBus;
+
         public DefaultCodeEvaluator(IMessenger messenger, IQueue<EvaluateCodeCommand> messageQueue)
         {
             commandQueue = messageQueue;
             messageBus = messenger;
         }
-
-        private readonly IQueue<EvaluateCodeCommand> commandQueue;
-        private readonly IMessenger messageBus;
 
         public Task<WorkerResult> Handle(EvaluateCodeCommand command)
         {
@@ -34,22 +34,25 @@ namespace Compilify.Common
             };
 
             messageBus.MessageReceived += handler;
-
+            
             // Queue the command for processing
-            commandQueue.EnqueueAsync(command)
-                        .ContinueWith(t =>
-                        {
-                            // If anything goes wrong, stop listening for the completion event and update the task
-                            messageBus.MessageReceived -= handler;
-                            if (t.IsFaulted)
-                            {
-                                tcs.TrySetException(t.Exception);
-                            }
-                            else if (t.IsCanceled)
-                            {
-                                tcs.TrySetCanceled();
-                            }
-                        }, TaskContinuationOptions.NotOnRanToCompletion);
+            var task = commandQueue.EnqueueAsync(command);
+
+            task.ContinueWith(
+                t =>
+                {
+                    // If anything goes wrong, stop listening for the completion event and update the task
+                    messageBus.MessageReceived -= handler;
+                    if (t.IsFaulted)
+                    {
+                        tcs.TrySetException(t.Exception);
+                    }
+                    else if (t.IsCanceled)
+                    {
+                        tcs.TrySetCanceled();
+                    }
+                },
+                TaskContinuationOptions.NotOnRanToCompletion);
 
             return tcs.Task;
         }

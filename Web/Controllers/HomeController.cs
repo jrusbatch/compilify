@@ -12,15 +12,15 @@ namespace Compilify.Web.Controllers
 {
     public class HomeController : AsyncController
     {
+        private readonly IPostRepository db;
+        private readonly CSharpValidator compiler;
+        
         public HomeController(IPostRepository contentRepository)
         {
             db = contentRepository;
             compiler = new CSharpValidator(new CSharpCompilationProvider());
         }
 
-        private readonly IPostRepository db;
-        private readonly CSharpValidator compiler;
-        
         [HttpGet]
         public ActionResult Index()
         {
@@ -46,7 +46,6 @@ namespace Compilify.Web.Controllers
         // GET /:slug/:version  -> Get a specific version of the content
         // GET /:slug/latest    -> Get the latest saved version of the content
         // GET /:slug/live      -> Watch or collaborate on the content in real time
-        //
         [HttpGet]
         public ActionResult Show(string slug, int? version)
         {
@@ -112,16 +111,6 @@ namespace Compilify.Web.Controllers
             return Json(new { status = "ok", data = errors });
         }
 
-        private IEnumerable<EditorError> GetErrorsInPost(Post post)
-        {
-            return compiler.GetCompilationErrors(post)
-                           .Select(x => new EditorError
-                                        {
-                                            Location = x.Location.GetLineSpan(true),
-                                            Message = x.Info.GetMessage()
-                                        });
-        }
-
         private static RouteValueDictionary BuildRouteParametersForPost(string slug, int? version)
         {
             var routeValues = new RouteValueDictionary { { "slug", slug } };
@@ -160,11 +149,21 @@ namespace Compilify.Web.Controllers
 
             post.Content = builder.Clear()
                                   .AppendLine("var person = new Person(name: null);")
-                                  .AppendLine("")
+                                  .AppendLine()
                                   .AppendLine("return person.Greet();")
                                   .ToString();
 
             return post;
+        }
+
+        private IEnumerable<EditorError> GetErrorsInPost(Post post)
+        {
+            return compiler.GetCompilationErrors(post)
+                           .Select(x => new EditorError
+                                        {
+                                            Location = x.Location.GetLineSpan(true),
+                                            Message = x.Info.GetMessage()
+                                        });
         }
 
         private ActionResult PostNotFound()

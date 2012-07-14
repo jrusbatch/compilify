@@ -14,6 +14,14 @@ namespace Compilify.Worker
 {
     public sealed class Program
     {
+        private const int DefaultTimeout = 5000;
+        
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly CSharpExecutor Executer = new CSharpExecutor();
+
+        private static IQueue<EvaluateCodeCommand> queue;
+        private static IMessenger messenger;
+        
         public static int Main(string[] args)
         {
             Logger.Info("Application started.");
@@ -34,15 +42,21 @@ namespace Compilify.Worker
 
             return -1; // Return a non-zero code so AppHarbor restarts the worker
         }
-
-        private const int DefaultTimeout = 5000;
         
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly CSharpExecutor Executer = new CSharpExecutor();
+        public static void OnUnhandledApplicationException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var exception = e.ExceptionObject as Exception;
 
-        private static IQueue<EvaluateCodeCommand> queue;
-        private static IMessenger messenger;
-        
+            if (e.IsTerminating)
+            {
+                Logger.FatalException("An unhandled exception is causing the worker to terminate.", exception);
+            }
+            else
+            {
+                Logger.ErrorException("An unhandled exception occurred in the worker process.", exception);
+            }
+        }
+
         private static void ProcessQueue()
         {
             var stopWatch = new Stopwatch();
@@ -97,20 +111,6 @@ namespace Compilify.Worker
                 }
                 
                 stopWatch.Reset();
-            }
-        }
-
-        public static void OnUnhandledApplicationException(object sender, UnhandledExceptionEventArgs e)
-        {
-            var exception = e.ExceptionObject as Exception;
-
-            if (e.IsTerminating)
-            {
-                Logger.FatalException("An unhandled exception is causing the worker to terminate.", exception);
-            }
-            else
-            {
-                Logger.ErrorException("An unhandled exception occurred in the worker process.", exception);
             }
         }
     }

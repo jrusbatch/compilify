@@ -11,6 +11,7 @@ namespace Compilify.Messaging
         }
 
         public string EventKey { get; private set; }
+
         public byte[] Payload { get; private set; }
     }
 }

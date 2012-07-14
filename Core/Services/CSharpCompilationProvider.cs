@@ -47,8 +47,9 @@ namespace Compilify.Services
 
             var asScript = ParseOptions.Default.WithKind(SourceCodeKind.Script);
 
-            var console = SyntaxTree.ParseCompilationUnit("public static readonly StringWriter __Console = new StringWriter();", 
-                                                          options: asScript);
+            var console =
+                SyntaxTree.ParseCompilationUnit(
+                    "public static readonly StringWriter __Console = new StringWriter();", options: asScript);
 
             var entry = SyntaxTree.ParseCompilationUnit(EntryPoint);
 
@@ -58,7 +59,7 @@ namespace Compilify.Services
             var editor = SyntaxTree.ParseCompilationUnit(post.Classes ?? string.Empty, path: "Editor", options: asScript)
                                    .RewriteWith<MissingSemicolonRewriter>();
 
-            var compilation =  Compile(post.Title ?? "Untitled", new[] { entry, prompt, editor, console });
+            var compilation = Compile(post.Title ?? "Untitled", new[] { entry, prompt, editor, console });
 
             var newPrompt = prompt.RewriteWith(new ConsoleRewriter("__Console", compilation.GetSemanticModel(prompt)));
             var newEditor = editor.RewriteWith(new ConsoleRewriter("__Console", compilation.GetSemanticModel(editor)));
@@ -80,12 +81,13 @@ namespace Compilify.Services
             var system = Assembly.Load("System,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
             var core = Assembly.Load("System.Core,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
 
-            var compilation = Compilation.Create(compilationName, options, syntaxTrees,
-                                                 new MetadataReference[] { 
-                                                     new AssemblyFileReference(core.Location), 
-                                                     new AssemblyFileReference(system.Location),
-                                                     new AssemblyFileReference(mscorlib.Location)
-                                                 });
+            var metadata = new MetadataReference[]
+                {
+                    new AssemblyFileReference(core.Location), new AssemblyFileReference(system.Location),
+                    new AssemblyFileReference(mscorlib.Location)
+                };
+
+            var compilation = Compilation.Create(compilationName, options, syntaxTrees,  metadata);
 
             return compilation;
         }
@@ -101,6 +103,5 @@ namespace Compilify.Services
 
             return builder.ToString();
         }
-
     }
 }

@@ -8,8 +8,10 @@ namespace Compilify.Web.Models
 {
     public class PostViewModel
     {
-        public PostViewModel() 
-            : this(null) { }
+        public PostViewModel()
+            : this(null)
+        {
+        }
 
         public PostViewModel(Post post)
         {

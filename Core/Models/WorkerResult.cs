@@ -24,6 +24,19 @@ namespace Compilify.Models
 
         [ProtoMember(5)]
         public ExecutionResult ExecutionResult { get; set; }
+        
+        public static WorkerResult Deserialize(byte[] data)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException("data");
+            }
+
+            using (var stream = new MemoryStream(data))
+            {
+                return Serializer.Deserialize<WorkerResult>(stream);
+            }
+        }
 
         public string ToResultString()
         {
@@ -39,31 +52,18 @@ namespace Compilify.Models
             builder.AppendLine();
             builder.AppendFormat("CPU Time: {0}" + Environment.NewLine, ExecutionResult.ProcessorTime);
 
-            builder.AppendFormat("Bytes Allocated: {0}" + Environment.NewLine, 
-                                 ExecutionResult.TotalMemoryAllocated.ToByteSizeString());
+            builder.AppendFormat(
+                "Bytes Allocated: {0}" + Environment.NewLine, ExecutionResult.TotalMemoryAllocated.ToByteSizeString());
 
             return builder.ToString();
         }
-
+        
         public byte[] GetBytes()
         {
             using (var stream = new MemoryStream())
             {
                 Serializer.Serialize(stream, this);
                 return stream.ToArray();
-            }
-        }
-
-        public static WorkerResult Deserialize(byte[] data)
-        {
-            if (data == null)
-            {
-                throw new ArgumentNullException("data");
-            }
-
-            using (var stream = new MemoryStream(data))
-            {
-                return Serializer.Deserialize<WorkerResult>(stream);
             }
         }
     }

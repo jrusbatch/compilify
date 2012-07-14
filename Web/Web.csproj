@@ -196,6 +196,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\DependencyInjection.cs" />
     <Compile Include="App_Start\MongoDbInitializer.cs" />
+    <Compile Include="App_Start\ViewEngineConfig.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="EndPoints\ExecuteEndPoint.cs" />
@@ -209,7 +210,10 @@
     <Compile Include="Infrastructure\Extensions\RouteCollectionExtensions.cs" />
     <Compile Include="Infrastructure\LowercaseRoute.cs" />
     <Compile Include="Infrastructure\RequireHttpsOnAppHarborAttribute.cs" />
+    <Compile Include="Models\EditorError.cs" />
+    <Compile Include="Models\EditorLocation.cs" />
     <Compile Include="Models\PostViewModel.cs" />
+    <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\SignInViewModel.cs" />
     <Compile Include="Models\ValidateViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

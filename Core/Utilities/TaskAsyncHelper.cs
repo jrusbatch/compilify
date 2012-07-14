@@ -8,45 +8,42 @@ namespace Compilify.Utilities
 {
     internal static class TaskAsyncHelper
     {
-        private static readonly Task emptyTask = MakeEmpty();
-
-        private static Task MakeEmpty()
-        {
-            return FromResult<object>(null);
-        }
-
+        private static readonly Task EmptyTask = MakeEmpty();
+        
         public static Task Empty
         {
-            get { return emptyTask; }
+            get { return EmptyTask; }
         }
 
         public static TTask Catch<TTask>(this TTask task) where TTask : Task
         {
             if (task != null && task.Status != TaskStatus.RanToCompletion)
             {
-                task.ContinueWith(innerTask =>
-                {
-                    var ex = innerTask.Exception;
-                    //Trace.TraceError("SignalR exception thrown by Task: {0}", ex);
-                }, TaskContinuationOptions.OnlyOnFaulted);
+                task.ContinueWith(
+// ReSharper disable UnusedVariable
+                    innerTask => { var ex = innerTask.Exception; },
+// ReSharper restore UnusedVariable
+                    TaskContinuationOptions.OnlyOnFaulted);
             }
+
             return task;
         }
 
         public static void ContinueWithNotComplete(this Task task, TaskCompletionSource<object> tcs)
         {
-            task.ContinueWith(t =>
-            {
-                if (t.IsFaulted)
+            task.ContinueWith(
+                t =>
                 {
-                    tcs.SetException(t.Exception);
-                }
-                else if (t.IsCanceled)
-                {
-                    tcs.SetCanceled();
-                }
-            },
-            TaskContinuationOptions.NotOnRanToCompletion);
+                    if (t.IsFaulted)
+                    {
+                        tcs.SetException(t.Exception);
+                    }
+                    else if (t.IsCanceled)
+                    {
+                        tcs.SetCanceled();
+                    }
+                },
+                TaskContinuationOptions.NotOnRanToCompletion);
         }
 
         public static void ContinueWith(this Task task, TaskCompletionSource<object> tcs)
@@ -75,10 +72,11 @@ namespace Compilify.Utilities
         public static Task Interleave<T>(Func<T, Action, Task> before, Func<Task> after, T arg)
         {
             var tcs = new TaskCompletionSource<object>();
-            var tasks = new[] {
-                            tcs.Task,
-                            before(arg, () => after().ContinueWith(tcs))
-                        };
+            var tasks = new[]
+            {
+                tcs.Task,
+                before(arg, () => after().ContinueWith(tcs))
+            };
 
             return tasks.Return();
         }
@@ -133,24 +131,27 @@ namespace Compilify.Utilities
             }
 
             var tcs = new TaskCompletionSource<object>();
-            Task.Factory.ContinueWhenAll(tasks, completedTasks =>
-            {
-                var faulted = completedTasks.FirstOrDefault(t => t.IsFaulted);
-                if (faulted != null)
+            Task.Factory.ContinueWhenAll(
+                tasks,
+                completedTasks =>
                 {
-                    tcs.SetException(faulted.Exception);
-                    return;
-                }
-                var cancelled = completedTasks.FirstOrDefault(t => t.IsCanceled);
-                if (cancelled != null)
-                {
-                    tcs.SetCanceled();
-                    return;
-                }
+                    var faulted = completedTasks.FirstOrDefault(t => t.IsFaulted);
+                    if (faulted != null)
+                    {
+                        tcs.SetException(faulted.Exception);
+                        return;
+                    }
 
-                successor();
-                tcs.SetResult(null);
-            });
+                    var cancelled = completedTasks.FirstOrDefault(t => t.IsCanceled);
+                    if (cancelled != null)
+                    {
+                        tcs.SetCanceled();
+                        return;
+                    }
+
+                    successor();
+                    tcs.SetResult(null);
+                });
 
             return tcs.Task;
         }
@@ -406,22 +407,26 @@ namespace Compilify.Utilities
 
         public static Task AllSucceeded(this Task[] tasks, Action<Task[]> continuation)
         {
-            return Task.Factory.ContinueWhenAll(tasks, _ =>
-            {
-                var cancelledTask = tasks.FirstOrDefault(task => task.IsCanceled);
-                if (cancelledTask != null)
-                    throw new TaskCanceledException();
-
-                var allExceptions =
-                    tasks.Where(task => task.IsFaulted).SelectMany(task => task.Exception.InnerExceptions).ToList();
-
-                if (allExceptions.Count > 0)
+            return Task.Factory.ContinueWhenAll(
+                tasks,
+                _ =>
                 {
-                    throw new AggregateException(allExceptions);
-                }
+                    var cancelledTask = tasks.FirstOrDefault(task => task.IsCanceled);
+                    if (cancelledTask != null)
+                    {
+                        throw new TaskCanceledException();
+                    }
 
-                continuation(tasks);
-            });
+                    var allExceptions =
+                        tasks.Where(task => task.IsFaulted).SelectMany(task => task.Exception.InnerExceptions).ToList();
+
+                    if (allExceptions.Count > 0)
+                    {
+                        throw new AggregateException(allExceptions);
+                    }
+
+                    continuation(tasks);
+                });
         }
 
         public static Task FromMethod(Action func)
@@ -537,25 +542,10 @@ namespace Compilify.Utilities
             tcs.SetException(e);
             return tcs.Task;
         }
-
-        private static Task Canceled()
+        
+        private static Task MakeEmpty()
         {
-            var tcs = new TaskCompletionSource<object>();
-            tcs.SetCanceled();
-            return tcs.Task;
-        }
-
-        private static Task<T> Canceled<T>()
-        {
-            var tcs = new TaskCompletionSource<T>();
-            tcs.SetCanceled();
-            return tcs.Task;
-        }
-
-        internal class TaskContinueWithMethod
-        {
-            public MethodInfo Method { get; set; }
-            public Type Type { get; set; }
+            return FromResult<object>(null);
         }
 
         private static Task RunTask(Task task, Action successor)
@@ -586,6 +576,27 @@ namespace Compilify.Utilities
             });
 
             return tcs.Task;
+        }
+
+        private static Task Canceled()
+        {
+            var tcs = new TaskCompletionSource<object>();
+            tcs.SetCanceled();
+            return tcs.Task;
+        }
+
+        private static Task<T> Canceled<T>()
+        {
+            var tcs = new TaskCompletionSource<T>();
+            tcs.SetCanceled();
+            return tcs.Task;
+        }
+
+        internal class TaskContinueWithMethod
+        {
+            public MethodInfo Method { get; set; }
+
+            public Type Type { get; set; }
         }
 
         private static class TaskRunners<T, TResult>
@@ -691,11 +702,6 @@ namespace Compilify.Utilities
                 return RunTask(task, () => successor(arg1, arg2));
             }
 
-            internal static Task<TResult> ThenWithArgs(Task task, Func<T1, TResult> successor, T1 arg1)
-            {
-                return TaskRunners<object, TResult>.RunTask(task, () => successor(arg1));
-            }
-
             internal static Task<TResult> ThenWithArgs(Task task, Func<T1, T2, TResult> successor, T1 arg1, T2 arg2)
             {
                 return TaskRunners<object, TResult>.RunTask(task, () => successor(arg1, arg2));
@@ -709,11 +715,6 @@ namespace Compilify.Utilities
             internal static Task<Task> ThenWithArgs(Task task, Func<T1, Task> successor, T1 arg1)
             {
                 return TaskRunners<object, Task>.RunTask(task, () => successor(arg1));
-            }
-
-            internal static Task<Task<TResult>> ThenWithArgs(Task<T> task, Func<T, T1, Task<TResult>> successor, T1 arg1)
-            {
-                return TaskRunners<T, Task<TResult>>.RunTask(task, t => successor(t.Result, arg1));
             }
 
             internal static Task<Task<T>> ThenWithArgs(Task<T> task, Func<Task<T>, T1, Task<T>> successor, T1 arg1)

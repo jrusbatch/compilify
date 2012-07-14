@@ -5,14 +5,14 @@ namespace Compilify.Services
 {
     internal sealed class ConsoleRewriter : SyntaxRewriter
     {
+        private readonly SemanticModel model;
+        private readonly IdentifierNameSyntax name;
+
         public ConsoleRewriter(string consoleClassName, SemanticModel semanticModel)
         {
             model = semanticModel;
             name = Syntax.IdentifierName(consoleClassName);
         }
-
-        private readonly SemanticModel model;
-        private readonly IdentifierNameSyntax name;
 
         public override SyntaxNode VisitInvocationExpression(InvocationExpressionSyntax node)
         {

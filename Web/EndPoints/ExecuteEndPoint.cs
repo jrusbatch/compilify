@@ -10,6 +10,9 @@ namespace Compilify.Web.EndPoints
 {
     public class ExecuteEndPoint : PersistentConnection
     {
+        private const int DefaultExecutionTimeout = 30;
+        private static readonly TimeSpan ExecutionTimeout;
+        
         static ExecuteEndPoint()
         {
             int timeout;
@@ -21,10 +24,6 @@ namespace Compilify.Web.EndPoints
             ExecutionTimeout = TimeSpan.FromSeconds(timeout);
         }
 
-        private const int DefaultExecutionTimeout = 30;
-
-        private static readonly TimeSpan ExecutionTimeout;
-        
         protected override Task OnReceivedAsync(IRequest request, string connectionId, string data)
         {
             var post = JsonConvert.DeserializeObject<Post>(data);
@@ -41,15 +40,26 @@ namespace Compilify.Web.EndPoints
             var evaluator = DependencyResolver.Current.GetService<ICodeEvaluator>();
 
             return evaluator.Handle(command)
-                            .ContinueWith(t => {
-                                if (t.IsFaulted) {
-                                    return Connection.Send(connectionId, new {
-                                        status = "error",
-                                        message = t.Exception != null ? t.Exception.Message : null
-                                    });
+                            .ContinueWith(t =>
+                            {
+                                if (t.IsFaulted)
+                                {
+                                    return Connection.Send(
+                                        connectionId,
+                                        new
+                                        {
+                                            status = "error",
+                                            message = t.Exception != null ? t.Exception.Message : null
+                                        });
                                 }
 
-                                return Connection.Send(connectionId, new { status = "ok", data = t.Result.ToResultString() });
+                                return Connection.Send(
+                                    connectionId,
+                                    new
+                                    {
+                                        status = "ok",
+                                        data = t.Result.ToResultString()
+                                    });
                             });
         }
     }

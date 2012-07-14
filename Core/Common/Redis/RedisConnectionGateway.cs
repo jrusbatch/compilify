@@ -11,34 +11,20 @@ namespace Compilify.Common.Redis
     /// http://stackoverflow.com/a/8777999/145831 </remarks>
     public sealed class RedisConnectionGateway
     {
+        private const string RedisConnectionFailed = "Redis connection failed.";
+        private static readonly object SyncConnectionLock = new object();
+        private readonly string connectionString;
+        private RedisConnection connection;
+        
         public RedisConnectionGateway(string connectionString)
         {
             this.connectionString = connectionString;
             connection = CreateConnection();
         }
-
-        private readonly string connectionString;
-        private const string RedisConnectionFailed = "Redis connection failed.";
-        private RedisConnection connection;
-
-        private static readonly object syncConnectionLock = new object();
-
-        private RedisConnection CreateConnection()
-        {
-            var uri = new Uri(connectionString);
-            var password = uri.UserInfo.Split(':').LastOrDefault();
-
-            if (password != null)
-            {
-                return new RedisConnection(uri.Host, uri.Port, password: password, syncTimeout: 5000, ioTimeout: 5000);
-            }
-
-            return new RedisConnection(uri.Host, uri.Port, syncTimeout: 5000, ioTimeout: 5000);
-        }
-
+        
         public RedisConnection GetConnection()
         {
-            lock (syncConnectionLock)
+            lock (SyncConnectionLock)
             {
                 if (connection == null)
                 {
@@ -85,6 +71,19 @@ namespace Compilify.Common.Redis
             connection.Close(immediate);
             connection.Dispose();
             connection = null;
+        }
+
+        private RedisConnection CreateConnection()
+        {
+            var uri = new Uri(connectionString);
+            var password = uri.UserInfo.Split(':').LastOrDefault();
+
+            if (password != null)
+            {
+                return new RedisConnection(uri.Host, uri.Port, password: password, syncTimeout: 5000, ioTimeout: 5000);
+            }
+
+            return new RedisConnection(uri.Host, uri.Port, syncTimeout: 5000, ioTimeout: 5000);
         }
     }
 }

@@ -43,5 +43,4 @@ namespace Compilify.Web.Infrastructure.Extensions
             return MvcHtmlString.Create("<meta property=\"fb:admins\" content=\"" + accountId + "\" />");
         }
     }
-
 }

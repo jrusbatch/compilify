@@ -8,23 +8,16 @@ namespace Compilify.Messaging.Redis
     public class RedisMessenger : IMessenger
     {
         private const string EventKey = "workers:job-done";
-
+        private static RedisSubscriberConnection channel;
+        private readonly RedisConnectionGateway gateway;
+        
         public RedisMessenger(RedisConnectionGateway redisConnectionGateway)
         {
             gateway = redisConnectionGateway;
             Subscribe();
         }
-
-        private readonly RedisConnectionGateway gateway;
-        private static RedisSubscriberConnection channel;
         
-        private void Subscribe()
-        {
-            channel = gateway.GetConnection().GetOpenSubscriberChannel();
-            channel.Closed += OnChannelClosed;
-
-            channel.Subscribe(EventKey, OnMessageRecieved);
-        }
+        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
 
         /// <summary>
         /// Handle messages received from workers through Redis.</summary>
@@ -55,6 +48,12 @@ namespace Compilify.Messaging.Redis
             return gateway.GetConnection().Publish(eventKey, message);
         }
 
-        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+        private void Subscribe()
+        {
+            channel = gateway.GetConnection().GetOpenSubscriberChannel();
+            channel.Closed += OnChannelClosed;
+
+            channel.Subscribe(EventKey, OnMessageRecieved);
+        }
     }
 }

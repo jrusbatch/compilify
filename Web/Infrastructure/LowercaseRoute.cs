@@ -5,7 +5,9 @@ namespace Compilify.Web.Infrastructure
     public class LowercaseRoute : Route
     {
         public LowercaseRoute(string url, IRouteHandler routeHandler)
-            : base(url, routeHandler) { }
+            : base(url, routeHandler)
+        {
+        }
 
         public override VirtualPathData GetVirtualPath(RequestContext requestContext, RouteValueDictionary values)
         {

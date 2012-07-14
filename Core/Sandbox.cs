@@ -16,8 +16,19 @@ namespace Compilify
     {
         private const string DefaultName = "Sandbox";
 
+        private readonly byte[] assemblyBytes;
+        private readonly AppDomain domain;
+        private bool disposed;
+        
+        static Sandbox()
+        {
+            AppDomain.MonitoringIsEnabled = true;
+        }
+
         public Sandbox(byte[] compiledAssemblyBytes)
-            : this(DefaultName, compiledAssemblyBytes) { }
+            : this(DefaultName, compiledAssemblyBytes)
+        {
+        }
 
         public Sandbox(string name, byte[] compiledAssemblyBytes)
         {
@@ -42,15 +53,6 @@ namespace Compilify
             domain = AppDomain.CreateDomain(name, null, setup, permissions);
         }
 
-        static Sandbox()
-        {
-            AppDomain.MonitoringIsEnabled = true;
-        }
-
-        private readonly byte[] assemblyBytes;
-        private readonly AppDomain domain;
-        private bool disposed;
-
         public ExecutionResult Run(string className, string resultProperty, TimeSpan timeout)
         {
             var task = Task<ExecutionResult>.Factory.StartNew(() => Execute(className, resultProperty));
@@ -63,6 +65,15 @@ namespace Compilify
             return task.Result ?? new ExecutionResult { Result = "null" };
         }
 
+        public void Dispose()
+        {
+            if (!disposed)
+            {
+                disposed = true;
+                AppDomain.Unload(domain);
+            }
+        }
+        
         private ExecutionResult Execute(string className, string resultProperty)
         {
             var result = new ExecutionResult();
@@ -92,24 +103,16 @@ namespace Compilify
 
             return result;
         }
-
-        public void Dispose()
-        {
-            if (!disposed)
-            {
-                disposed = true;
-                AppDomain.Unload(domain);
-            }
-        }
-
+        
         private sealed class ByteCodeLoader : MarshalByRefObject
         {
-            public ByteCodeLoader() { }
+            public ByteCodeLoader()
+            {
+            }
 
             public SandboxResult Run(string className, string resultProperty, byte[] compiledAssembly)
             {
                 var assembly = Assembly.Load(compiledAssembly);
-                // assembly.EntryPoint.Invoke(null, new object[] { });
                 assembly.GetType("EntryPoint").GetMethod("Main").Invoke(null, new object[] { });
 
                 var console = (StringWriter)assembly.GetType("Script").GetField("__Console").GetValue(null);
