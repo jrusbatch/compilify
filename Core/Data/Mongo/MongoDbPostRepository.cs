@@ -57,7 +57,7 @@ namespace Compilify.Data.Mongo
                 var sequence = docs.FindAndModify(Query.EQ("Name", "slug"), null, Update.Inc("Current", 1), true, true)
                                    .GetModifiedDocumentAs<Incrementor>();
 
-                slug = Base32Encoder.Encode(sequence.Current);
+                slug = Base36Encoder.Encode(sequence.Current);
             }
 
             content.Slug = slug;
