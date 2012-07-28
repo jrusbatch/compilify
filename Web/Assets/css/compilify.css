@@ -32,13 +32,13 @@ body {
 
 p,
 body {
-    font-size: 14px;
+    font-size: 11pt;
 }
 
 p,
 body,
 strong {
-    font-family: "Segoe UI", "Segoe WP", "Helvetica Neue", 'RobotoLight', sans-serif;
+    font-family: "Segoe UI", 'RobotoLight', "Segoe WP", "Helvetica Neue", sans-serif;
 }
 
 #ide {
@@ -57,7 +57,7 @@ strong {
 }
 
 #commands {
-    font-family: "Segoe UI Light", "Helvetica Neue", 'RobotoThin', "Segoe UI", "Segoe WP", sans-serif;
+    font-family: "Segoe UI Light", "Segoe UI", 'RobotoThin', "Helvetica Neue",  "Segoe WP", sans-serif;
     padding: 0 10px;
     margin: 9px 0;
     font-size: 18px;
@@ -254,7 +254,7 @@ strong {
  *****************************************************************************/
 .navbar,
 h1, h2, h3, h4, h5, h6 {
-    font-family: "Segoe UI Light", "Helvetica Neue", 'RobotoThin', "Segoe UI", "Segoe WP", sans-serif;
+    font-family: "Segoe UI Light", "Segoe UI", 'RobotoThin', "Helvetica Neue", "Segoe WP", sans-serif;
     font-weight: 100;
 }
 .navbar {
