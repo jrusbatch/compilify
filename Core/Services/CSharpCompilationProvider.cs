@@ -53,11 +53,9 @@ namespace Compilify.Services
 
             var entry = SyntaxTree.ParseCompilationUnit(EntryPoint);
 
-            var prompt = SyntaxTree.ParseCompilationUnit(BuildScript(post.Content), path: "Prompt", options: asScript)
-                                   .RewriteWith<MissingSemicolonRewriter>();
+            var prompt = SyntaxTree.ParseCompilationUnit(BuildScript(post.Content), path: "Prompt", options: asScript);
 
-            var editor = SyntaxTree.ParseCompilationUnit(post.Classes ?? string.Empty, path: "Editor", options: asScript)
-                                   .RewriteWith<MissingSemicolonRewriter>();
+            var editor = SyntaxTree.ParseCompilationUnit(post.Classes ?? string.Empty, path: "Editor", options: asScript);
 
             var compilation = Compile(post.Title ?? "Untitled", new[] { entry, prompt, editor, console });
 
@@ -76,16 +74,12 @@ namespace Compilify.Services
             
             var options = new CompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithUsings(DefaultNamespaces);
 
-            // Load basic .NET assemblies into our sandbox
-            var mscorlib = Assembly.Load("mscorlib,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
-            var system = Assembly.Load("System,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
-            var core = Assembly.Load("System.Core,Version=4.0.0.0,Culture=neutral,PublicKeyToken=b77a5c561934e089");
-
-            var metadata = new MetadataReference[]
-                {
-                    new AssemblyFileReference(core.Location), new AssemblyFileReference(system.Location),
-                    new AssemblyFileReference(mscorlib.Location)
-                };
+            var metadata = new[]
+                           {
+                               MetadataReference.Create("mscorlib"),
+                               MetadataReference.Create("System"),
+                               MetadataReference.Create("System.Core"),
+                           };
 
             var compilation = Compilation.Create(compilationName, options, syntaxTrees,  metadata);
 
