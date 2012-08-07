@@ -35,8 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BookSleeve">
-      <HintPath>..\packages\BookSleeve.1.1.0.7\lib\BookSleeve.dll</HintPath>
+    <Reference Include="BookSleeve, Version=1.1.0.8, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\BookSleeve.1.1.0.8\lib\BookSleeve.dll</HintPath>
     </Reference>
     <Reference Include="MongoDB.Bson">
       <HintPath>..\packages\mongocsharpdriver.1.5\lib\net35\MongoDB.Bson.dll</HintPath>
@@ -77,6 +78,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -86,11 +88,13 @@
     <Compile Include="Data\Mongo\MongoDbInitializer.cs" />
     <Compile Include="Data\Mongo\MongoDbPostRepository.cs" />
     <Compile Include="Common\DefaultCodeEvaluator.cs" />
+    <Compile Include="EditorError.cs" />
     <Compile Include="ICodeEvaluator.cs" />
     <Compile Include="EvaluateCodeCommand.cs" />
     <Compile Include="Extensions\CompilationExtensions.cs" />
     <Compile Include="Extensions\GeneralExtensions.cs" />
     <Compile Include="Extensions\SyntaxTreeExtensions.cs" />
+    <Compile Include="DocumentLineSpan.cs" />
     <Compile Include="Messaging\IMessenger.cs" />
     <Compile Include="Messaging\MessageReceivedEventArgs.cs" />
     <Compile Include="IQueue.cs" />
@@ -108,7 +112,9 @@
     <Compile Include="Services\CSharpValidator.cs" />
     <Compile Include="Data\IPostRepository.cs" />
     <Compile Include="Services\MissingSemicolonRewriter.cs" />
+    <Compile Include="TextPosition.cs" />
     <Compile Include="Utilities\Base36Encoder.cs" />
+    <Compile Include="Utilities\Hash.cs" />
     <Compile Include="Utilities\TaskAsyncHelper.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -66,7 +66,7 @@
                             var error = msg.data[index];
                             var loc = error.Location;
 
-                            var file = loc.Path;
+                            var file = loc.DocumentName;
 
                             var start = loc.StartLinePosition;
                             var end = loc.EndLinePosition;

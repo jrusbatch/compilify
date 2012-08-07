@@ -210,8 +210,6 @@
     <Compile Include="Infrastructure\Extensions\RouteCollectionExtensions.cs" />
     <Compile Include="Infrastructure\LowercaseRoute.cs" />
     <Compile Include="Infrastructure\RequireHttpsOnAppHarborAttribute.cs" />
-    <Compile Include="Models\EditorError.cs" />
-    <Compile Include="Models\EditorLocation.cs" />
     <Compile Include="Models\PostViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\SignInViewModel.cs" />
