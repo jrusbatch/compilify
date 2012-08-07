@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -7,11 +8,16 @@ namespace Compilify.Web.Controllers
 {
     public class ErrorController : Controller
     {
-        public ActionResult Index(int? status) 
-        {
-            var codes = Enum.GetValues(typeof(HttpStatusCode)).Cast<int>();
+        private static readonly ISet<int> StatusCodes =
+            new HashSet<int>(Enum.GetValues(typeof(HttpStatusCode)).Cast<int>().Where(x => x >= 400));
 
-            var httpCode = status.HasValue ? (int?)codes.FirstOrDefault(c => c == status.Value) ?? 500 : 500;
+        public ActionResult Index(int status = 500)
+        {
+            var httpCode = StatusCodes.FirstOrDefault(c => c == status);
+            if (httpCode == default(int))
+            {
+                httpCode = 500;
+            }
 
             // ensure response is the right code
             Response.StatusCode = httpCode;
