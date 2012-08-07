@@ -112,7 +112,6 @@
     <Compile Include="Services\CSharpValidator.cs" />
     <Compile Include="Data\IPostRepository.cs" />
     <Compile Include="Services\ICodeValidator.cs" />
-    <Compile Include="Services\MissingSemicolonRewriter.cs" />
     <Compile Include="TextPosition.cs" />
     <Compile Include="Utilities\Base36Encoder.cs" />
     <Compile Include="Utilities\Hash.cs" />
