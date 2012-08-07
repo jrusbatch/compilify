@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -13,12 +13,22 @@ namespace Compilify.Web.Controllers
     public class HomeController : AsyncController
     {
         private readonly IPostRepository db;
-        private readonly CSharpValidator compiler;
+        private readonly ICodeValidator compiler;
         
-        public HomeController(IPostRepository contentRepository)
+        public HomeController(IPostRepository contentRepository, ICodeValidator codeValidator)
         {
+            if (contentRepository == null)
+            {
+                throw new ArgumentNullException("contentRepository");
+            }
+            
+            if (codeValidator == null)
+            {
+                throw new ArgumentNullException("codeValidator");
+            }
+
             db = contentRepository;
-            compiler = new CSharpValidator(new CSharpCompilationProvider());
+            compiler = codeValidator;
         }
 
         [HttpGet]
@@ -158,12 +168,7 @@ namespace Compilify.Web.Controllers
 
         private IEnumerable<EditorError> GetErrorsInPost(Post post)
         {
-            return compiler.GetCompilationErrors(post)
-                           .Select(x => new EditorError
-                                        {
-                                            Location = x.Location.GetLineSpan(true),
-                                            Message = x.Info.GetMessage()
-                                        });
+            return compiler.GetCompilationErrors(post);
         }
 
         private ActionResult PostNotFound()
