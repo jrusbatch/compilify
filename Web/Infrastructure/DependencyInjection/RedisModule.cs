@@ -2,6 +2,7 @@ using System.Configuration;
 using Autofac;
 using Compilify.Common;
 using Compilify.Common.Redis;
+using Compilify.LanguageServices;
 using Compilify.Messaging;
 using Compilify.Messaging.Redis;
 

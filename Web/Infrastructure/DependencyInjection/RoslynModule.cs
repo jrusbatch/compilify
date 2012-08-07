@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using Compilify.Services;
+using Compilify.LanguageServices;
 
 namespace Compilify.Web.Infrastructure.DependencyInjection
 {

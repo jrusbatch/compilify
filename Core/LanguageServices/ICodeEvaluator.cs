@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Compilify.Models;
 
-namespace Compilify
+namespace Compilify.LanguageServices
 {
     public interface ICodeEvaluator
     {

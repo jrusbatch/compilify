@@ -1,7 +1,7 @@
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 
-namespace Compilify.Services
+namespace Compilify.LanguageServices
 {
     internal sealed class ConsoleRewriter : SyntaxRewriter
     {

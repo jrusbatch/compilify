@@ -10,7 +10,7 @@ using Compilify.Models;
 using Roslyn.Scripting;
 using Roslyn.Scripting.CSharp;
 
-namespace Compilify
+namespace Compilify.LanguageServices
 {
     public sealed class Sandbox : IDisposable
     {

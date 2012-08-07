@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Compilify.Models;
 
-namespace Compilify.Services
+namespace Compilify.LanguageServices
 {
     public interface ICodeValidator
     {

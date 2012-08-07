@@ -3,10 +3,10 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Compilify.Common.Redis;
+using Compilify.LanguageServices;
 using Compilify.Messaging;
 using Compilify.Messaging.Redis;
 using Compilify.Models;
-using Compilify.Services;
 using Newtonsoft.Json;
 using NLog;
 

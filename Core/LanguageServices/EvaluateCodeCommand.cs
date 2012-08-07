@@ -2,7 +2,7 @@
 using System.IO;
 using ProtoBuf;
 
-namespace Compilify
+namespace Compilify.LanguageServices
 {
     [Serializable]
     [ProtoContract]

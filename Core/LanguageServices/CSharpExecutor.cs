@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Compilify.Models;
 
-namespace Compilify.Services
+namespace Compilify.LanguageServices
 {
     public class CSharpExecutor
     {

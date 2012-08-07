@@ -4,7 +4,7 @@ using Compilify.Extensions;
 using Compilify.Models;
 using Roslyn.Compilers;
 
-namespace Compilify.Services
+namespace Compilify.LanguageServices
 {
     public class CSharpValidator : ICodeValidator
     {

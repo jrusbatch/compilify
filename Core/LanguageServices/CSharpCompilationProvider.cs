@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Reflection;
 using System.Text;
 using Compilify.Extensions;
 using Compilify.Models;
 using Roslyn.Compilers;
 using Roslyn.Compilers.CSharp;
 
-namespace Compilify.Services
+namespace Compilify.LanguageServices
 {
     public interface ICSharpCompilationProvider
     {

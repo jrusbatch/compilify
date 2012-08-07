@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace Compilify
+namespace Compilify.LanguageServices
 {
     [DataContract]
     public class EditorError

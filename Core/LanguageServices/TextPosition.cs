@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using Compilify.Utilities;
 using Roslyn.Compilers;
 
-namespace Compilify
+namespace Compilify.LanguageServices
 {
     [DataContract]
     public struct TextPosition : IEquatable<TextPosition>, IComparable<TextPosition>
