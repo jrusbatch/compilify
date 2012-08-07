@@ -7,7 +7,7 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<CSharpCompilationProvider>().As<ICodeEvaluator>();
+            builder.RegisterType<CSharpCompilationProvider>().As<ICSharpCompilationProvider>();
             builder.RegisterType<CSharpValidator>().As<ICodeValidator>();
         }
     }
