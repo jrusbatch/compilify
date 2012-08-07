@@ -186,15 +186,15 @@ namespace Compilify.Web.Controllers.Tests
         [Fact]
         public void Save_returns_redirect_to_Show()
         {
-            var post = new Post();
+            var postViewModel = new PostViewModel();
             var validator = Mock.Of<ICodeValidator>();
             var mockRepository = new Mock<IPostRepository>();
 
-            mockRepository.Setup(x => x.Save(It.IsAny<string>(), post)).Returns(post);
+            mockRepository.Setup(x => x.Save(It.IsAny<string>(), It.IsAny<Post>())).Returns<string, Post>((s, x) => x);
 
             var controller = new HomeController(mockRepository.Object, validator);
 
-            var result = controller.Save(null, post) as RedirectToRouteResult;
+            var result = controller.Save(null, postViewModel) as RedirectToRouteResult;
             
             Assert.NotNull(result);
         }
@@ -202,7 +202,7 @@ namespace Compilify.Web.Controllers.Tests
         [Fact]
         public void Validate_returns_JsonResult()
         {
-            var viewModel = new ValidateViewModel();
+            var viewModel = new PostViewModel();
             var mockValidator = new Mock<ICodeValidator>();
             var repository = Mock.Of<IPostRepository>();
 

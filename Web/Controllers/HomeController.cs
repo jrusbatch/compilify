@@ -103,20 +103,18 @@ namespace Compilify.Web.Controllers
 
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult Save(string slug, Post post)
+        public ActionResult Save(string slug, PostViewModel postViewModel)
         {
-            var result = db.Save(slug, post);
+            var result = db.Save(slug, postViewModel.ToPost());
 
             return RedirectToAction("Show", BuildRouteParametersForPost(result.Slug, result.Version));
         }
 
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult Validate(ValidateViewModel viewModel)
+        public ActionResult Validate(PostViewModel postViewModel)
         {
-            var post = new Post { Classes = viewModel.Classes, Content = viewModel.Command };
-
-            var errors = GetErrorsInPost(post);
+            var errors = GetErrorsInPost(postViewModel.ToPost());
 
             return Json(new { status = "ok", data = errors });
         }

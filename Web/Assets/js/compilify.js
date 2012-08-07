@@ -42,7 +42,7 @@
         return $.ajax('/validate', {
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ 'Command': command, 'Classes': classes }),
+            data: JSON.stringify({ 'Content': command, 'Classes': classes }),
             success: function(msg) {
                 var data = msg.data;
                 
