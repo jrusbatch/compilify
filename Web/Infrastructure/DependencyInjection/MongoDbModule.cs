@@ -1,8 +1,8 @@
 ﻿using System.Configuration;
 using Autofac;
 using Autofac.Integration.Mvc;
-using Compilify.Data.Mongo;
-using MongoDB.Driver;
+using Compilify.DataAccess;
+using Compilify.DataAccess.MongoDB;
 
 namespace Compilify.Web.Infrastructure.DependencyInjection
 {
@@ -10,19 +10,15 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(CreateConnection)
-                   .InstancePerHttpRequest()
-                   .AsSelf();
+            var connectionString = ConfigurationManager.AppSettings["MONGOLAB_URI"];
+
+            builder.Register(c => new MongoConnectionFactory(connectionString))
+                   .As<IMongoConnectionFactory>()
+                   .SingleInstance();
 
             builder.RegisterType<MongoDbPostRepository>()
-                   .AsImplementedInterfaces()
+                   .As<IPostRepository>()
                    .InstancePerHttpRequest();
-        }
-
-        private static MongoDatabase CreateConnection(IComponentContext context)
-        {
-            var connectionString = ConfigurationManager.AppSettings["MONGOLAB_URI"];
-            return MongoDatabase.Create(connectionString);
         }
     }
 }

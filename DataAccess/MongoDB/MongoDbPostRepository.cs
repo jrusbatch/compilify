@@ -4,15 +4,15 @@ using Compilify.Utilities;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 
-namespace Compilify.Data.Mongo
+namespace Compilify.DataAccess.MongoDB
 {
     public class MongoDbPostRepository : IPostRepository
     {
         private readonly MongoDatabase db;
 
-        public MongoDbPostRepository(MongoDatabase mongoDatabase)
+        public MongoDbPostRepository(IMongoConnectionFactory connectionFactory)
         {
-            db = mongoDatabase;
+            db = connectionFactory.Create();
 
             db.GetCollection("posts").EnsureIndex(
                 IndexKeys.Descending("Slug", "Version"), 

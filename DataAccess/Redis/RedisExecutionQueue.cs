@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Compilify.LanguageServices;
 
-namespace Compilify.Common.Redis
+namespace Compilify.DataAccess.Redis
 {
     public class RedisExecutionQueue : IQueue<EvaluateCodeCommand>
     {

@@ -1,9 +1,9 @@
-﻿using Compilify.Models;
+using Compilify.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.IdGenerators;
 
-namespace Compilify.Data.Mongo
+namespace Compilify.DataAccess.MongoDB
 {
     public static class MongoDbInitializer
     {

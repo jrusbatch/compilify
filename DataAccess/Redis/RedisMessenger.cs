@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BookSleeve;
-using Compilify.Common.Redis;
+using Compilify.Messaging;
 
-namespace Compilify.Messaging.Redis
+namespace Compilify.DataAccess.Redis
 {
     public class RedisMessenger : IMessenger
     {

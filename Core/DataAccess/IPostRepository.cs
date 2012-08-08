@@ -1,6 +1,6 @@
 using Compilify.Models;
 
-namespace Compilify.Data
+namespace Compilify.DataAccess
 {
     public interface IPostRepository
     {

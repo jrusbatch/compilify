@@ -103,6 +103,10 @@
       <Project>{8F2EA92A-1519-482E-9808-DACB2CA67503}</Project>
       <Name>Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
+      <Project>{519279f3-53c1-41ff-8f49-553cfa43fc8a}</Project>
+      <Name>DataAccess</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

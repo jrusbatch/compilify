@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Compilify.Common.Redis
+namespace Compilify.DataAccess.Redis
 {
     [Serializable]
     public class RedisConnectionException : Exception

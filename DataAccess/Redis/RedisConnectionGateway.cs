@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net.Sockets;
 using BookSleeve;
 
-namespace Compilify.Common.Redis
+namespace Compilify.DataAccess.Redis
 {
     /// <summary>
     /// Maintains an open connection to a Redis server.</summary>
