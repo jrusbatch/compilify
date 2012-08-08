@@ -72,7 +72,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\DefaultCodeEvaluator.cs" />
+    <Compile Include="LanguageServices\DefaultCodeEvaluator.cs" />
+    <Compile Include="Serialization\ISerializationProvider.cs" />
+    <Compile Include="Serialization\ProtobufSerializationProvider.cs" />
     <Compile Include="LanguageServices\EditorError.cs" />
     <Compile Include="LanguageServices\ICodeEvaluator.cs" />
     <Compile Include="LanguageServices\EvaluateCodeCommand.cs" />

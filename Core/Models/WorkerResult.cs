@@ -1,43 +1,30 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Text;
 using Compilify.Extensions;
-using ProtoBuf;
 
 namespace Compilify.Models
 {
     [Serializable]
-    [ProtoContract]
+    [DataContract]
     public class WorkerResult
     {
-        [ProtoMember(1)]
+        [DataMember(Order = 1)]
         public Guid ExecutionId { get; set; }
         
-        [ProtoMember(2)]
+        [DataMember(Order = 2)]
         public string ClientId { get; set; }
         
-        [ProtoMember(3)]
+        [DataMember(Order = 3)]
         public DateTime Time { get; set; }
         
-        [ProtoMember(4)]
+        [DataMember(Order = 4)]
         public long Duration { get; set; }
 
-        [ProtoMember(5)]
+        [DataMember(Order = 5)]
         public ExecutionResult ExecutionResult { get; set; }
         
-        public static WorkerResult Deserialize(byte[] data)
-        {
-            if (data == null)
-            {
-                throw new ArgumentNullException("data");
-            }
-
-            using (var stream = new MemoryStream(data))
-            {
-                return Serializer.Deserialize<WorkerResult>(stream);
-            }
-        }
-
         public string ToResultString()
         {
             var builder = new StringBuilder();
@@ -56,15 +43,6 @@ namespace Compilify.Models
                 "Bytes Allocated: {0}" + Environment.NewLine, ExecutionResult.TotalMemoryAllocated.ToByteSizeString());
 
             return builder.ToString();
-        }
-        
-        public byte[] GetBytes()
-        {
-            using (var stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, this);
-                return stream.ToArray();
-            }
         }
     }
 }

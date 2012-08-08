@@ -1,22 +1,22 @@
 ﻿using System;
-using ProtoBuf;
+using System.Runtime.Serialization;
 
 namespace Compilify.Models
 {
     [Serializable]
-    [ProtoContract]
+    [DataContract]
     public class ExecutionResult
     {
-        [ProtoMember(1)]
+        [DataMember(Order = 1)]
         public TimeSpan ProcessorTime { get; set; }
 
-        [ProtoMember(2)]
+        [DataMember(Order = 2)]
         public long TotalMemoryAllocated { get; set; }
 
-        [ProtoMember(3)]
+        [DataMember(Order = 3)]
         public string ConsoleOutput { get; set; }
 
-        [ProtoMember(4)]
+        [DataMember(Order = 4)]
         public string Result { get; set; }
     }
 }

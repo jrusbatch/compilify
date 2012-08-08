@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
-using ProtoBuf;
+using System.Runtime.Serialization;
 
 namespace Compilify.LanguageServices
 {
     [Serializable]
-    [ProtoContract]
+    [DataContract]
     public sealed class EvaluateCodeCommand
     {
-        [ProtoMember(1)]
+        [DataMember(Order = 1)]
         private Guid id = Guid.NewGuid();
 
         public EvaluateCodeCommand()
@@ -20,44 +20,22 @@ namespace Compilify.LanguageServices
             get { return id; }
         }
 
-        [ProtoMember(2)]
+        [DataMember(Order = 2)]
         public string ClientId { get; set; }
 
-        [ProtoMember(3)]
+        [DataMember(Order = 3)]
         public string Code { get; set; }
 
-        [ProtoMember(4)]
+        [DataMember(Order = 4)]
         public string Classes { get; set; }
 
-        [ProtoMember(5)]
+        [DataMember(Order = 5)]
         public string Result { get; set; }
 
-        [ProtoMember(6)]
+        [DataMember(Order = 6)]
         public DateTime Submitted { get; set; }
 
-        [ProtoMember(7)]
+        [DataMember(Order = 7)]
         public TimeSpan TimeoutPeriod { get; set; }
-        
-        public static EvaluateCodeCommand Deserialize(byte[] data)
-        {
-            if (data == null)
-            {
-                return null;
-            }
-
-            using (var stream = new MemoryStream(data))
-            {
-                return Serializer.Deserialize<EvaluateCodeCommand>(stream);
-            }
-        }
-
-        public byte[] GetBytes()
-        {
-            using (var stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, this);
-                return stream.ToArray();
-            }
-        }
     }
 }

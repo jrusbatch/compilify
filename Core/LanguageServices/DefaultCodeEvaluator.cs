@@ -1,19 +1,21 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Compilify.LanguageServices;
+using Compilify.Infrastructure;
 using Compilify.Messaging;
 using Compilify.Models;
 
-namespace Compilify.Common
+namespace Compilify.LanguageServices
 {
     public sealed class DefaultCodeEvaluator : ICodeEvaluator
     {
+        private readonly ISerializationProvider serializer;
         private readonly IQueue<EvaluateCodeCommand> commandQueue;
         private readonly IMessenger messageBus;
 
-        public DefaultCodeEvaluator(IMessenger messenger, IQueue<EvaluateCodeCommand> messageQueue)
+        public DefaultCodeEvaluator(IMessenger messenger, IQueue<EvaluateCodeCommand> messageQueue, ISerializationProvider serializationProvider)
         {
+            serializer = serializationProvider;
             commandQueue = messageQueue;
             messageBus = messenger;
         }
@@ -34,7 +36,7 @@ namespace Compilify.Common
             {
                 token.ThrowIfCancellationRequested();
 
-                var result = WorkerResult.Deserialize(e.Payload);
+                var result = serializer.Deserialize<WorkerResult>(e.Payload);
                 if (result.ExecutionId == executionId)
                 {
                     messageBus.MessageReceived -= handler;

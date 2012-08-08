@@ -3,9 +3,11 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Compilify.DataAccess.Redis;
+using Compilify.Infrastructure;
 using Compilify.LanguageServices;
 using Compilify.Messaging;
 using Compilify.Models;
+using Compilify.Serialization;
 using Newtonsoft.Json;
 using NLog;
 
@@ -17,6 +19,7 @@ namespace Compilify.Worker
         
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly CSharpExecutor Executer = new CSharpExecutor();
+        private static readonly ISerializationProvider Serializer = new ProtobufSerializationProvider();
 
         private static IQueue<EvaluateCodeCommand> queue;
         private static IMessenger messenger;
@@ -34,7 +37,7 @@ namespace Compilify.Worker
 
             var gateway = new RedisConnectionGateway(ConfigurationManager.AppSettings["REDISTOGO_URL"]);
 
-            queue = new RedisExecutionQueue(gateway, 0, "queue:execute");
+            queue = new RedisExecutionQueue(Serializer, gateway, 0, "queue:execute");
             messenger = new RedisMessenger(gateway);
 
             ProcessQueue();
@@ -102,7 +105,8 @@ namespace Compilify.Worker
                                        ExecutionResult = result 
                                    };
 
-                    messenger.Publish("workers:job-done", response.GetBytes());
+                    var message = Serializer.Serialize(response);
+                    messenger.Publish("workers:job-done", message);
                 }
                 catch (JsonSerializationException ex)
                 {
