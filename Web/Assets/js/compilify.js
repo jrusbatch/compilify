@@ -148,7 +148,7 @@
         var editorOptions = {
             indentUnit: 4,
             lineNumbers: true,
-            theme: 'neat',
+            theme: 'compilify',
             mode: 'text/x-csharp',
             onChange: function(cm, changes) {
                 validateEnvironment();
