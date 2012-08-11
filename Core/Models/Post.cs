@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Compilify.Models
 {
-    public class Post
+    public class Post : ICodeProgram
     {
         public Post()
         {
@@ -20,6 +20,9 @@ namespace Compilify.Models
 
         public string Description { get; set; }
 
+		string ICodeProgram.Name { get { return Title; } }
+		TimeSpan ICodeProgram.TimeoutPeriod { get { return TimeSpan.FromSeconds(5D); } }
+
         /// <summary>
         /// The ID of the user who created the post, or null if the post was created by an anonymous user.</summary>
         public Guid? AuthorId { get; set; }
@@ -28,6 +31,10 @@ namespace Compilify.Models
         /// If <c>true</c>, the post will not be displayed in search results. However, it will still be accessible via 
         /// direct access.</summary>
         public bool? IsPrivate { get; set; }
+
+		/// <summary>
+		/// The page lanage.</summary>
+		public string Language { get; set; }
 
         /// <summary>
         /// The post content.</summary>
