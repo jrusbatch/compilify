@@ -8,113 +8,129 @@ using Compilify.LanguageServices;
 using Compilify.Messaging;
 using Compilify.Models;
 using Compilify.Serialization;
-using Newtonsoft.Json;
 using NLog;
+using Newtonsoft.Json;
 
 namespace Compilify.Worker
 {
-    public sealed class Program
-    {
-        private const int DefaultTimeout = 5000;
-        
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly CSharpExecutor Executer = new CSharpExecutor();
-        private static readonly ISerializationProvider Serializer = new ProtobufSerializationProvider();
+	public sealed class Program
+	{
+		private const int DefaultTimeout = 5000;
 
-        private static IQueue<EvaluateCodeCommand> queue;
-        private static IMessenger messenger;
-        
-        public static int Main(string[] args)
-        {
-            Logger.Info("Application started.");
+		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+		private static readonly ICodeCompiler Compiler = new CSharpCompiler();
+		private static readonly ISerializationProvider Serializer = new ProtobufSerializationProvider();
 
-            AppDomain.CurrentDomain.UnhandledException += OnUnhandledApplicationException;
+		private static IQueue<EvaluateCodeCommand> queue;
+		private static IMessenger messenger;
 
-            // Log the exception, but do not mark it as observed. The process will be terminated and restarted 
-            // automatically by AppHarbor
-            TaskScheduler.UnobservedTaskException += 
-                (sender, e) => Logger.ErrorException("An unobserved task exception occurred", e.Exception);
+		public static int Main(string[] args)
+		{
+			Logger.Info("Application started.");
 
-            var gateway = new RedisConnectionGateway(ConfigurationManager.AppSettings["REDISTOGO_URL"]);
+			AppDomain.CurrentDomain.UnhandledException += OnUnhandledApplicationException;
 
-            queue = new RedisExecutionQueue(Serializer, gateway, 0, "queue:execute");
-            messenger = new RedisMessenger(gateway);
+			// Log the exception, but do not mark it as observed. The process will be terminated and restarted 
+			// automatically by AppHarbor
+			TaskScheduler.UnobservedTaskException +=
+				(sender, e) => Logger.ErrorException("An unobserved task exception occurred", e.Exception);
 
-            ProcessQueue();
+			var gateway = new RedisConnectionGateway(ConfigurationManager.AppSettings["REDISTOGO_URL"]);
 
-            return -1; // Return a non-zero code so AppHarbor restarts the worker
-        }
-        
-        public static void OnUnhandledApplicationException(object sender, UnhandledExceptionEventArgs e)
-        {
-            var exception = e.ExceptionObject as Exception;
+			queue = new RedisExecutionQueue(Serializer, gateway, 0, "queue:execute");
+			messenger = new RedisMessenger(gateway);
 
-            if (e.IsTerminating)
-            {
-                Logger.FatalException("An unhandled exception is causing the worker to terminate.", exception);
-            }
-            else
-            {
-                Logger.ErrorException("An unhandled exception occurred in the worker process.", exception);
-            }
-        }
+			ProcessQueue();
 
-        private static void ProcessQueue()
-        {
-            var stopWatch = new Stopwatch();
+			return -1; // Return a non-zero code so AppHarbor restarts the worker
+		}
 
-            Logger.Info("ProcessQueue started.");
+		public static void OnUnhandledApplicationException(object sender, UnhandledExceptionEventArgs e)
+		{
+			var exception = e.ExceptionObject as Exception;
 
-            while (true)
-            {
-                var cmd = queue.Dequeue();
+			if (e.IsTerminating)
+			{
+				Logger.FatalException("An unhandled exception is causing the worker to terminate.", exception);
+			}
+			else
+			{
+				Logger.ErrorException("An unhandled exception occurred in the worker process.", exception);
+			}
+		}
 
-                if (cmd == null)
-                {
-                    continue;
-                }
-                
-                var timeInQueue = DateTime.UtcNow - cmd.Submitted;
+		private static void ProcessQueue()
+		{
+			var stopWatch = new Stopwatch();
 
-                Logger.Info("Job received after {0:N3} seconds in queue.", timeInQueue.TotalSeconds);
+			Logger.Info("ProcessQueue started.");
 
-                if (timeInQueue > cmd.TimeoutPeriod)
-                {
-                    Logger.Warn("Job was in queue for longer than {0} seconds, skipping!", cmd.TimeoutPeriod.Seconds);
-                    continue;
-                }
+			while (true)
+			{
+				var cmd = queue.Dequeue();
 
-                var post = new Post { Content = cmd.Code, Classes = cmd.Classes };
+				if (cmd == null)
+				{
+					continue;
+				}
 
-                stopWatch.Start();
+				var timeInQueue = DateTime.UtcNow - cmd.Submitted;
 
-                var result = Executer.Execute(post);
+				Logger.Info("Job received after {0:N3} seconds in queue.", timeInQueue.TotalSeconds);
 
-                stopWatch.Stop();
+				if (timeInQueue > cmd.TimeoutPeriod)
+				{
+					Logger.Warn("Job was in queue for longer than {0} seconds, skipping!", cmd.TimeoutPeriod.Seconds);
+					continue;
+				}
 
-                Logger.Info("Work completed in {0} milliseconds.", stopWatch.ElapsedMilliseconds);
+				var startedOn = DateTime.UtcNow;
+				stopWatch.Start();
 
-                try
-                {
-                    var response = new WorkerResult
-                                   {
-                                       ExecutionId = cmd.ExecutionId,
-                                       ClientId = cmd.ClientId,
-                                       Time = DateTime.UtcNow,
-                                       Duration = stopWatch.ElapsedMilliseconds,
-                                       ExecutionResult = result 
-                                   };
+				var assembly = Compiler.Compile(cmd);
+				var result = (ExecutionResult)null;
 
-                    var message = Serializer.Serialize(response);
-                    messenger.Publish("workers:job-done", message);
-                }
-                catch (JsonSerializationException ex)
-                {
-                    Logger.ErrorException("An error occurred while attempting to serialize the JSON result.", ex);
-                }
-                
-                stopWatch.Reset();
-            }
-        }
-    }
+				if (assembly == null)
+				{
+					result = new ExecutionResult {
+						Result = "[compiling of code failed]"
+					};
+				}
+				else
+				{
+					using(var executor = new Sandbox())
+						result = executor.Execute(assembly, cmd.TimeoutPeriod);
+				}
+
+				stopWatch.Stop();
+				var stoppedOn = DateTime.UtcNow;
+
+				Logger.Info("Work completed in {0} milliseconds.", stopWatch.ElapsedMilliseconds);
+
+				try
+				{
+					var response = new WorkerResult {
+						ExecutionId = cmd.ExecutionId,
+						ClientId = cmd.ClientId,
+						StartTime = startedOn,
+						StopTime = stoppedOn,
+						RunDuration = stopWatch.Elapsed,
+						ProcessorTime = result.ProcessorTime,
+						TotalMemoryAllocated = result.TotalMemoryAllocated,
+						ConsoleOutput = result.ConsoleOutput,
+						Result = result.Result
+					};
+
+					var message = Serializer.Serialize(response);
+					messenger.Publish("workers:job-done", message);
+				}
+				catch (JsonSerializationException ex)
+				{
+					Logger.ErrorException("An error occurred while attempting to serialize the JSON result.", ex);
+				}
+
+				stopWatch.Reset();
+			}
+		}
+	}
 }

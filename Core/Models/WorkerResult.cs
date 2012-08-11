@@ -6,43 +6,35 @@ using Compilify.Extensions;
 
 namespace Compilify.Models
 {
-    [Serializable]
-    [DataContract]
-    public class WorkerResult
-    {
-        [DataMember(Order = 1)]
-        public Guid ExecutionId { get; set; }
-        
-        [DataMember(Order = 2)]
-        public string ClientId { get; set; }
-        
-        [DataMember(Order = 3)]
-        public DateTime Time { get; set; }
-        
-        [DataMember(Order = 4)]
-        public long Duration { get; set; }
+	[Serializable]
+	[DataContract]
+	public class WorkerResult : ICodeRunResult
+	{
+		[DataMember(Order = 1)]
+		public Guid ExecutionId { get; set; }
 
-        [DataMember(Order = 5)]
-        public ExecutionResult ExecutionResult { get; set; }
-        
-        public string ToResultString()
-        {
-            var builder = new StringBuilder();
+		[DataMember(Order = 2)]
+		public string ClientId { get; set; }
 
-            if (!string.IsNullOrEmpty(ExecutionResult.ConsoleOutput))
-            {
-                builder.AppendLine(ExecutionResult.ConsoleOutput);
-            }
+		[DataMember(Order = 3)]
+		public DateTime StartTime { get; set; }
 
-            builder.AppendLine(ExecutionResult.Result);
+		[DataMember(Order = 4)]
+		public DateTime StopTime { get; set; }
 
-            builder.AppendLine();
-            builder.AppendFormat("CPU Time: {0}" + Environment.NewLine, ExecutionResult.ProcessorTime);
+		[DataMember(Order = 5)]
+		public TimeSpan RunDuration { get; set; }
 
-            builder.AppendFormat(
-                "Bytes Allocated: {0}" + Environment.NewLine, ExecutionResult.TotalMemoryAllocated.ToByteSizeString());
+		[DataMember(Order = 6)]
+		public TimeSpan ProcessorTime { get; set; }
 
-            return builder.ToString();
-        }
-    }
+		[DataMember(Order = 7)]
+		public long TotalMemoryAllocated { get; set; }
+
+		[DataMember(Order = 8)]
+		public string ConsoleOutput { get; set; }
+
+		[DataMember(Order = 9)]
+		public string Result { get; set; }
+	}
 }

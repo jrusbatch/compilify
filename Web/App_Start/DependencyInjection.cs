@@ -3,6 +3,7 @@ using Autofac;
 using Autofac.Integration.Mvc;
 using Compilify.Web;
 using Compilify.Web.Infrastructure.DependencyInjection;
+using SignalR;
 using WebActivator;
 
 [assembly: PreApplicationStartMethod(typeof(DependencyInjection), "Initialize")]
@@ -21,7 +22,8 @@ namespace Compilify.Web
             builder.RegisterModule(new RoslynModule());
 
             var container = builder.Build();
-            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+			DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+			GlobalHost.DependencyResolver = new AutofacDepenedencyResolverForSignalR(container);
         }
     }
 }

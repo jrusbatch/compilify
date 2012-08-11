@@ -14,13 +14,13 @@ namespace Compilify.DataAccess.MongoDB
         {
             db = connectionFactory.Create();
 
-            db.GetCollection("posts").EnsureIndex(
-                IndexKeys.Descending("Slug", "Version"), 
-                IndexOptions.SetUnique(true));
+			db.GetCollection("posts").EnsureIndex(
+				IndexKeys.Descending("Slug", "Version"),
+				IndexOptions.SetUnique(true));
 
-            db.GetCollection("sequences").EnsureIndex(
-                IndexKeys.Descending("Name"), 
-                IndexOptions.SetUnique(true));
+			db.GetCollection("sequences").EnsureIndex(
+				IndexKeys.Descending("Name"),
+				IndexOptions.SetUnique(true));
         }
 
         public Post GetVersion(string slug, int version)
