@@ -1,82 +1,90 @@
 ﻿using System;
 using System.Configuration;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Compilify.Extensions;
 using Compilify.LanguageServices;
-using Compilify.Models;
 using Newtonsoft.Json;
 using SignalR;
 
 namespace Compilify.Web.EndPoints
 {
-    public class ExecuteEndPoint : PersistentConnection
-    {
-        private const int DefaultExecutionTimeout = 30;
-        private static readonly TimeSpan ExecutionTimeout;
-        
-        static ExecuteEndPoint()
-        {
-            int timeout;
-            if (!int.TryParse(ConfigurationManager.AppSettings["Compilify.ExecutionTimeout"], out timeout))
-            {
-                timeout = DefaultExecutionTimeout;
-            }
+	public class ExecuteEndPoint : PersistentConnection
+	{
+		private const int DefaultExecutionTimeout = 30;
+		private static readonly TimeSpan ExecutionTimeout;
 
-            ExecutionTimeout = TimeSpan.FromSeconds(timeout);
-        }
+		static ExecuteEndPoint()
+		{
+			int timeout;
+			if (!int.TryParse(ConfigurationManager.AppSettings["Compilify.ExecutionTimeout"], out timeout))
+			{
+				timeout = DefaultExecutionTimeout;
+			}
 
-        protected override Task OnReceivedAsync(IRequest request, string connectionId, string data)
-        {
-            var post = JsonConvert.DeserializeObject<Post>(data);
+			ExecutionTimeout = TimeSpan.FromSeconds(timeout);
+		}
 
-            var command = new EvaluateCodeCommand
-                          {
-                              ClientId = connectionId,
-                              Code = post.Content,
-                              Classes = post.Classes,
-                              Submitted = DateTime.UtcNow,
-                              TimeoutPeriod = ExecutionTimeout
-                          };
+		public string JobRunToString(ICodeRunResult run)
+		{
+			var builder = new StringBuilder();
 
-            // TODO: Time this out
-            var tokenSource = new CancellationTokenSource();
+			if (!String.IsNullOrEmpty(run.ConsoleOutput))
+				builder.AppendLine(run.ConsoleOutput);
 
-            var evaluator = DependencyResolver.Current.GetService<ICodeEvaluator>();
+			if (!String.IsNullOrEmpty(run.Result))
+				builder.AppendLine(run.Result);
 
-            return evaluator.Handle(command, tokenSource.Token)
-                            .ContinueWith(t =>
-                            {
-                                if (t.IsFaulted)
-                                {
-                                    return Connection.Send(
-                                        connectionId,
-                                        new
-                                        {
-                                            status = "error",
-                                            message = t.Exception != null ? t.Exception.Message : null
-                                        });
-                                }
-                                
-                                if (t.IsCanceled)
-                                {
-                                    return Connection.Send(
-                                        connectionId,
-                                        new
-                                        {
-                                            status = "error",
-                                            message = "Evaluation timed out or was cancelled."
-                                        });
-                                }
+			builder.AppendFormat("CPU Time: {0}" + Environment.NewLine, run.ProcessorTime);
+			builder.AppendFormat("Bytes Allocated: {0}" + Environment.NewLine, run.TotalMemoryAllocated.ToByteSizeString());
 
-                                return Connection.Send(
-                                    connectionId,
-                                    new
-                                    {
-                                        status = "ok",
-                                        data = t.Result.ToResultString()
-                                    });
-                            });
-        }
-    }
+			return builder.ToString();
+		}
+
+		protected override Task OnReceivedAsync(IRequest request, string connectionId, string data)
+		{
+			var command = JsonConvert.DeserializeObject<EvaluateCodeCommand>(data);
+			command.ClientId = connectionId;
+			command.Submitted = DateTime.UtcNow;
+			command.TimeoutPeriod = ExecutionTimeout;
+
+			// TODO: Time this out
+			var tokenSource = new CancellationTokenSource();
+
+			var evaluator = GlobalHost.DependencyResolver.Resolve<ICodeEvaluator>();
+
+			return evaluator
+				.EvaluateAsync(command, tokenSource.Token)
+				.ContinueWith(t => {
+					if (t.IsFaulted)
+					{
+						return Connection.Send(
+						   connectionId,
+						   new {
+							   status = "error",
+							   message = t.Exception != null ? t.Exception.Message : null
+						   });
+					}
+
+					if (t.IsCanceled)
+					{
+						return Connection.Send(
+							connectionId,
+							new {
+								status = "error",
+								message = "Evaluation timed out or was cancelled."
+							});
+					}
+
+					return Connection.Send(
+						connectionId,
+						new {
+							status = "ok",
+							data = JobRunToString(t.Result)
+						});
+				});
+		}
+	}
 }

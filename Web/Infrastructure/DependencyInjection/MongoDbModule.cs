@@ -1,8 +1,8 @@
 ﻿using System.Configuration;
 using Autofac;
 using Autofac.Integration.Mvc;
-using Compilify.DataAccess;
 using Compilify.DataAccess.MongoDB;
+using Compilify.Models;
 
 namespace Compilify.Web.Infrastructure.DependencyInjection
 {
