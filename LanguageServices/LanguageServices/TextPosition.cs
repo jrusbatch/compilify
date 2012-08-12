@@ -32,6 +32,11 @@ namespace Compilify.LanguageServices
             get { return character; }
         }
         
+        internal static TextPosition Create(LinePosition position)
+        {
+            return new TextPosition(position.Line, position.Character);
+        }
+        
         public static TextPosition Create(int line, int character)
         {
             if (line < 0)
@@ -45,11 +50,6 @@ namespace Compilify.LanguageServices
             }
 
             return new TextPosition(line, character);
-        }
-        
-        internal static TextPosition Create(LinePosition position)
-        {
-            return new TextPosition(position.Line, position.Character);
         }
         
         public static bool operator ==(TextPosition left, TextPosition right)

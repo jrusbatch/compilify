@@ -35,7 +35,7 @@ namespace Compilify.Utilities
             }
 
             var @base = Characters.Length;
-            return str.ToLowerInvariant().Aggregate(0, (current, c) => current * @base + Characters.IndexOf(c));
+            return str.ToLowerInvariant().Aggregate(0, (current, c) => (current * @base) + Characters.IndexOf(c));
         }
     }
 }

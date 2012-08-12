@@ -5,6 +5,6 @@ namespace Compilify.LanguageServices
 {
     public interface ICodeEvaluator
     {
-		Task<ICodeRunResult> EvaluateAsync(ICodeProgram program, CancellationToken cancellationToken);
+        Task<ICodeRunResult> EvaluateAsync(ICodeProgram program, CancellationToken cancellationToken);
     }
 }

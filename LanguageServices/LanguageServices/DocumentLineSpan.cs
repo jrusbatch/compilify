@@ -18,6 +18,13 @@ namespace Compilify.LanguageServices
             start = startPosition;
             end = endPosition;
         }
+        
+        internal static DocumentLineSpan Create(FileLinePositionSpan span)
+        {
+            var startPosition = TextPosition.Create(span.StartLinePosition);
+            var endPosition = TextPosition.Create(span.EndLinePosition);
+            return new DocumentLineSpan(span.Path, startPosition, endPosition);
+        }
 
         [DataMember]
         public string DocumentName
@@ -35,13 +42,6 @@ namespace Compilify.LanguageServices
         public TextPosition EndLinePosition
         {
             get { return end; }
-        }
-
-        internal static DocumentLineSpan Create(FileLinePositionSpan span)
-        {
-            var startPosition = TextPosition.Create(span.StartLinePosition);
-            var endPosition = TextPosition.Create(span.EndLinePosition);
-            return new DocumentLineSpan(span.Path, startPosition, endPosition);
         }
 
         public override bool Equals(object obj)

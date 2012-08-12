@@ -20,11 +20,11 @@ namespace Compilify.LanguageServices
             get { return id; }
         }
 
-		[DataMember(Order = 2)]
-		public string Name { get; set; }
+        [DataMember(Order = 2)]
+        public string Name { get; set; }
 
-		[DataMember(Order = 3)]
-		public string Language { get; set; }
+        [DataMember(Order = 3)]
+        public string Language { get; set; }
 
         [DataMember(Order = 4)]
         public string ClientId { get; set; }

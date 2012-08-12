@@ -21,17 +21,21 @@ namespace Compilify
             messageBus = messenger;
         }
 
-		public Task<ICodeRunResult> EvaluateAsync(ICodeProgram command, CancellationToken token)
+        public Task<ICodeRunResult> EvaluateAsync(ICodeProgram command, CancellationToken token)
         {
             if (command == null)
+            {
                 throw new ArgumentNullException("command");
+            }
 
-			if (!(command is EvaluateCodeCommand))
-				throw new ArgumentException("This evaluator can only deal with the type EvaulateCodeCommand");
+            if (!(command is EvaluateCodeCommand))
+            {
+                throw new ArgumentException("This evaluator can only deal with the type EvaluateCodeCommand");
+            }
 
-			var cmd = (EvaluateCodeCommand)command;
+            var cmd = (EvaluateCodeCommand)command;
             var tcs = new TaskCompletionSource<ICodeRunResult>();
-			var executionId = cmd.ExecutionId;
+            var executionId = cmd.ExecutionId;
 
             // Create an anonymous event handler to be called if and when a worker finishes executing our code
             EventHandler<MessageReceivedEventArgs> handler = null;
@@ -56,7 +60,7 @@ namespace Compilify
             });
             
             // Queue the command for processing
-			var task = commandQueue.EnqueueAsync(cmd);
+            var task = commandQueue.EnqueueAsync(cmd);
 
             task.ContinueWith(
                 t =>

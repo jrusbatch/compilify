@@ -20,8 +20,15 @@ namespace Compilify.Models
 
         public string Description { get; set; }
 
-		string ICodeProgram.Name { get { return Title; } }
-		TimeSpan ICodeProgram.TimeoutPeriod { get { return TimeSpan.FromSeconds(5D); } }
+        string ICodeProgram.Name
+        {
+            get { return Title; }
+        }
+
+        TimeSpan ICodeProgram.TimeoutPeriod
+        {
+            get { return TimeSpan.FromSeconds(5D); }
+        }
 
         /// <summary>
         /// The ID of the user who created the post, or null if the post was created by an anonymous user.</summary>
@@ -32,9 +39,9 @@ namespace Compilify.Models
         /// direct access.</summary>
         public bool? IsPrivate { get; set; }
 
-		/// <summary>
-		/// The page lanage.</summary>
-		public string Language { get; set; }
+        /// <summary>
+        /// The page lanage.</summary>
+        public string Language { get; set; }
 
         /// <summary>
         /// The post content.</summary>

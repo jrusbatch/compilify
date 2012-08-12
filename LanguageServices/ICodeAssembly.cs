@@ -1,10 +1,11 @@
 namespace Compilify
 {
-	public interface ICodeAssembly
-	{
-		string EntryPointClassName { get; set; }
-		string EntryPointMethodName { get; set; }
+    public interface ICodeAssembly
+    {
+        string EntryPointClassName { get; set; }
 
-		byte[] CompiledAssembly { get; set; }
-	}
+        string EntryPointMethodName { get; set; }
+
+        byte[] CompiledAssembly { get; set; }
+    }
 }

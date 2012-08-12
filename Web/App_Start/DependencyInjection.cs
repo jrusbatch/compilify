@@ -22,8 +22,8 @@ namespace Compilify.Web
             builder.RegisterModule(new RoslynModule());
 
             var container = builder.Build();
-			DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
-			GlobalHost.DependencyResolver = new AutofacDepenedencyResolverForSignalR(container);
+            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+            GlobalHost.DependencyResolver = new AutofacDepenedencyResolverForSignalR(container);
         }
     }
 }

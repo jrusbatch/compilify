@@ -8,11 +8,11 @@ namespace Compilify.LanguageServices
 {
     public class CSharpValidator : ICodeValidator
     {
-		private readonly CSharpCompiler compiler;
+        private readonly CSharpCompiler compiler;
 
         public CSharpValidator()
         {
-			compiler = new CSharpCompiler();
+            compiler = new CSharpCompiler();
         }
 
         public IEnumerable<EditorError> GetCompilationErrors(ICodeProgram post)

@@ -4,8 +4,8 @@ using Compilify.Models;
 
 namespace Compilify.LanguageServices
 {
-	public interface ICodeExecutor : IDisposable
-	{
-		ExecutionResult Execute(ICodeAssembly assembly, TimeSpan timeout);
-	}
+    public interface ICodeExecutor : IDisposable
+    {
+        ExecutionResult Execute(ICodeAssembly assembly, TimeSpan timeout);
+    }
 }

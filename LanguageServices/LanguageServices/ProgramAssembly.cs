@@ -1,12 +1,11 @@
-﻿using System;
-using System.Linq;
-
-namespace Compilify.LanguageServices
+﻿namespace Compilify.LanguageServices
 {
-	public class ProgramAssembly : ICodeAssembly
-	{
-		public string EntryPointClassName { get; set; }
-		public string EntryPointMethodName { get; set; }
-		public byte[] CompiledAssembly { get; set; }
-	}
+    public class ProgramAssembly : ICodeAssembly
+    {
+        public string EntryPointClassName { get; set; }
+
+        public string EntryPointMethodName { get; set; }
+
+        public byte[] CompiledAssembly { get; set; }
+    }
 }
