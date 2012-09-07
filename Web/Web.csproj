@@ -168,8 +168,6 @@
     <Compile Include="Infrastructure\LowercaseRoute.cs" />
     <Compile Include="Infrastructure\RequireHttpsOnAppHarborAttribute.cs" />
     <Compile Include="Models\PostViewModel.cs" />
-    <Compile Include="Models\RegisterViewModel.cs" />
-    <Compile Include="Models\SignInViewModel.cs" />
     <Compile Include="Models\ValidateViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -239,8 +237,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Auth\Register.cshtml" />
-    <Content Include="Views\Auth\SignIn.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Show.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
