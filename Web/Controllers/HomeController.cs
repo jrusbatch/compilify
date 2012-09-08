@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Compilify.DataAccess;
 using Compilify.LanguageServices;
 using Compilify.Models;
 using Compilify.Web.Models;
@@ -62,7 +61,7 @@ namespace Compilify.Web.Controllers
             if (version <= 1)
             {
                 // Redirect the user to /:slug instead of /:slug/1
-                return RedirectToActionPermanent("Show", "Home", new { slug = slug, version = (int?)null });
+                return RedirectToActionPermanent("Show", "Home", new { slug, version = (int?)null });
             }
 
             version = version ?? 1;
