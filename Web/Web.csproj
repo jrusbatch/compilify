@@ -164,8 +164,6 @@
     <Compile Include="Infrastructure\DependencyInjection\RedisModule.cs" />
     <Compile Include="Infrastructure\DependencyInjection\RoslynModule.cs" />
     <Compile Include="Infrastructure\Extensions\HtmlHelperExtensions.cs" />
-    <Compile Include="Infrastructure\Extensions\RouteCollectionExtensions.cs" />
-    <Compile Include="Infrastructure\LowercaseRoute.cs" />
     <Compile Include="Infrastructure\RequireHttpsOnAppHarborAttribute.cs" />
     <Compile Include="Models\PostViewModel.cs" />
     <Compile Include="Models\ValidateViewModel.cs" />

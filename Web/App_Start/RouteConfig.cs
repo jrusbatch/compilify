@@ -10,21 +10,23 @@ namespace Compilify.Web
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
+            routes.LowercaseUrls = true;
+
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            routes.MapLowercaseRoute(
+            routes.MapRoute(
                 "Root",
                 string.Empty,
                 defaults: new { controller = "Home", action = "Index" },
                 constraints: new { httpMethod = new HttpMethodConstraint("GET") });
 
-            routes.MapLowercaseRoute(
+            routes.MapRoute(
                 name: "About",
                 url: "about",
                 defaults: new { controller = "Home", action = "About" },
                 constraints: new { httpMethod = new HttpMethodConstraint("GET") });
 
-            routes.MapLowercaseRoute(
+            routes.MapRoute(
                 name: "validate",
                 url: "validate",
                 defaults: new { controller = "Home", action = "Validate" },
@@ -32,25 +34,25 @@ namespace Compilify.Web
 
             routes.MapConnection<ExecuteEndPoint>("execute", "execute/{*operation}");
 
-            routes.MapLowercaseRoute(
+            routes.MapRoute(
                 name: "Update",
                 url: "{slug}/{version}",
                 defaults: new { controller = "Home", action = "Save", version = UrlParameter.Optional },
                 constraints: new { httpMethod = new HttpMethodConstraint("POST"), slug = @"[a-z0-9]*", });
 
-            routes.MapLowercaseRoute(
+            routes.MapRoute(
                 name: "Save",
                 url: "{slug}",
                 defaults: new { controller = "Home", action = "Save", slug = UrlParameter.Optional },
                 constraints: new { httpMethod = new HttpMethodConstraint("POST"), slug = @"[a-z0-9]*" });
 
-            routes.MapLowercaseRoute(
+            routes.MapRoute(
                 name: "Show",
                 url: "{slug}/{version}",
                 defaults: new { controller = "Home", action = "Show", version = UrlParameter.Optional },
                 constraints: new { httpMethod = new HttpMethodConstraint("GET"), slug = @"[a-z0-9]+", version = @"\d*" });
 
-            routes.MapLowercaseRoute(
+            routes.MapRoute(
                 name: "Latest",
                 url: "{slug}/latest",
                 defaults: new { controller = "Home", action = "Latest" },
