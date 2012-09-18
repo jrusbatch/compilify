@@ -11,7 +11,7 @@ namespace Compilify.Extensions
 
         internal static SyntaxTree RewriteWith<TRewriter>(this SyntaxTree tree, TRewriter rewriter) where TRewriter : SyntaxRewriter
         {
-            return SyntaxTree.Create(tree.FilePath, (CompilationUnitSyntax)rewriter.Visit(tree.GetRoot()), tree.Options);
+            return SyntaxTree.Create((CompilationUnitSyntax)rewriter.Visit(tree.GetRoot()), tree.FilePath, tree.Options);
         }
     }
 }

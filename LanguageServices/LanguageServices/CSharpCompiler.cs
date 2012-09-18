@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Compilify.Extensions;
@@ -20,8 +21,8 @@ namespace Compilify.LanguageServices
                   }
               }";
 
-        private static readonly ReadOnlyArray<string> DefaultNamespaces =
-            ReadOnlyArray<string>.CreateFrom(new[]
+        private static readonly IEnumerable<string> DefaultNamespaces =
+            new[]
             {
                 "System", 
                 "System.IO", 
@@ -30,7 +31,7 @@ namespace Compilify.LanguageServices
                 "System.Text", 
                 "System.Text.RegularExpressions", 
                 "System.Collections.Generic"
-            });
+            };
 
         public ICodeAssembly Compile(ICodeProgram program)
         {
@@ -66,12 +67,12 @@ namespace Compilify.LanguageServices
             var asScript = ParseOptions.Default.WithKind(SourceCodeKind.Script);
 
             var console =
-                SyntaxTree.ParseCompilationUnit(
+                SyntaxTree.ParseText(
                     "public static readonly StringWriter __Console = new StringWriter();", options: asScript);
 
-            var entry = SyntaxTree.ParseCompilationUnit(EntryPoint);
-            var prompt = SyntaxTree.ParseCompilationUnit(BuildScript(program.Content), path: "Prompt", options: asScript);
-            var editor = SyntaxTree.ParseCompilationUnit(program.Classes ?? string.Empty, path: "Editor", options: asScript);
+            var entry = SyntaxTree.ParseText(EntryPoint);
+            var prompt = SyntaxTree.ParseText(BuildScript(program.Content), "Prompt", asScript);
+            var editor = SyntaxTree.ParseText(program.Classes ?? string.Empty, "Editor", asScript);
 
             var compilation = RoslynCompile(program.Name ?? "Untitled", new[] { entry, prompt, editor, console });
 
@@ -96,9 +97,9 @@ namespace Compilify.LanguageServices
 
             var metadata = new[]
                            {
-                               MetadataReference.Create("mscorlib"),
-                               MetadataReference.Create("System"),
-                               MetadataReference.Create("System.Core")
+                               MetadataReference.CreateAssemblyReference("mscorlib"),
+                               MetadataReference.CreateAssemblyReference("System"),
+                               MetadataReference.CreateAssemblyReference("System.Core")
                            };
 
             var compilation = Compilation.Create(compilationName, options, syntaxTrees,  metadata);
