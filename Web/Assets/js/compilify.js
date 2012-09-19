@@ -51,7 +51,6 @@
                 }
 
                 markedErrors.length = 0;
-                console.log(msg);
 
                 if (_.isArray(data)) {
                     var $list = $('#footer .status ul.messages').detach().empty();
@@ -116,8 +115,6 @@
         connection = $.connection('/execute');
 
         connection.received(function (msg) {
-            console.log(msg);
-
             if (msg && msg.status === "ok") {
                 setResult(msg.data);
             }
