@@ -194,6 +194,7 @@
     <Content Include="Assets\js\vendor\bootstrap.js" />
     <Content Include="Assets\js\vendor\codemirror.js" />
     <Content Include="Assets\js\vendor\codemirror-clike.js" />
+    <Content Include="Assets\js\vendor\jquery.js" />
     <Content Include="Assets\js\vendor\jquery.validate.js" />
     <Content Include="Assets\js\vendor\jquery.validate-hooks.js" />
     <Content Include="Assets\js\vendor\jquery.validate.unobtrusive.js" />
@@ -202,7 +203,6 @@
     <Content Include="Assets\js\vendor\underscore.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="Assets\js\vendor\jquery.js" />
     <Content Include="Assets\js\vendor\jquery.signalr.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
