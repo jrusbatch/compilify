@@ -87,7 +87,6 @@
         /// Queues code for execution on the server.</summary>
         
         if (_.isString(command) && command.length > 0) {
-            trackEvent('Code', 'Execute', window.location.pathname);
             connection.send(JSON.stringify({ 'Content': command, 'Classes': classes }));
             $('#footer:not(.loading)').addClass('loading');
         }
