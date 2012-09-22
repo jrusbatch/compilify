@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Compilify.Extensions;
-using Compilify.Models;
 using Roslyn.Compilers;
 
 namespace Compilify.LanguageServices
@@ -15,9 +14,9 @@ namespace Compilify.LanguageServices
             compiler = new CSharpCompiler();
         }
 
-        public IEnumerable<EditorError> GetCompilationErrors(ICodeProgram post)
+        public IEnumerable<EditorError> GetCompilationErrors(ICodeProject post)
         {
-            var result = compiler.RoslynCompile(post).Emit();
+            var result = compiler.RoslynCompile(post).EmitToMemory();
             return result.Diagnostics
                          .Where(x => x.Info.Severity == DiagnosticSeverity.Error)
                          .Select(x => new EditorError

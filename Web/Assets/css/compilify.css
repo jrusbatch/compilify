@@ -80,7 +80,7 @@ strong {
     bottom: 155px;
 }
 
-#editors #define {
+#editors .editor-container:first-child {
     position: absolute;
     margin-right: 10px;
     left: 0;
@@ -88,7 +88,7 @@ strong {
     top: 0;
     bottom: 0;
 }
-#editors #execute {
+#editors .editor-container:last-child {
     position: absolute;
     margin-left: 10px;
     left: 50%;

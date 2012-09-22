@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 
@@ -6,14 +7,12 @@ namespace Compilify.LanguageServices
 {
     [Serializable]
     [DataContract]
-    public sealed class EvaluateCodeCommand : ICodeProgram
+    public sealed class EvaluateCodeCommand : ICodeProject
     {
         [DataMember(Order = 1)]
         private Guid id = Guid.NewGuid();
 
-        public EvaluateCodeCommand()
-        {
-        }
+        public EvaluateCodeCommand() { }
 
         public Guid ExecutionId
         {
@@ -43,5 +42,8 @@ namespace Compilify.LanguageServices
 
         [DataMember(Order = 9)]
         public TimeSpan TimeoutPeriod { get; set; }
+
+        [DataMember(Order = 10)]
+        public IEnumerable<ICodeDocument> Documents { get; set; }
     }
 }

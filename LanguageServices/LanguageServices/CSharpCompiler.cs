@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Compilify.Extensions;
 using Roslyn.Compilers;
+using Roslyn.Compilers.Common;
 using Roslyn.Compilers.CSharp;
+using Roslyn.Services;
 
 namespace Compilify.LanguageServices
 {
@@ -33,7 +34,24 @@ namespace Compilify.LanguageServices
                 "System.Collections.Generic"
             };
 
-        public ICodeAssembly Compile(ICodeProgram program)
+        private static readonly IEnumerable<MetadataReference> DefaultReferences =
+            new[]
+            {
+                MetadataReference.CreateAssemblyReference("mscorlib"),
+                MetadataReference.CreateAssemblyReference("System"),
+                MetadataReference.CreateAssemblyReference("System.Core")
+            };
+
+        private static readonly CommonParseOptions DefaultParseOptions = 
+            ParseOptions.Default.WithKind(SourceCodeKind.Script);
+
+        private static readonly CompilationOptions DefaultCompilationOptions =
+            new CompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+                    .WithOverflowChecks(true)
+                    .WithOptimizations(true)
+                    .WithUsings(DefaultNamespaces);
+
+        public ICodeAssembly Compile(ICodeProject program)
         {
             var compilation = RoslynCompile(program);
             var assembly = new ProgramAssembly
@@ -57,54 +75,59 @@ namespace Compilify.LanguageServices
             return assembly;
         }
 
-        public Compilation RoslynCompile(ICodeProgram program)
+        private static ISolution CreateSolution(ICodeProject codeProject, out ProjectId projectId)
         {
-            if (program == null)
-            {
-                throw new ArgumentNullException("program");
-            }
+            var solutionId = SolutionId.CreateNewId();
+            var solution =
+                Solution.Create(solutionId)
+                    .AddCSharpProject(codeProject.Name, codeProject.Name, out projectId)
+                    .AddMetadataReferences(projectId, DefaultReferences)
+                    .UpdateCompilationOptions(projectId, DefaultCompilationOptions)
+                    .UpdateParseOptions(projectId, DefaultParseOptions);
 
-            var asScript = ParseOptions.Default.WithKind(SourceCodeKind.Script);
-
-            var console =
-                SyntaxTree.ParseText(
-                    "public static readonly StringWriter __Console = new StringWriter();", options: asScript);
-
-            var entry = SyntaxTree.ParseText(EntryPoint);
-            var prompt = SyntaxTree.ParseText(BuildScript(program.Content), "Prompt", asScript);
-            var editor = SyntaxTree.ParseText(program.Classes ?? string.Empty, "Editor", asScript);
-
-            var compilation = RoslynCompile(program.Name ?? "Untitled", new[] { entry, prompt, editor, console });
-
-            var newPrompt = prompt.RewriteWith(new ConsoleRewriter("__Console", compilation.GetSemanticModel(prompt)));
-            var newEditor = editor.RewriteWith(new ConsoleRewriter("__Console", compilation.GetSemanticModel(editor)));
-
-            return compilation.ReplaceSyntaxTree(prompt, newPrompt).ReplaceSyntaxTree(editor, newEditor);
+            DocumentId docId;
+            return solution.AddDocument(projectId, "EntryPoint", EntryPoint, out docId);
         }
 
-        public Compilation RoslynCompile(string compilationName, params SyntaxTree[] syntaxTrees)
+        public CommonCompilation RoslynCompile(ICodeProject codeProject)
         {
-            if (string.IsNullOrEmpty(compilationName))
+            if (codeProject == null)
             {
-                throw new ArgumentNullException("compilationName");
+                throw new ArgumentNullException("codeProject");
             }
 
-            var options =
-                new CompilationOptions(OutputKind.DynamicallyLinkedLibrary)
-                    .WithOverflowChecks(true)
-                    .WithOptimizations(true)
-                    .WithUsings(DefaultNamespaces);
+            ProjectId projectId;
+            var solution = CreateSolution(codeProject, out projectId);
 
-            var metadata = new[]
-                           {
-                               MetadataReference.CreateAssemblyReference("mscorlib"),
-                               MetadataReference.CreateAssemblyReference("System"),
-                               MetadataReference.CreateAssemblyReference("System.Core")
-                           };
+            var documentIds = new Dictionary<string, DocumentId>();
 
-            var compilation = Compilation.Create(compilationName, options, syntaxTrees,  metadata);
+            foreach (var document in codeProject.Documents)
+            {
+                var documentId = DocumentId.CreateNewId(projectId, document.Name);
 
-            return compilation;
+                var text = document.GetText();
+                if (string.Equals(document.Name, "Content"))
+                {
+                    // This smells terrible.
+                    text = BuildScript(text);
+                }
+
+                solution = solution.AddDocument(documentId, document.Name, new StringText(text));
+                documentIds.Add(document.Name, documentId);
+            }
+
+            foreach (var documentId in solution.GetProject(projectId).DocumentIds)
+            {
+                var document = solution.GetDocument(documentId);
+                var root = document.GetSyntaxRoot();
+                var semanticModel = document.GetSemanticModel();
+
+                var rewriter = new ConsoleRewriter("__Console", semanticModel);
+
+                solution = solution.UpdateDocument(documentId, rewriter.Visit((SyntaxNode)root));
+            }
+
+            return solution.GetProject(projectId).GetCompilation();
         }
 
         private static string BuildScript(string content)

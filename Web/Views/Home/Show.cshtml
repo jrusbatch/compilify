@@ -10,17 +10,14 @@
         </div>
     
         <div id="editors">
-            <div id="define">
-                <div class="editor">
-                    @Html.TextAreaFor(x => x.Classes)
+            @foreach(var document in Model.Documents)
+            {
+                <div class="editor-container">
+                    <div class="editor">
+                        <textarea data-name="@document.Name">@document.Text</textarea>
+                    </div>
                 </div>
-            </div>
-
-            <div id="execute">
-                <div class="editor">
-                    @Html.TextAreaFor(x => x.Content)
-                </div>
-            </div>
+            }
         </div>
     
         <div id="footer">

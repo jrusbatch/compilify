@@ -11,16 +11,6 @@
     var root = this,
         connection;
     
-    function trackEvent(category, action, label) {
-        /// <summary>
-        /// Tracks an event in Google Analytics if it is initialized.</summary>
-        
-        var gaq = root._gaq;
-        if (gaq && _.isFunction(gaq.push)) {
-            gaq.push(['_trackEvent', category, action, label, , false]);
-        }
-    }
-    
     function save() {
         /// <summary>
         /// Save content.</summary>
@@ -31,18 +21,16 @@
 
     var markedErrors = [];
 
-    function validate(command, classes) {
+    function validate(documents) {
         /// <summary>
         /// Sends code to the server for validation and displays the resulting
         /// errors, if any.</summary>
-        var pathname = window.location.pathname;
         
-        trackEvent('Code', 'Validate', pathname);
-
         return $.ajax('/validate', {
             type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ 'Content': command, 'Classes': classes }),
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({ Documents: documents }),
+            dataType: 'json',
             success: function(msg) {
                 var data = msg.data;
                 
@@ -70,13 +58,17 @@
                             var start = loc.StartLinePosition;
                             var end = loc.EndLinePosition;
 
-                            var markStart = { line: start.Line, ch: start.Character };
-                            var markEnd = { line: end.Line, ch: end.Character };
+                            var editor = Compilify.GetEditorByName(file);
+                            
+                            if (editor) {
+                                var markStart = { line: start.Line, ch: start.Character };
+                                var markEnd = { line: end.Line, ch: end.Character };
+                                
+                                var mark = editor._codeMirror.markText(markStart, markEnd, 'compilation-error');
 
-                            var mark = Compilify[file].markText(markStart, markEnd, 'compilation-error');
-
-                            markedErrors.push(mark);
-
+                                markedErrors.push(mark);
+                            }
+                            
                             var message = 'Line: ' + (start.Line + 1) +
                                           ' Column: ' + start.Character + ' - ' + error.Message;
 
@@ -108,6 +100,53 @@
         $('#footer .results pre').html(data);
     }
 
+    (function () {
+        var validateEnvironment = _.throttle(function () {
+            var documents = [],
+                editors = Compilify.Editors || [];
+            
+            for (var i = 0, len = editors.length; i < len; i++) {
+                var editor = editors[i];
+                documents.push({ Name: editor.name, Text: editor.getValue() });
+            }
+
+            console.log(documents);
+
+            validate(documents);
+        }, 250);
+
+        var defaults = {
+            indentUnit: 4,
+            lineNumbers: true,
+            theme: 'neat',
+            mode: 'text/x-csharp',
+            onChange: function (cm, changes) {
+                validateEnvironment();
+            }
+        };
+
+        function Editor(name, textarea) {
+            this.name = name;
+            this._codeMirror = CodeMirror.fromTextArea(textarea, defaults);
+            this.markedErrors = [];
+
+            this.getValue = this._codeMirror.getValue;
+        }
+
+        Compilify.Editor = Editor;
+        Compilify.GetEditorByName = function(name) {
+            for (var i = 0, len = Compilify.Editors.length; i < len; i++) {
+                var editor = Compilify.Editors[i];
+                if (editor.name == name) {
+                    return editor;
+                }
+            }
+
+            return null;
+        };
+    }());
+    
+
     $(function() {
         //
         // Set up the SignalR connection
@@ -127,53 +166,24 @@
         //
         // Set up CodeMirror editor
         //
-        
-        // Get the editor and save the current content so we can tell when it 
-        // changes
-        var editor = $('#define .editor textarea')[0],
-            prompt = $('#execute .editor textarea')[0];
 
-        var validateEnvironment = _.throttle(function() {
-            var classes = Compilify.Editor.getValue();
-            var command = Compilify.Prompt.getValue();
-
-            validate(command, classes);
-        }, 250);
-        
-        root.CodeMirror.commands.save = save;
-
-        var editorOptions = {
-            indentUnit: 4,
-            lineNumbers: true,
-            theme: 'neat',
-            mode: 'text/x-csharp',
-            onChange: function(cm, changes) {
-                validateEnvironment();
-            }
-        };
-        
-        if (!editor || !prompt) {
-            return;
-        }
-        
-        Compilify.Editor = root.CodeMirror.fromTextArea(editor, editorOptions);
-        Compilify.Editor.save = save;
-
-        Compilify.Prompt = root.CodeMirror.fromTextArea(prompt, editorOptions);
-        Compilify.Prompt.save = save;
-        
-        $('.js-save').on('click', save);
-
-        $('.js-run').on('click', function() {
-            var command = Compilify.Prompt.getValue();
-            var classes = Compilify.Editor.getValue();
-            
-            execute(command, classes);
-
-            $('.results pre').html('');
-            
-            return false;
+        Compilify.Editors = [];
+        $('#editors textarea').each(function () {
+            var $this = $(this);
+            var editor = new Compilify.Editor($this.data('name'), this);
+            Compilify.Editors.push(editor);
         });
+        
+        //$('.js-run').on('click', function() {
+        //    var command = Compilify.Prompt.getValue();
+        //    var classes = Compilify.Editor.getValue();
+            
+        //    execute(command, classes);
+
+        //    $('.results pre').html('');
+            
+        //    return false;
+        //});
         
         //
         // Set up key binds

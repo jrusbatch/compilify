@@ -21,7 +21,7 @@ namespace Compilify
             messageBus = messenger;
         }
 
-        public Task<ICodeRunResult> EvaluateAsync(ICodeProgram command, CancellationToken token)
+        public Task<ICodeRunResult> EvaluateAsync(ICodeProject command, CancellationToken token)
         {
             if (command == null)
             {

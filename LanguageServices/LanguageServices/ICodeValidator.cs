@@ -5,6 +5,6 @@ namespace Compilify.LanguageServices
 {
     public interface ICodeValidator
     {
-        IEnumerable<EditorError> GetCompilationErrors(ICodeProgram program);
+        IEnumerable<EditorError> GetCompilationErrors(ICodeProject program);
     }
 }

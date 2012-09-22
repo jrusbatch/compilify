@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="DefaultCodeEvaluator.cs" />
     <Compile Include="IQueue.cs" />
+    <Compile Include="Models\Document.cs" />
     <Compile Include="Models\IPostRepository.cs" />
     <Compile Include="Messaging\IMessenger.cs" />
     <Compile Include="Messaging\MessageReceivedEventArgs.cs" />

@@ -3,29 +3,27 @@ using System.Collections.Generic;
 
 namespace Compilify.Models
 {
-    public class Post : ICodeProgram
+    public class Post : ICodeProject
     {
+        private readonly ISet<Document> documents;
+
         public Post()
         {
-            Tags = new HashSet<string>();
+            documents = new HashSet<Document>();
         }
 
         public string Id { get; set; }
         
-        public string Title { get; set; }
-
         public string Slug { get; set; }
 
         public int Version { get; set; }
 
-        public string Description { get; set; }
-
-        string ICodeProgram.Name
+        string ICodeProject.Name
         {
-            get { return Title; }
+            get { return "Untitled"; }
         }
 
-        TimeSpan ICodeProgram.TimeoutPeriod
+        TimeSpan ICodeProject.TimeoutPeriod
         {
             get { return TimeSpan.FromSeconds(5D); }
         }
@@ -43,15 +41,15 @@ namespace Compilify.Models
         /// The page lanage.</summary>
         public string Language { get; set; }
 
-        /// <summary>
-        /// The post content.</summary>
-        public string Content { get; set; }
+        public IEnumerable<ICodeDocument> Documents
+        {
+            get { return documents; }
+        }
 
-        /// <summary>
-        /// Supporting classes</summary>
-        public string Classes { get; set; }
-
-        public HashSet<string> Tags { get; protected set; }
+        public void AddDocument(string name, string text)
+        {
+            documents.Add(new Document(name, text));
+        }
 
         /// <summary>
         /// The UTC date and time that the post was first persisted to the data store.</summary>

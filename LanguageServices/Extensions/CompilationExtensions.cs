@@ -5,7 +5,7 @@ namespace Compilify.Extensions
 {
     internal static class CompilationExtensions
     {
-        internal static CommonEmitResult Emit(this CommonCompilation compilation)
+        internal static CommonEmitResult EmitToMemory(this CommonCompilation compilation)
         {
             using (var stream = new MemoryStream())
             {

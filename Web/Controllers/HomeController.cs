@@ -37,10 +37,9 @@ namespace Compilify.Web.Controllers
 
             var errors = GetErrorsInPost(post);
 
-            var viewModel = new PostViewModel(post)
-                            {
-                                Errors = errors
-                            };
+            var viewModel = PostViewModel.Create(post);
+
+            viewModel.Errors = errors;
 
             return View("Show", viewModel);
         }
@@ -74,10 +73,9 @@ namespace Compilify.Web.Controllers
             
             var errors = GetErrorsInPost(post);
 
-            var viewModel = new PostViewModel(post)
-                            {
-                                Errors = errors
-                            };
+            var viewModel = PostViewModel.Create(post);
+
+            viewModel.Errors = errors;
 
             if (Request.IsAjaxRequest())
             {
@@ -135,35 +133,37 @@ namespace Compilify.Web.Controllers
             var post = new Post();
             var builder = new StringBuilder();
 
-            post.Classes = builder.AppendLine("class Person")
-                                  .AppendLine("{")
-                                  .AppendLine("    public Person(string name)")
-                                  .AppendLine("    {")
-                                  .AppendLine("        Name = name;")
-                                  .AppendLine("    }")
-                                  .AppendLine()
-                                  .AppendLine("    public string Name { get; private set; }")
-                                  .AppendLine()
-                                  .AppendLine("    public string Greet()")
-                                  .AppendLine("    {")
-                                  .AppendLine("        if (Name == null)")
-                                  .AppendLine("            return \"Hello, stranger!\";")
-                                  .AppendLine()
-                                  .AppendLine("        return string.Format(\"Hello, {0}!\", Name);")
-                                  .AppendLine("    }")
-                                  .AppendLine("}")
-                                  .ToString();
+            builder.AppendLine("class Person")
+                   .AppendLine("{")
+                   .AppendLine("    public Person(string name)")
+                   .AppendLine("    {")
+                   .AppendLine("        Name = name;")
+                   .AppendLine("    }")
+                   .AppendLine()
+                   .AppendLine("    public string Name { get; private set; }")
+                   .AppendLine()
+                   .AppendLine("    public string Greet()")
+                   .AppendLine("    {")
+                   .AppendLine("        if (Name == null)")
+                   .AppendLine("            return \"Hello, stranger!\";")
+                   .AppendLine()
+                   .AppendLine("        return string.Format(\"Hello, {0}!\", Name);")
+                   .AppendLine("    }")
+                   .AppendLine("}");
 
-            post.Content = builder.Clear()
-                                  .AppendLine("var person = new Person(name: null);")
-                                  .AppendLine()
-                                  .AppendLine("return person.Greet();")
-                                  .ToString();
+            post.AddDocument("Classes", builder.ToString());
+
+            builder.Clear()
+                   .AppendLine("var person = new Person(name: null);")
+                   .AppendLine()
+                   .AppendLine("return person.Greet();");
+
+            post.AddDocument("Content", builder.ToString());
 
             return post;
         }
 
-        private IEnumerable<EditorError> GetErrorsInPost(Post post)
+        private IEnumerable<EditorError> GetErrorsInPost(ICodeProject post)
         {
             return compiler.GetCompilationErrors(post);
         }

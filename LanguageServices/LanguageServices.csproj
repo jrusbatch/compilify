@@ -68,7 +68,7 @@
     <Compile Include="LanguageServices\ProgramAssembly.cs" />
     <Compile Include="ICodeAssembly.cs" />
     <Compile Include="LanguageServices\ICodeCompiler.cs" />
-    <Compile Include="ICodeProgram.cs" />
+    <Compile Include="ICodeProject.cs" />
     <Compile Include="LanguageServices\ICodeExecutor.cs" />
     <Compile Include="ICodeRunResult.cs" />
     <Compile Include="LanguageServices\EditorError.cs" />

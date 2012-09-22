@@ -14,7 +14,7 @@
     <RootNamespace>Compilify.Web</RootNamespace>
     <AssemblyName>Compilify.Web</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <MvcBuildViews>false</MvcBuildViews>
+    <MvcBuildViews>true</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort>
     </IISExpressSSLPort>
@@ -165,6 +165,7 @@
     <Compile Include="Infrastructure\DependencyInjection\RoslynModule.cs" />
     <Compile Include="Infrastructure\Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Infrastructure\RequireHttpsOnAppHarborAttribute.cs" />
+    <Compile Include="Models\DocumentModel.cs" />
     <Compile Include="Models\PostViewModel.cs" />
     <Compile Include="Models\ValidateViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

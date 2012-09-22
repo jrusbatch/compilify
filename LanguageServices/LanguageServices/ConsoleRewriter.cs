@@ -1,14 +1,15 @@
 using Roslyn.Compilers;
+using Roslyn.Compilers.Common;
 using Roslyn.Compilers.CSharp;
 
 namespace Compilify.LanguageServices
 {
     internal sealed class ConsoleRewriter : SyntaxRewriter
     {
-        private readonly SemanticModel model;
+        private readonly ISemanticModel model;
         private readonly IdentifierNameSyntax name;
 
-        public ConsoleRewriter(string consoleClassName, SemanticModel semanticModel)
+        public ConsoleRewriter(string consoleClassName, ISemanticModel semanticModel)
         {
             model = semanticModel;
             name = Syntax.IdentifierName(consoleClassName);
