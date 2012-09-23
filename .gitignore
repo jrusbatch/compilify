@@ -16,3 +16,4 @@ packages/
 *.DotSettings
 UpgradeLog*.xml
 _Upgrade*
+TestResults/
