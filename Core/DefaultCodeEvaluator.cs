@@ -21,19 +21,19 @@ namespace Compilify
             messageBus = messenger;
         }
 
-        public Task<ICodeRunResult> EvaluateAsync(ICodeProject command, CancellationToken token)
+        public Task<ICodeRunResult> EvaluateAsync(ICodeProject command, CancellationToken token = default(CancellationToken))
         {
             if (command == null)
             {
                 throw new ArgumentNullException("command");
             }
 
-            if (!(command is EvaluateCodeCommand))
+            EvaluateCodeCommand cmd;
+            if ((cmd = command as EvaluateCodeCommand) == null)
             {
                 throw new ArgumentException("This evaluator can only deal with the type EvaluateCodeCommand");
             }
 
-            var cmd = (EvaluateCodeCommand)command;
             var tcs = new TaskCompletionSource<ICodeRunResult>();
             var executionId = cmd.ExecutionId;
 

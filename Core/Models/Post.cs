@@ -41,7 +41,7 @@ namespace Compilify.Models
         /// The page lanage.</summary>
         public string Language { get; set; }
 
-        public IEnumerable<ICodeDocument> Documents
+        public IEnumerable<Document> Documents
         {
             get { return documents; }
         }

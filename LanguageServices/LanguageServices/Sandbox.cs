@@ -110,10 +110,34 @@ namespace Compilify.LanguageServices
 
             public SandboxResult Run(string className, string methodName, string resultProperty, byte[] compiledAssembly)
             {
-                var assembly = Assembly.Load(compiledAssembly);
-                var target = assembly.GetType(className).GetMethod(methodName);
-                var console = (StringWriter)assembly.GetType("Script").GetField("__Console").GetValue(null);
+                if (className == null)
+                {
+                    throw new ArgumentNullException("className");
+                }
+
+                if (methodName == null)
+                {
+                    throw new ArgumentNullException("methodName");
+                }
+
+                if (resultProperty == null)
+                {
+                    throw new ArgumentNullException("resultProperty");
+                }
+
+                if (compiledAssembly == null)
+                {
+                    throw new ArgumentNullException("compiledAssembly");
+                }
+
                 var returnValue = (object)null;
+                
+                var assembly = Assembly.Load(compiledAssembly);
+
+                var targetType = assembly.GetType(className, true);
+
+                var target = targetType.GetMethod(methodName);
+                var console = (StringWriter)assembly.GetType("Script", true).GetField("__Console").GetValue(null);
 
                 try
                 {

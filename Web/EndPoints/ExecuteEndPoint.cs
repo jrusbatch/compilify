@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using System.Threading;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Compilify.Extensions;
 using Compilify.LanguageServices;
+using Compilify.Web.Models;
 using Newtonsoft.Json;
 using SignalR;
 
@@ -49,13 +51,20 @@ namespace Compilify.Web.EndPoints
 
         protected override Task OnReceivedAsync(IRequest request, string connectionId, string data)
         {
-            var command = JsonConvert.DeserializeObject<EvaluateCodeCommand>(data);
-            command.ClientId = connectionId;
-            command.Submitted = DateTime.UtcNow;
-            command.TimeoutPeriod = ExecutionTimeout;
+            var viewModel = JsonConvert.DeserializeObject<PostViewModel>(data);
 
-            // TODO: Time this out
-            var tokenSource = new CancellationTokenSource();
+            var model = viewModel.ToPost();
+
+            var command = new EvaluateCodeCommand
+                          {
+                              Documents = new List<Document>(model.Documents),
+
+                              ClientId = connectionId,
+                              Submitted = DateTime.UtcNow,
+                              TimeoutPeriod = ExecutionTimeout
+                          };
+
+            var tokenSource = new CancellationTokenSource(ExecutionTimeout);
 
             var evaluator = GlobalHost.DependencyResolver.Resolve<ICodeEvaluator>();
 
@@ -64,36 +73,44 @@ namespace Compilify.Web.EndPoints
                 .ContinueWith(
                     t =>
                     {
-                        if (t.IsFaulted)
+                        try
                         {
-                            return Connection.Send(
-                               connectionId,
-                               new
-                               {
-                                   status = "error",
-                                   message = t.Exception != null ? t.Exception.Message : null
-                               });
-                        }
+                            if (t.IsCanceled)
+                            {
+                                return Connection.Send(
+                                    connectionId,
+                                    new
+                                    {
+                                        status = "error",
+                                        message = "Evaluation timed out or was cancelled."
+                                    });
+                            }
 
-                        if (t.IsCanceled)
-                        {
+                            if (t.IsFaulted)
+                            {
+                                return Connection.Send(
+                                   connectionId,
+                                   new
+                                   {
+                                       status = "error",
+                                       message = t.Exception != null ? t.Exception.Message : null
+                                   });
+                            }
+
                             return Connection.Send(
                                 connectionId,
                                 new
                                 {
-                                    status = "error",
-                                    message = "Evaluation timed out or was cancelled."
+                                    status = "ok",
+                                    data = JobRunToString(t.Result)
                                 });
+                        } 
+                        finally
+                        {
+                            tokenSource.Dispose();
                         }
-
-                        return Connection.Send(
-                            connectionId,
-                            new
-                            {
-                                status = "ok",
-                                data = JobRunToString(t.Result)
-                            });
-                    });
+                    },
+                    tokenSource.Token);
         }
     }
 }

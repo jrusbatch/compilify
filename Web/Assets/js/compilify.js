@@ -15,7 +15,7 @@
         /// <summary>
         /// Save content.</summary>
         
-        $('form').submit();
+        // $('form').submit();
         return false;
     }
 
@@ -82,14 +82,15 @@
         });
     }
 
-    function execute(command, classes) {
+    function execute(documents) {
         /// <summary>
         /// Queues code for execution on the server.</summary>
         
-        if (_.isString(command) && command.length > 0) {
-            connection.send(JSON.stringify({ 'Content': command, 'Classes': classes }));
+        //if (_.isString(command) && command.length > 0) {
+            // connection.send(JSON.stringify({ 'Content': command, 'Classes': classes }));
+            connection.send(JSON.stringify(documents));
             $('#footer:not(.loading)').addClass('loading');
-        }
+        //}
     }
     
     function setResult(data) {
@@ -160,7 +161,7 @@
             $('#footer').removeClass('loading');
         });
 
-        connection.start();
+        connection.start({ transport: 'longPolling' });
         
         //
         // Set up CodeMirror editor
@@ -173,16 +174,22 @@
             Compilify.Editors.push(editor);
         });
         
-        //$('.js-run').on('click', function() {
-        //    var command = Compilify.Prompt.getValue();
-        //    var classes = Compilify.Editor.getValue();
+        $('.js-run').on('click', function() {
             
-        //    execute(command, classes);
+            var documents = [],
+                editors = Compilify.Editors || [];
 
-        //    $('.results pre').html('');
+            for (var i = 0, len = editors.length; i < len; i++) {
+                var editor = editors[i];
+                documents.push({ Name: editor.name, Text: editor.getValue() });
+            }
+
+            execute({ Documents: documents });
+
+            $('.results pre').html('');
             
-        //    return false;
-        //});
+            return false;
+        });
         
         //
         // Set up key binds

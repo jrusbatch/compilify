@@ -58,7 +58,7 @@ namespace Compilify.LanguageServices
             var compilation = RoslynCompile(program);
             var assembly = new ProgramAssembly
                            {
-                               EntryPointClassName = "EntryPoint",
+                               EntryPointClassName = "Script+EntryPoint",
                                EntryPointMethodName = "Main"
                            };
 
@@ -79,18 +79,18 @@ namespace Compilify.LanguageServices
 
         private static ISolution CreateSolution(ICodeProject codeProject, out ProjectId projectId)
         {
-            DocumentId entryPointDoumentId;
+            DocumentId entryPointDocumentId;
             DocumentId consoleDocumentId;
 
             var solutionId = SolutionId.CreateNewId();
 
             return
                 Solution.Create(solutionId)
-                    .AddCSharpProject(codeProject.Name, codeProject.Name, out projectId)
+                    .AddCSharpProject(codeProject.Name ?? "Untitled", codeProject.Name ?? "Untitled", out projectId)
                     .AddMetadataReferences(projectId, DefaultReferences)
                     .UpdateCompilationOptions(projectId, DefaultCompilationOptions)
                     .UpdateParseOptions(projectId, DefaultParseOptions)
-                    .AddDocument(projectId, "EntryPoint", EntryPoint, out entryPointDoumentId)
+                    .AddDocument(projectId, "EntryPoint", EntryPoint, out entryPointDocumentId)
                     .AddDocument(projectId, "Console", Console, out consoleDocumentId);
         }
 

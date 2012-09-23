@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Document.cs" />
     <Compile Include="LanguageServices\ProgramAssembly.cs" />
     <Compile Include="ICodeAssembly.cs" />
     <Compile Include="LanguageServices\ICodeCompiler.cs" />

@@ -12,7 +12,10 @@ namespace Compilify.LanguageServices
         [DataMember(Order = 1)]
         private Guid id = Guid.NewGuid();
 
-        public EvaluateCodeCommand() { }
+        public EvaluateCodeCommand()
+        {
+            Documents = new List<Document>();
+        }
 
         public Guid ExecutionId
         {
@@ -28,12 +31,6 @@ namespace Compilify.LanguageServices
         [DataMember(Order = 4)]
         public string ClientId { get; set; }
 
-        [DataMember(Order = 5)]
-        public string Content { get; set; }
-
-        [DataMember(Order = 6)]
-        public string Classes { get; set; }
-
         [DataMember(Order = 7)]
         public string Result { get; set; }
 
@@ -44,6 +41,11 @@ namespace Compilify.LanguageServices
         public TimeSpan TimeoutPeriod { get; set; }
 
         [DataMember(Order = 10)]
-        public IEnumerable<ICodeDocument> Documents { get; set; }
+        public IList<Document> Documents { get; set; }
+
+        IEnumerable<Document> ICodeProject.Documents
+        {
+            get { return Documents; }
+        }
     }
 }
