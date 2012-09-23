@@ -22,6 +22,8 @@ namespace Compilify.LanguageServices
                   }
               }";
 
+        private const string Console = "public static readonly StringWriter __Console = new StringWriter();";
+
         private static readonly IEnumerable<string> DefaultNamespaces =
             new[]
             {
@@ -77,16 +79,19 @@ namespace Compilify.LanguageServices
 
         private static ISolution CreateSolution(ICodeProject codeProject, out ProjectId projectId)
         {
+            DocumentId entryPointDoumentId;
+            DocumentId consoleDocumentId;
+
             var solutionId = SolutionId.CreateNewId();
-            var solution =
+
+            return
                 Solution.Create(solutionId)
                     .AddCSharpProject(codeProject.Name, codeProject.Name, out projectId)
                     .AddMetadataReferences(projectId, DefaultReferences)
                     .UpdateCompilationOptions(projectId, DefaultCompilationOptions)
-                    .UpdateParseOptions(projectId, DefaultParseOptions);
-
-            DocumentId docId;
-            return solution.AddDocument(projectId, "EntryPoint", EntryPoint, out docId);
+                    .UpdateParseOptions(projectId, DefaultParseOptions)
+                    .AddDocument(projectId, "EntryPoint", EntryPoint, out entryPointDoumentId)
+                    .AddDocument(projectId, "Console", Console, out consoleDocumentId);
         }
 
         public CommonCompilation RoslynCompile(ICodeProject codeProject)
