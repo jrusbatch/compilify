@@ -11,15 +11,44 @@
     var root = this,
         connection;
     
+    function getAllDocuments() {
+        var documents = [],
+            editors = Compilify.Editors || [];
+
+        for (var i = 0, len = editors.length; i < len; i++) {
+            var editor = editors[i];
+            documents.push({ Name: editor.name, Text: editor.getValue() });
+        }
+
+        return documents;
+    }
+
     function save() {
         /// <summary>
         /// Save content.</summary>
         
         // $('form').submit();
+
+        var documents = getAllDocuments();
+
+        var post = {
+            Documents: documents
+        };
+
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(post),
+            success: function(msg) {
+                console.log(msg);
+            }
+        });
+
         return false;
     }
 
     var markedErrors = [];
+    
 
     function validate(documents) {
         /// <summary>
@@ -110,8 +139,6 @@
                 documents.push({ Name: editor.name, Text: editor.getValue() });
             }
 
-            console.log(documents);
-
             validate(documents);
         }, 250);
 
@@ -190,6 +217,8 @@
             
             return false;
         });
+
+        $('.js-save').on('click', save);
         
         //
         // Set up key binds
