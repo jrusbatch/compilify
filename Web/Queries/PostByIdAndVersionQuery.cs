@@ -9,7 +9,6 @@ namespace Compilify.Web.Queries
     public class PostByIdAndVersionQuery : IQuery
     {
         private readonly IPostRepository posts;
-
         private readonly ICodeValidator validator;
 
         public PostByIdAndVersionQuery(IPostRepository postRepository, ICodeValidator codeValidator)
@@ -21,6 +20,11 @@ namespace Compilify.Web.Queries
         public Task<PostViewModel> Execute(string slug, int version)
         {
             var post = posts.GetVersion(slug, version);
+
+            if (post == null)
+            {
+                return Task.FromResult<PostViewModel>(null);
+            }
 
             var errors = GetErrorsInPost(post);
 

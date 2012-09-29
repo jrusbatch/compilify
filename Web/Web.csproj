@@ -193,7 +193,7 @@
     <Compile Include="Models\PostViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queries\ErrorsInPostQuery.cs" />
-    <Compile Include="Queries\LastestVersionOfPostQuery.cs" />
+    <Compile Include="Queries\LatestVersionOfPostQuery.cs" />
     <Compile Include="Queries\IQuery.cs" />
     <Compile Include="Queries\PostByIdAndVersionQuery.cs" />
     <Compile Include="Queries\SamplePostQuery.cs" />

@@ -50,7 +50,7 @@ namespace Compilify.Web.Controllers
         [HttpGet]
         public async Task<ActionResult> Latest(string slug)
         {
-            var version = await Resolve<LastestVersionOfPostQuery>().Execute(slug);
+            var version = await Resolve<LatestVersionOfPostQuery>().Execute(slug);
 
             if (version < 1)
             {

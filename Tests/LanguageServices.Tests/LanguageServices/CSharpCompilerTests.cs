@@ -7,7 +7,7 @@ namespace Compilify.LanguageServices
 {
     public class CSharpCompilerTests
     {
-        [Fact]
+        [Fact] // NOTE: This test will fail when executed by NCrunch.
         public void CodeCanBeCompiledAndExecuted()
         {
             var classes = new Document("Classes", "public static void SayHello() { Console.WriteLine(\"Hello, world!\"); }");

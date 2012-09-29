@@ -3,11 +3,11 @@ using Compilify.Models;
 
 namespace Compilify.Web.Queries
 {
-    public class LastestVersionOfPostQuery : IQuery
+    public class LatestVersionOfPostQuery : IQuery
     {
         private readonly IPostRepository posts;
 
-        public LastestVersionOfPostQuery(IPostRepository postRepository)
+        public LatestVersionOfPostQuery(IPostRepository postRepository)
         {
             posts = postRepository;
         }
