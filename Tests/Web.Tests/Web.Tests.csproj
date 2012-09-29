@@ -7,7 +7,7 @@
     <ProjectGuid>{0D23E4FF-5460-4563-809A-D5A4F2D9F18D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Compilify.Web.Tests</RootNamespace>
+    <RootNamespace>Compilify.Web</RootNamespace>
     <AssemblyName>Compilify.Web.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
