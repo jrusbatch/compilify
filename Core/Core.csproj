@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompilifyException.cs" />
     <Compile Include="DefaultCodeEvaluator.cs" />
     <Compile Include="IQueue.cs" />
     <Compile Include="Models\IPostRepository.cs" />
