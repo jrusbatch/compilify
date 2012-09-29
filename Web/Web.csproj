@@ -185,6 +185,7 @@
     <Compile Include="Infrastructure\DependencyInjection\RoslynModule.cs" />
     <Compile Include="Infrastructure\Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Infrastructure\RequireHttpsOnAppHarborAttribute.cs" />
+    <Compile Include="Infrastructure\ServiceNotFoundException.cs" />
     <Compile Include="Models\DocumentModel.cs" />
     <Compile Include="Models\PostViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
