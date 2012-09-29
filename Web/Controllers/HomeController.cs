@@ -7,7 +7,7 @@ using Compilify.Web.Queries;
 
 namespace Compilify.Web.Controllers
 {
-    public class HomeController : CompilifyController
+    public class HomeController : BaseMvcController
     {
         [HttpGet]
         public async Task<ActionResult> Index()

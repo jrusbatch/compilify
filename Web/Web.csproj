@@ -175,7 +175,7 @@
     <Compile Include="App_Start\ViewEngineConfig.cs" />
     <Compile Include="Commands\SavePostCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
-    <Compile Include="Controllers\CompilifyController.cs" />
+    <Compile Include="Controllers\BaseMvcController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="EndPoints\ExecuteEndPoint.cs" />

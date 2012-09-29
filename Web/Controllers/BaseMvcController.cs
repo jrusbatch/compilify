@@ -3,7 +3,7 @@ using Compilify.Web.Infrastructure;
 
 namespace Compilify.Web.Controllers
 {
-    public abstract class CompilifyController : AsyncController
+    public abstract class BaseMvcController : AsyncController
     {
         protected virtual TService Resolve<TService>() where TService : class
         {
