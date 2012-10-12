@@ -233,6 +233,8 @@
     <Content Include="Assets\img\octocat.png" />
     <Content Include="Assets\img\twitter.png" />
     <Content Include="Assets\js\compilify.js" />
+    <Content Include="Assets\js\resizer.js" />
+    <Content Include="Assets\js\tabs.js" />
     <Content Include="Assets\js\vendor\bootstrap.js" />
     <Content Include="Assets\js\vendor\codemirror.js" />
     <Content Include="Assets\js\vendor\codemirror.clike.js" />
