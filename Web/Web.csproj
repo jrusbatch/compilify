@@ -202,14 +202,15 @@
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Content Include="Assets\css\compilify.css" />
     <Content Include="Assets\css\vendor\bootstrap.css" />
     <Content Include="Assets\css\vendor\codemirror.css" />
     <Content Include="Assets\css\vendor\codemirror-neat.css" />
     <Content Include="Assets\css\vendor\font-awesome.css" />
     <Content Include="Assets\fonts\fontawesome-webfont.svg" />
     <Content Include="Assets\fonts\Roboto License.txt" />
-    <Content Include="Assets\fonts\roboto-light-webfont.svg" />
+    <Content Include="Assets\fonts\Roboto-Light-webfont.svg" />
+    <Content Include="Assets\fonts\Roboto-Medium-webfont.svg" />
+    <Content Include="Assets\fonts\Roboto-Regular-webfont.svg" />
     <Content Include="Assets\fonts\roboto-thin-webfont.svg" />
     <Content Include="Assets\img\appharbor.png" />
     <Content Include="Assets\img\appharbor_small.png" />
@@ -254,12 +255,6 @@
     <Content Include="Assets\fonts\fontawesome-webfont.svgz" />
     <Content Include="Assets\fonts\fontawesome-webfont.ttf" />
     <Content Include="Assets\fonts\fontawesome-webfont.woff" />
-    <Content Include="Assets\fonts\roboto-light-webfont.eot" />
-    <Content Include="Assets\fonts\roboto-light-webfont.ttf" />
-    <Content Include="Assets\fonts\roboto-light-webfont.woff" />
-    <Content Include="Assets\fonts\roboto-thin-webfont.eot" />
-    <Content Include="Assets\fonts\roboto-thin-webfont.ttf" />
-    <Content Include="Assets\fonts\roboto-thin-webfont.woff" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -284,6 +279,27 @@
       <Project>{67a4a77f-7d7d-4a37-bcc1-a7e018ccd6c8}</Project>
       <Name>Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\fonts\Roboto-Light-webfont.eot" />
+    <Content Include="Assets\fonts\Roboto-Light-webfont.ttf" />
+    <Content Include="Assets\fonts\Roboto-Light-webfont.woff" />
+    <Content Include="Assets\fonts\Roboto-Medium-webfont.eot" />
+    <Content Include="Assets\fonts\Roboto-Medium-webfont.ttf" />
+    <Content Include="Assets\fonts\Roboto-Medium-webfont.woff" />
+    <Content Include="Assets\fonts\Roboto-Regular-webfont.eot" />
+    <Content Include="Assets\fonts\Roboto-Regular-webfont.ttf" />
+    <Content Include="Assets\fonts\Roboto-Regular-webfont.woff" />
+    <Content Include="Assets\fonts\roboto-thin-webfont.eot" />
+    <Content Include="Assets\fonts\roboto-thin-webfont.ttf" />
+    <Content Include="Assets\fonts\roboto-thin-webfont.woff" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\less\compilify.less" />
+    <Content Include="Assets\less\fonts.less" />
+    <Content Include="Assets\less\mixins.less" />
+    <Content Include="Assets\less\typography.less" />
+    <Content Include="Assets\less\variables.less" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
