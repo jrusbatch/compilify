@@ -1,72 +1,75 @@
 ﻿using System.Configuration;
 using System.Web;
 using System.Web.Optimization;
+using BundleTransformer.Core.Orderers;
+using BundleTransformer.Core.Transformers;
 
 namespace Compilify.Web
 {
     public class BundleConfig
     {
+        private static readonly IBundleOrderer DefaultBundleOrderer = new NullOrderer();
+
         public static void RegisterBundles(BundleCollection bundles)
         {
-            var minifyAssets = MinifyAssets();
+            RegisterStyleSheets(bundles);
+            RegisterScripts(bundles);
+        }
 
-            var css = new StyleBundle("~/css");
-
-            if (!minifyAssets)
-            {
-                css.Transforms.Clear();
-            }
-
-            css.Include(
+        private static void RegisterStyleSheets(BundleCollection bundles)
+        {
+            var vendorCss = new StyleBundle("~/styles/libs") { Orderer = DefaultBundleOrderer };
+            vendorCss.Include(
+                "~/assets/css/vendor/jquery.ui.core.css",
+                "~/assets/css/vendor/jquery.ui.resizable.css",
                 "~/assets/css/vendor/bootstrap.css",
                 "~/assets/css/vendor/font-awesome.css",
                 "~/assets/css/vendor/codemirror.css",
-                "~/assets/css/vendor/codemirror-neat.css",
-                "~/assets/css/compilify.css");
+                "~/assets/css/vendor/codemirror.neat.css");
+            bundles.Add(vendorCss);
 
-            bundles.Add(css);
+            var less = new StyleBundle("~/styles/app") { Orderer = DefaultBundleOrderer };
+            less.Transforms.Add(new CssTransformer());
+            less.Include("~/assets/less/compilify.less");
+            bundles.Add(less);
+        }
 
-            var vendorjs = new ScriptBundle("~/js/libs");
-            if (!minifyAssets)
-            {
-                vendorjs.Transforms.Clear();
-            }
+        private static void RegisterScripts(BundleCollection bundles)
+        {
+            var transform = new JsTransformer();
+
+            var vendorjs = new ScriptBundle("~/js/libs") { Orderer = DefaultBundleOrderer };
+            vendorjs.Transforms.Add(transform);
+            vendorjs.Include("~/assets/js/vendor/json2.js");
 
             vendorjs.Include(
-                "~/assets/js/vendor/json2.js",
+                "~/assets/js/vendor/jquery.js",
+                "~/assets/js/vendor/jquery.ui.core.js",
+                "~/assets/js/vendor/jquery.ui.widget.js",
+                "~/assets/js/vendor/jquery.ui.mouse.js",
+                "~/assets/js/vendor/jquery.ui.resizable.js",
+                "~/assets/js/vendor/jquery.signalr.js");
+
+            vendorjs.Include(
                 "~/assets/js/vendor/underscore.js",
+                "~/assets/js/vendor/backbone.js",
+                "~/assets/js/vendor/backbone.marionette.js");
+
+            vendorjs.Include(
                 "~/assets/js/vendor/bootstrap.js",
                 "~/assets/js/vendor/codemirror.js",
-                "~/assets/js/vendor/codemirror-clike.js",
-                "~/assets/js/vendor/jquery.signalr.js",
-                "~/assets/js/vendor/jquery.validate.js",
-                "~/assets/js/vendor/jquery.validate.unobtrusive.js",
-                "~/assets/js/vendor/jquery.validate-hooks.js",
+                "~/assets/js/vendor/codemirror.clike.js",
                 "~/assets/js/vendor/shortcut.js");
-            
+
             vendorjs.ConcatenationToken = ";";
             bundles.Add(vendorjs);
 
-            var js = new ScriptBundle("~/js/app");
-            if (!minifyAssets)
-            {
-                js.Transforms.Clear();
-            }
-
+            var js = new ScriptBundle("~/js/app") { Orderer = DefaultBundleOrderer };
+            js.Transforms.Add(transform);
             js.Include("~/assets/js/compilify.js");
-            js.ConcatenationToken = ";";
+            js.Include("~/assets/js/resizer.js");
+            js.Include("~/assets/js/tabs.js");
             bundles.Add(js);
-        }
-
-        private static bool MinifyAssets()
-        {
-            bool setting;
-            if (bool.TryParse(ConfigurationManager.AppSettings["Compilify.MinifyAssets"], out setting))
-            {
-                return setting;
-            }
-
-            return !HttpContext.Current.IsDebuggingEnabled;
         }
     }
 }

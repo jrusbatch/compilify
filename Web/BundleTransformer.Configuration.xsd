@@ -1,0 +1,1132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema 
+	id="bundleTransformerConfiguration"
+	targetNamespace="http://tempuri.org/BundleTransformer.Configuration.xsd"
+	elementFormDefault="qualified"
+	xmlns="http://tempuri.org/BundleTransformer.Configuration.xsd"
+	xmlns:mstns="http://tempuri.org/BundleTransformer.Configuration.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="bundleTransformer">
+		<xs:annotation>
+			<xs:documentation>Bundle Transformer configuration settings</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="core" type="CoreSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+				<xs:element name="less" type="LessSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+				<xs:element name="sassAndScss" type="SassAndScssSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+				<xs:element name="typeScript" type="TypeScriptSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+				<xs:element name="microsoftAjax" type="MicrosoftAjaxSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+				<xs:element name="yui" type="YuiSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+				<xs:element name="closure" type="ClosureSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+				<xs:element name="uglify" type="UglifySettings_SchemaType" minOccurs="0" maxOccurs="1" />
+				<xs:element name="packer" type="PackerSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+				<xs:element name="csso" type="CssoSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+
+	<!-- Simple types -->
+	<xs:simpleType name="Boolean_SchemaType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="true" />
+			<xs:enumeration value="false" />
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- /Simple types -->
+
+	<!-- Core settings -->
+	<xs:complexType name="CoreSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of core</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="css" type="AssetTypeSettings_SchemaType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Configuration settings of processing CSS-assets</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="js" type="AssetTypeSettings_SchemaType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Configuration settings of processing JS-assets</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="assetHandler" type="AssetHandlerSettings_SchemaType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						Configuration settings of HTTP-handler, that responsible for text output of processed asset
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="enableTracing" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to enable tracing</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="jsFilesWithMicrosoftStyleExtensions" type="xs:string" 
+			use="optional" default="MicrosoftAjax.js,MicrosoftMvcAjax.js,MicrosoftMvcValidation.js,knockout-$version$.js">
+			<xs:annotation>
+				<xs:documentation>List of JS-files with Microsoft-style extensions</xs:documentation>
+			</xs:annotation>			
+		</xs:attribute>
+		<xs:attribute name="useEnableOptimizationsProperty" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag, which makes the debug mode is dependent on the value of the BundleTable.EnableOptimizations property</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	
+	<xs:complexType name="AssetTypeSettings_SchemaType">
+		<xs:all>
+			<xs:element name="minifiers" type="MinifierRegistrationList_SchemaType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="translators" type="TranslatorRegistrationList_SchemaType" minOccurs="0" maxOccurs="1" />
+		</xs:all>
+		<xs:attribute name="defaultMinifier" type="xs:string" use="optional" default="NullMinifier">
+			<xs:annotation>
+				<xs:documentation>Name of default minifier</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="usePreMinifiedFiles" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to allow usage of pre-minified files</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="MinifierRegistrationList_SchemaType">
+		<xs:annotation>
+			<xs:documentation>List of registered minifiers</xs:documentation>
+		</xs:annotation>
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="add" type="AddMinifierRegistration_SchemaType" />
+			<xs:element name="remove" type="RemoveMinifierRegistration_SchemaType" />
+			<xs:element name="clear" type="ClearMinifierRegistration_SchemaType" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="AddMinifierRegistration_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Adds minifier registration</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="AddAssetProcessorRegistrationBase_SchemaType" />
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="RemoveMinifierRegistration_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Removes minifier registration</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="RemoveAssetProcessorRegistrationBase_SchemaType" />
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ClearMinifierRegistration_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Removes all minifier registrations, that specified above</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ClearAssetProcessorRegistrationBase_SchemaType" />
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="TranslatorRegistrationList_SchemaType">
+		<xs:annotation>
+			<xs:documentation>List of registered translators</xs:documentation>
+		</xs:annotation>
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="add" type="AddTranslatorRegistration_SchemaType" />
+			<xs:element name="remove" type="RemoveTranslatorRegistration_SchemaType" />
+			<xs:element name="clear" type="ClearTranslatorRegistration_SchemaType" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="AddTranslatorRegistration_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Adds translator registration</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="AddAssetProcessorRegistrationBase_SchemaType">
+				<xs:attribute name="enabled" type="Boolean_SchemaType" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to enable translator</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="RemoveTranslatorRegistration_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Removes translator registration</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="RemoveAssetProcessorRegistrationBase_SchemaType" />
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ClearTranslatorRegistration_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Removes all translator registrations, that specified above</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ClearAssetProcessorRegistrationBase_SchemaType" />
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AddAssetProcessorRegistrationBase_SchemaType" abstract="true">
+		<xs:attribute name="name" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Processor name</xs:documentation>
+			</xs:annotation>			
+		</xs:attribute>
+		<xs:attribute name="type" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Processor .NET-type name</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="RemoveAssetProcessorRegistrationBase_SchemaType" abstract="true">
+		<xs:attribute name="name" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Processor name</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="ClearAssetProcessorRegistrationBase_SchemaType" abstract="true" />
+
+	<xs:complexType name="AssetHandlerSettings_SchemaType">
+		<xs:attribute name="clientCacheDurationInDays" use="optional" default="365">
+			<xs:annotation>
+				<xs:documentation>Duration of storage text content of processed asset in browser cache (in days)</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:int">
+					<xs:minInclusive value="0" />
+					<xs:maxInclusive value="365" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="enableCompression" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to enable GZIP/Deflate-compression of processed asset</xs:documentation>
+			</xs:annotation>			
+		</xs:attribute>
+		<xs:attribute name="useLastModifiedHeader" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to enable using HTTP-header "Last-Modified" for notify browser about change files of processed asset</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="useETagHeader" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to enable using HTTP-header "ETag" for notify browser about change files of processed asset</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="serverCacheDurationInMinutes" use="optional" default="15">
+			<xs:annotation>
+				<xs:documentation>Duration of storage the text content of processed asset in server cache (in minutes)</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:int">
+					<xs:minInclusive value="1" />
+					<xs:maxInclusive value="1440" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="useServerCacheSlidingExpiration" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to enable sliding expiration time of server cache</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="disableClientCacheInDebugMode" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to disable storage text content of processed asset in browser cache during debugging</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="disableCompressionInDebugMode" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to disable GZIP/Deflate-compression of processed asset during debugging</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- /Core settings -->
+
+	<!-- LESS settings -->
+	<xs:complexType name="LessSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of LESS-translator</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="useNativeMinification" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to allow the use of native minification</xs:documentation>
+			</xs:annotation>			
+		</xs:attribute>
+		<xs:attribute name="severity" use="optional" default="0">
+			<xs:annotation>
+				<xs:documentation>Severity level of errors:
+ 0 - only syntax error messages;
+ 1 - only syntax error messages and warnings</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:int">
+					<xs:minInclusive value="0" />
+					<xs:maxInclusive value="1" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- /LESS settings -->
+
+	<!-- Sass and SCSS settings -->
+	<xs:complexType name="SassAndScssSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of Sass- and SCSS-translator</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="useNativeMinification" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to allow the use of native minification</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- /Sass and SCSS settings -->
+
+	<!-- TypeScript settings -->
+	<xs:complexType name="TypeScriptSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of TypeScript-translator</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="style" type="TypeScriptStyleSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+		</xs:all>
+		<xs:attribute name="useNativeMinification" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to allow the use of native minification</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="useDefaultLib" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to include a default lib.d.ts with global declarations</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="propagateConstants" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to propagate constants to emitted code</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="errorOnWith" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to disallow with statements</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="inferPropertiesFromThisAssignment" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to infer class properties from top-level assignments to 'this'</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="codeGenTarget" use="optional" default="EcmaScript3">
+			<xs:annotation>
+				<xs:documentation>ECMAScript target version ("EcmaScript3" (default), or "EcmaScript5")</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="EcmaScript3" />
+					<xs:enumeration value="EcmaScript5" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="TypeScriptStyleSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of code stylization</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="bitwise" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to allow bitwise operations</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="blockInCompoundStatement" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to disallow non-block statements as bodies of compound statements</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="eqEqEq" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to disallow == and !=</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="forIn" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to require body of for in loop to start with a filter</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="emptyBlocks" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to permit empty blocks</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="newMustBeUsed" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to require result of new expression to be used (no new just for side-effects)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="requireSemicolons" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to require semicolons to terminate statements</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="assignmentInConditions" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to disallow top-level assignment in conditionals if (a=b) { ...</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="eqNull" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to disallow == null or != null</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="evalOk" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to permit eval</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="innerScopeDeclarationsEscape" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to permit var use if declaration in inner scope as in if (c) { var v=10; } v=11;</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="functionsInLoops" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to permit functions in loops</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="reDeclareLocal" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to permit re-declaration of local variable</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="literalSubscript" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to permit obj['x'] in addition to obj.x</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="implicitAny" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to implicit 'any'</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- /TypeScript settings -->
+
+	<!-- Microsoft Ajax settings -->
+	<xs:complexType name="MicrosoftAjaxSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of Microsoft Ajax Minifier</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="css" type="MicrosoftAjaxCssMinifierSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="js" type="MicrosoftAjaxJsMinifierSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="MicrosoftAjaxCssMinifierSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of Microsoft Ajax CSS-minifier</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="MicrosoftAjaxMinifierSettingsBase_SchemaType">
+				<xs:attribute name="colorNames" use="optional" default="Strict">
+					<xs:annotation>
+						<xs:documentation>ColorNames setting</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="Strict" />
+							<xs:enumeration value="Hex" />
+							<xs:enumeration value="Major" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="commentMode" use="optional" default="Important">
+					<xs:annotation>
+						<xs:documentation>CommentMode setting</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="Important" />
+							<xs:enumeration value="None" />
+							<xs:enumeration value="All" />
+							<xs:enumeration value="Hacks" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="minifyExpressions" type="Boolean_SchemaType" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation>Value indicating whether to minify the JavaScript within expression functions</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="MicrosoftAjaxJsMinifierSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of Microsoft Ajax JS-minifier</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="MicrosoftAjaxMinifierSettingsBase_SchemaType">
+				<xs:attribute name="collapseToLiteral" type="Boolean_SchemaType" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to collapse new Array() to [] and new Object() to {} [true] or leave as-is [false]</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<!--<xs:attribute name="combineDuplicateLiterals" type="Boolean_SchemaType" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to combine duplicate literals within function scopes to local variables [true] or leave them as-is [false]</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>-->
+				<xs:attribute name="debugLookupList" type="xs:string" use="optional" default="Debug,$Debug,WAssert,Msn.Debug,Web.Debug">
+					<xs:annotation>
+						<xs:documentation>String representation of the list of debug lookups, comma-separated</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="evalTreatment" use="optional" default="Ignore">
+					<xs:annotation>
+						<xs:documentation>EvalTreatment setting</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="Ignore" />
+							<xs:enumeration value="MakeImmediateSafe" />
+							<xs:enumeration value="MakeAllSafe" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="ignoreConditionalCompilation" type="Boolean_SchemaType" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation>Flag for whether or not to ignore conditional-compilation comment syntax (true) or to try to retain the comments in the output (false; default)</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="inlineSafeStrings" type="Boolean_SchemaType" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to break up string literals containing &lt;/script&gt; so inline code won't break [true].
+Leave string literals as-is [false].</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="knownGlobalNamesList" type="xs:string" use="optional" default="">
+					<xs:annotation>
+						<xs:documentation>The known global names list as a single comma-separated string</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="localRenaming" use="optional" default="CrunchAll">
+					<xs:annotation>
+						<xs:documentation>Value indicating whether to how to rename local variables and functions:
+KeepAll - do not rename local variables and functions;
+CrunchAll - rename all local variables and functions to shorter names;
+KeepLocalizationVars - rename all local variables and functions that do NOT start with L_</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="KeepAll" />
+							<xs:enumeration value="KeepLocalizationVars" />
+							<xs:enumeration value="CrunchAll" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="macSafariQuirks" type="Boolean_SchemaType" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation>Value indicating whether to add characters to the output to make sure Mac Safari bugs are not generated [true].
+Disregard potential Mac Safari bugs [false].</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="minifyCode" type="Boolean_SchemaType" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to modify the source code's syntax tree to provide the smallest equivalent output [true].
+Do not modify the syntax tree [false].</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="noAutoRenameList" type="xs:string" use="optional" default="$super">
+					<xs:annotation>
+						<xs:documentation>The no-automatic-renaming list as a single string of comma-separated identifiers</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="preserveFunctionNames" type="Boolean_SchemaType" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation>Value indicating whether all function names must be preserved and remain as-named</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="preserveImportantComments" type="Boolean_SchemaType" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation>Value indicating whether to preserve important comments in the output.
+Default is true.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="removeFunctionExpressionNames" type="Boolean_SchemaType" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation>Value indicating whether or not to remove unreferenced function expression names</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="removeUnneededCode" type="Boolean_SchemaType" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation>Remove unneeded code, like uncalled local functions [true].
+Keep all code [false].</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="renamePairs" type="xs:string" use="optional" default="">
+					<xs:annotation>
+						<xs:documentation>String representation of all the indentifier replacements as a comma-separated list of "source=target" identifiers</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="strictMode" type="Boolean_SchemaType" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation>Boolean value indicating whether or not to force the input code into strict mode (can still specify strict-mode in the sources if this value is false)</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="stripDebugStatements" type="Boolean_SchemaType" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation>Strip debug statements [true].
+Leave debug statements [false].</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="MicrosoftAjaxMinifierSettingsBase_SchemaType" abstract="true">
+		<xs:attribute name="allowEmbeddedAspNetBlocks" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Embedded ASP.NET blocks (&lt;% %&gt;) should be recognized and output as is</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ignoreErrorList" type="xs:string" use="optional" default="">
+			<xs:annotation>
+				<xs:documentation>String representation of the list of debug lookups, comma-separated</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="indentSize" type="xs:int" use="optional" default="4">
+			<xs:annotation>
+				<xs:documentation>Number of spaces per indent level when in MultipleLines output mode</xs:documentation>
+			</xs:annotation>			
+		</xs:attribute>
+		<xs:attribute name="outputMode" use="optional" default="SingleLine">
+			<xs:annotation>
+				<xs:documentation>Output mode:
+SingleLine - output all code on a single line;
+MultipleLines - break the output into multiple lines to be more human-readable</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="SingleLine">
+						<xs:annotation>
+							<xs:documentation>Output the minified code on a single line for maximum minification.
+LineBreakThreshold may still break the single line into multiple lines
+at a syntactically correct point after the given line length is reached.
+Not easily human-readable.</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="MultipleLines">
+						<xs:annotation>
+							<xs:documentation>Output the minified code on multiple lines to increase readability</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="blocksStartOnSameLine" use="optional" default="NewLine">
+			<xs:annotation>
+				<xs:documentation>Value indicating whether the opening curly brace for blocks is
+on its own line (NewLine, default) or on the same line as the preceding code (SameLine)
+or taking a hint from the source code position (UseSource).
+Only relevant when OutputMode is set to MultipleLines.</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="NewLine">
+						<xs:annotation>
+							<xs:documentation>Output the opening curly-brace block-start character on its own new line. 
+Example:
+if (condition)
+{
+    ...
+}</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="SameLine">
+						<xs:annotation>
+							<xs:documentation>Output the opening curly-brace block-start character at the end of the previous line. 
+Example:
+if (condition) {
+    ...
+}
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="UseSource">
+						<xs:annotation>
+							<xs:documentation>Output the opening curly-brace block-start character on the same line or a new line
+depending on how it was specified in the sources</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="preprocessorDefineList" type="xs:string" use="optional" default="">
+			<xs:annotation>
+				<xs:documentation>String representation of the list of names defined for the preprocessor, comma-separated</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="termSemicolons" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to add a semicolon at the end of the parsed code</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="severity" use="optional" default="0">
+			<xs:annotation>
+				<xs:documentation>Severity level of errors:
+ 0 - syntax error;
+ 1 - the programmer probably did not intend to do this;
+ 2 - this can lead to problems in the future;
+ 3 - this can lead to performance problems;
+ 4 - this is just not right</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:int">
+					<xs:minInclusive value="0" />
+					<xs:maxInclusive value="4" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- /Microsoft Ajax settings -->
+
+	<!-- YUI settings -->
+	<xs:complexType name="YuiSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of YUI Minifier</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="css" type="YuiCssMinifierSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="js" type="YuiJsMinifierSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="YuiCssMinifierSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of YUI CSS-minifier</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="YuiMinifierSettingsBase_SchemaType">
+				<xs:attribute name="removeComments" type="Boolean_SchemaType" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to remove all comments except "important" comments</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="YuiJsMinifierSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of YUI JS-minifier</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="YuiMinifierSettingsBase_SchemaType">
+				<xs:attribute name="obfuscateJavascript" type="Boolean_SchemaType" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to allow obfuscation of code</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="preserveAllSemicolons" type="Boolean_SchemaType" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to preserve unnecessary semicolons (such as right before a '}')</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="disableOptimizations" type="Boolean_SchemaType" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to disable all the built-in micro optimizations</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="ignoreEval" type="Boolean_SchemaType" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to ignore when processing code, that executed in eval operator</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="encoding" use="optional" default="UTF8">
+					<xs:annotation>
+						<xs:documentation>Type of Encoding</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="ASCII" />
+							<xs:enumeration value="BigEndianUnicode" />
+							<xs:enumeration value="Unicode" />
+							<xs:enumeration value="UTF32" />
+							<xs:enumeration value="UTF7" />
+							<xs:enumeration value="UTF8" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="threadCulture" type="xs:string" use="optional" default="en-us">
+					<xs:annotation>
+						<xs:documentation>
+							Culture you want the thread to run under.
+							This affects the treatment of numbers etc - e.g. 9.00 could be output as 9,00
+							(this is mainly for non English OS's).
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="severity" use="optional" default="0">
+					<xs:annotation>
+						<xs:documentation>
+						Severity level of errors:
+							0 - only syntax error messages;
+							1 - only syntax error messages and warnings.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:int">
+							<xs:minInclusive value="0" />
+							<xs:maxInclusive value="1" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="YuiMinifierSettingsBase_SchemaType" abstract="true">
+		<xs:attribute name="compressionType" use="optional" default="Standard">
+			<xs:annotation>
+				<xs:documentation>Code compression type</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="None" />
+					<xs:enumeration value="Standard" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="lineBreakPosition" type="xs:int" use="optional" default="-1">
+			<xs:annotation>
+				<xs:documentation>Column number, after which must be inserted a line break.
+Specify 0 to get a line break after each semi-colon in JavaScript, and after each rule in CSS.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- /YUI settings -->
+	
+	<!-- Closure settings -->
+	<xs:complexType name="ClosureSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of Closure Minifier</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="js" type="ClosureJsSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ClosureJsSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of minification JS-assets</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="remote" type="ClosureRemoteJsMinifierSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="local" type="ClosureLocalJsMinifierSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="ClosureRemoteJsMinifierSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of Closure remote JS-minifier</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ClosureJsMinifierSettingsBase_SchemaType">
+				<xs:attribute name="closureCompilerServiceApiUrl" type="xs:string" use="optional" default="http://closure-compiler.appspot.com/compile">
+					<xs:annotation>
+						<xs:documentation>URL of Google Closure Compiler Service API</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="excludeDefaultExterns" type="Boolean_SchemaType" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to exclude common externs such as document and all its methods</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ClosureLocalJsMinifierSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of Closure local JS-minifier</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="ClosureJsMinifierSettingsBase_SchemaType">
+				<xs:attribute name="javaVirtualMachinePath" type="xs:string" use="optional" default="">
+					<xs:annotation>
+						<xs:documentation>Path to Java Virtual Machine</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="closureCompilerApplicationPath" type="xs:string" use="optional" default="">
+					<xs:annotation>
+						<xs:documentation>Path to Google Closure Compiler Application</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="languageSpec" use="optional" default="EcmaScript3">
+					<xs:annotation>
+						<xs:documentation>Language spec that input sources conform</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:NMTOKEN">
+							<xs:enumeration value="EcmaScript3" />
+							<xs:enumeration value="EcmaScript5" />
+							<xs:enumeration value="EcmaScript5Strict" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="thirdParty" type="Boolean_SchemaType" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to check source validity but do not enforce 
+Closure style rules and conventions
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="processJqueryPrimitives" type="Boolean_SchemaType" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to process built-ins from the jQuery library, such as jQuery.fn and jQuery.extend()</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="processClosurePrimitives" type="Boolean_SchemaType" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation>Flag for whether to process built-ins from the Closure library, such as goog.require(), goog.provide() and goog.exportSymbol()</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+ 			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ClosureJsMinifierSettingsBase_SchemaType" abstract="true">
+		<xs:attribute name="compilationLevel" use="optional" default="Simple">
+			<xs:annotation>
+				<xs:documentation>Degree of compression and optimization to apply to your JavaScript.
+There are 3 possible compilation levels:
+WhitespaceOnly - just removes whitespace and comments from your JavaScript;
+Simple - performs compression and optimization that does not interfere with
+the interaction between the compiled JavaScript and other JavaScript.
+This level renames only local variables;
+Advanced - achieves the highest level of compression by renaming symbols in your
+JavaScript. When using this type of compilation you must perform extra steps
+to preserve references to external symbols.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="WhitespaceOnly" />
+					<xs:enumeration value="Simple" />
+					<xs:enumeration value="Advanced" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="prettyPrint" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to add line breaks and indentation to its output code to make the code easier for humans to read</xs:documentation>
+			</xs:annotation>			
+		</xs:attribute>
+		<xs:attribute name="severity" use="optional" default="0">
+			<xs:annotation>
+				<xs:documentation>Severity level of errors:
+0 - only syntax error messages;
+1 - only syntax error messages and warnings generated by the optimization;
+2 - in addition to syntax errors and warnings generated by optimization passes, outputs warnings generated by selected code-checking passes;
+3 - in addition to syntax errors and warnings generated by optimization passes, outputs warnings generated by all code-checking passes.</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:int">
+					<xs:minInclusive value="0" />
+					<xs:maxInclusive value="3" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- /Closure settings -->
+
+	<!-- UglifyJs settings -->
+	<xs:complexType name="UglifySettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of Uglify Minifier</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="js" type="UglifyJsSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="UglifyJsSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of minification JS-assets</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="parser" type="UglifyParserSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="mangler" type="UglifyManglerSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="squeezer" type="UglifySqueezerSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+			<xs:element name="codeGenerator" type="UglifyCodeGeneratorSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="UglifyParserSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of the parser</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="strictSemicolons" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Processing mode of semicolons.
+If you pass true then the parser will throw an error when it expects a semicolon and it doesn’t find it.
+For most JS code you don’t want that, but it’s useful if you want to strictly sanitize your code.</xs:documentation>
+			</xs:annotation>			
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="UglifyManglerSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of the mangler</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="mangle" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to mangle names</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="topLevel" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to mangle names in the toplevel scope (by default we don’t touch them)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="defines" type="xs:string" use="optional" default="">
+			<xs:annotation>
+				<xs:documentation>String representation of the object (comma-separated list of values of the form SYMBOL[=value]) 
+with properties named after symbols to replace (except where symbol has properly declared by a var declaration 
+or use as function parameter or similar) and the values representing the AST replacement value</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="except" type="xs:string" use="optional" default="">
+			<xs:annotation>
+				<xs:documentation>Comma-separated list of names to exclude from compression.
+For example, to keep names require and $super intact you’d specify "require,$super".</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="noFunctions" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to disable mangling the names of functions</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="UglifySqueezerSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of the squeezer</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="makeSequences" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to cause consecutive statements in a block to be merged using the "sequence" (comma) operator</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="deadCode" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to remove unreachable code</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="unsafe" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to enable other additional optimizations that are known to be unsafe in some contrived situations, but could still be generally useful</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="UglifyCodeGeneratorSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of the code generator</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="beautify" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Output indented code</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="indentStart" type="xs:int" use="optional" default="0">
+			<xs:annotation>
+				<xs:documentation>Initial indentation in spaces</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="indentLevel" type="xs:int" use="optional" default="4">
+			<xs:annotation>
+				<xs:documentation>Indentation level, in spaces (pass an even number)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="quoteKeys" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to quote all keys in literal objects</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="spaceColon" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to put a space before the colon in object literals</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="asciiOnly" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to encode non-ASCII characters as \uXXXX</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- /UglifyJs settings -->
+
+	<!-- Packer settings -->
+	<xs:complexType name="PackerSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of Dean Edwards' Minifier</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="js" type="PackerJsMinifierSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="PackerJsMinifierSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of Dean Edwards' JS-minifier</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="shrinkVariables" type="Boolean_SchemaType" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to shrink variables</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="base62Encode" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to Base62 encode</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- /Packer settings -->
+
+	<!-- CSSO settings -->
+	<xs:complexType name="CssoSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of Sergey Kryzhanovsky's Minifier</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="css" type="CssoCssMinifierSettings_SchemaType" minOccurs="0" maxOccurs="1" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="CssoCssMinifierSettings_SchemaType">
+		<xs:annotation>
+			<xs:documentation>Configuration settings of Sergey Kryzhanovsky's CSS-minifier</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="disableRestructuring" type="Boolean_SchemaType" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Flag for whether to disable structure minification</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- /CSSO settings -->
+</xs:schema>
