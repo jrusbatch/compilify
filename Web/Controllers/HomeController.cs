@@ -1,20 +1,62 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Web.WebPages;
+using Compilify.LanguageServices;
+using Compilify.Models;
 using Compilify.Web.Commands;
 using Compilify.Web.Models;
 using Compilify.Web.Queries;
+using Raven.Client;
 
 namespace Compilify.Web.Controllers
 {
     public class HomeController : BaseMvcController
     {
-        [HttpGet]
-        public async Task<ActionResult> Index()
-        {
-            var model = await Resolve<SamplePostQuery>().Execute();
+        private const string ProjectCookieKey = "compilify.currentproject";
 
-            return View("Show", model);
+        private readonly IDocumentSession session;
+
+        private readonly ICodeValidator validator;
+
+        public HomeController(IDocumentSession documentSession, ICodeValidator codeValidator)
+        {
+            session = documentSession;
+            validator = codeValidator;
+        }
+
+        protected virtual string CurrentProjectId
+        {
+            get { return Request.Cookies[ProjectCookieKey] != null ? Request.Cookies[ProjectCookieKey].Value : ""; }
+            set { Response.AppendCookie(new HttpCookie(ProjectCookieKey, value)); }
+        }
+
+        [HttpGet]
+        public ActionResult Index()
+        {
+            Project project;
+
+            if (CurrentProjectId.IsEmpty() || (project = session.Load<Project>(CurrentProjectId)) == null)
+            {
+                project = new Project()
+                    .AddOrUpdate(new Document { Name = "Main", Content = "return new Person(\"stranger\").Greet();" })
+                    .AddOrUpdate(BuildSampleDocument());
+
+                session.Store(project);
+                CurrentProjectId = project.Id;
+            }
+
+            var viewModel = new PostViewModel()
+            {
+                Project = project,
+                Errors = GetErrorsInProgram(project).ToList()
+            };
+
+            return View("Show", viewModel);
         }
 
         [HttpGet]
@@ -92,6 +134,40 @@ namespace Compilify.Web.Controllers
             }
 
             return routeValues;
+        }
+
+        private static Document BuildSampleDocument()
+        {
+            var post = new Document { Name = "Person" };
+
+            var builder = new StringBuilder();
+            post.Content = builder.AppendLine("public class Person")
+                                  .AppendLine("{")
+                                  .AppendLine("    public Person(string name)")
+                                  .AppendLine("    {")
+                                  .AppendLine("        Name = name;")
+                                  .AppendLine("    }")
+                                  .AppendLine()
+                                  .AppendLine("    public string Name { get; private set; }")
+                                  .AppendLine()
+                                  .AppendLine("    public string Greet()")
+                                  .AppendLine("    {")
+                                  .AppendLine("        if (string.IsNullOrEmpty(Name))")
+                                  .AppendLine("        {")
+                                  .AppendLine("            return \"Hello, stranger!\";")
+                                  .AppendLine("        }")
+                                  .AppendLine()
+                                  .AppendLine("        return string.Format(\"Hello, {0}!\", Name);")
+                                  .AppendLine("    }")
+                                  .AppendLine("}")
+                                  .ToString();
+
+            return post;
+        }
+
+        private IEnumerable<EditorError> GetErrorsInProgram(ICodeProgram project)
+        {
+            return validator.GetCompilationErrors(project);
         }
 
         private ActionResult PostNotFound()

@@ -9,9 +9,8 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
     {
         protected override void Load(ContainerBuilder builder)
         {
-            var assembly = typeof(Application).Assembly;
-            builder.RegisterControllers(assembly);
-            builder.RegisterModelBinders(assembly);
+            builder.RegisterControllers(ThisAssembly);
+            builder.RegisterModelBinders(ThisAssembly);
             builder.RegisterModelBinderProvider();
             builder.RegisterModule(new AutofacWebTypesModule());
             builder.RegisterFilterProvider();
