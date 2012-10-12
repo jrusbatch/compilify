@@ -215,6 +215,8 @@
     <Content Include="Assets\css\vendor\codemirror.css" />
     <Content Include="Assets\css\vendor\codemirror-neat.css" />
     <Content Include="Assets\css\vendor\font-awesome.css" />
+    <Content Include="Assets\css\vendor\jquery.ui.resizable.css" />
+    <Content Include="Assets\css\vendor\jquery.ui.core.css" />
     <Content Include="Assets\fonts\fontawesome-webfont.svg" />
     <Content Include="Assets\fonts\Roboto License.txt" />
     <Content Include="Assets\fonts\Roboto-Light-webfont.svg" />
@@ -234,7 +236,11 @@
     <Content Include="Assets\js\vendor\bootstrap.js" />
     <Content Include="Assets\js\vendor\codemirror.js" />
     <Content Include="Assets\js\vendor\codemirror-clike.js" />
+    <Content Include="Assets\js\vendor\jquery.ui.resizable.js" />
+    <Content Include="Assets\js\vendor\jquery.ui.mouse.js" />
+    <Content Include="Assets\js\vendor\jquery.ui.widget.js" />
     <Content Include="Assets\js\vendor\jquery.js" />
+    <Content Include="Assets\js\vendor\jquery.ui.core.js" />
     <Content Include="Assets\js\vendor\jquery.validate.js" />
     <Content Include="Assets\js\vendor\jquery.validate-hooks.js" />
     <Content Include="Assets\js\vendor\jquery.validate.unobtrusive.js" />
