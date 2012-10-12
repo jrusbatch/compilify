@@ -241,9 +241,6 @@
     <Content Include="Assets\js\vendor\jquery.ui.widget.js" />
     <Content Include="Assets\js\vendor\jquery.js" />
     <Content Include="Assets\js\vendor\jquery.ui.core.js" />
-    <Content Include="Assets\js\vendor\jquery.validate.js" />
-    <Content Include="Assets\js\vendor\jquery.validate-hooks.js" />
-    <Content Include="Assets\js\vendor\jquery.validate.unobtrusive.js" />
     <Content Include="Assets\js\vendor\json2.js" />
     <Content Include="Assets\js\vendor\shortcut.js" />
     <Content Include="Assets\js\vendor\underscore.js" />
