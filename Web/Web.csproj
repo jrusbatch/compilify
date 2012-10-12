@@ -229,8 +229,11 @@
     <Content Include="Assets\img\execute.png" />
     <Content Include="Assets\img\glyphicons-halflings-white.png" />
     <Content Include="Assets\img\glyphicons-halflings.png" />
+    <Content Include="Assets\img\new.png" />
     <Content Include="Assets\img\observe.png" />
     <Content Include="Assets\img\octocat.png" />
+    <Content Include="Assets\img\run.png" />
+    <Content Include="Assets\img\save.png" />
     <Content Include="Assets\img\twitter.png" />
     <Content Include="Assets\js\compilify.js" />
     <Content Include="Assets\js\resizer.js" />
