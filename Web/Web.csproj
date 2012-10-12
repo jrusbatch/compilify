@@ -235,7 +235,7 @@
     <Content Include="Assets\js\compilify.js" />
     <Content Include="Assets\js\vendor\bootstrap.js" />
     <Content Include="Assets\js\vendor\codemirror.js" />
-    <Content Include="Assets\js\vendor\codemirror-clike.js" />
+    <Content Include="Assets\js\vendor\codemirror.clike.js" />
     <Content Include="Assets\js\vendor\jquery.ui.resizable.js" />
     <Content Include="Assets\js\vendor\jquery.ui.mouse.js" />
     <Content Include="Assets\js\vendor\jquery.ui.widget.js" />

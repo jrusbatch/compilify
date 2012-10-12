@@ -51,9 +51,7 @@ namespace Compilify.Web
                 "~/assets/js/vendor/jquery.signalr.js");
 
             vendorjs.Include(
-                "~/assets/js/vendor/underscore.js",
-                "~/assets/js/vendor/backbone.js",
-                "~/assets/js/vendor/backbone.marionette.js");
+                "~/assets/js/vendor/underscore.js");
 
             vendorjs.Include(
                 "~/assets/js/vendor/bootstrap.js",
