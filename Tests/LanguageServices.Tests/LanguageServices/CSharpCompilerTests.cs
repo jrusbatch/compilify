@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Compilify.Models;
 using Xunit;
 
 namespace Compilify.LanguageServices

@@ -53,7 +53,7 @@ namespace Compilify.LanguageServices
                     .WithOptimizations(true)
                     .WithUsings(DefaultNamespaces);
 
-        public ICodeAssembly Compile(ICodeProject program)
+        public ICodeAssembly Compile(ICodeProgram program)
         {
             var compilation = RoslynCompile(program);
             var assembly = new ProgramAssembly
@@ -77,7 +77,7 @@ namespace Compilify.LanguageServices
             return assembly;
         }
 
-        private static ISolution CreateSolution(ICodeProject codeProject, out ProjectId projectId)
+        private static ISolution CreateSolution(ICodeProgram codeProgram, out ProjectId projectId)
         {
             DocumentId entryPointDocumentId;
             DocumentId consoleDocumentId;
@@ -86,7 +86,7 @@ namespace Compilify.LanguageServices
 
             return
                 Solution.Create(solutionId)
-                    .AddCSharpProject(codeProject.Name ?? "Untitled", codeProject.Name ?? "Untitled", out projectId)
+                    .AddCSharpProject(codeProgram.Name ?? "Untitled", codeProgram.Name ?? "Untitled", out projectId)
                     .AddMetadataReferences(projectId, DefaultReferences)
                     .UpdateCompilationOptions(projectId, DefaultCompilationOptions)
                     .UpdateParseOptions(projectId, DefaultParseOptions)
@@ -94,23 +94,23 @@ namespace Compilify.LanguageServices
                     .AddDocument(projectId, "Console", Console, out consoleDocumentId);
         }
 
-        public CommonCompilation RoslynCompile(ICodeProject codeProject)
+        public CommonCompilation RoslynCompile(ICodeProgram codeProgram)
         {
-            if (codeProject == null)
+            if (codeProgram == null)
             {
-                throw new ArgumentNullException("codeProject");
+                throw new ArgumentNullException("codeProgram");
             }
 
             ProjectId projectId;
-            var solution = CreateSolution(codeProject, out projectId);
+            var solution = CreateSolution(codeProgram, out projectId);
 
             var documentIds = new Dictionary<string, DocumentId>();
 
-            foreach (var document in codeProject.Documents)
+            foreach (var document in codeProgram.Documents)
             {
                 var documentId = DocumentId.CreateNewId(projectId, document.Name);
 
-                var text = document.GetText();
+                var text = document.Content;
                 if (string.Equals(document.Name, "Content"))
                 {
                     // This smells terrible.

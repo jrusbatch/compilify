@@ -14,7 +14,7 @@ namespace Compilify.LanguageServices
             compiler = new CSharpCompiler();
         }
 
-        public IEnumerable<EditorError> GetCompilationErrors(ICodeProject post)
+        public IEnumerable<EditorError> GetCompilationErrors(ICodeProgram post)
         {
             var result = compiler.RoslynCompile(post).EmitToMemory();
             return result.Diagnostics

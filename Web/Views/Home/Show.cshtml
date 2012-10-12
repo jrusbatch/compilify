@@ -1,69 +1,108 @@
 @model Compilify.Web.Models.PostViewModel
 
-<div id="ide">
-    @using (Html.BeginForm())
-    {
-        <div id="commands">
-            <a class="js-new" href="/">new</a>
-            <a class="js-save" href="#">save</a>
-            <a class="js-run" href="#">run</a>
-        </div>
-    
-        <div id="editors">
-            @foreach(var document in Model.Documents)
-            {
-                <div class="editor-container">
-                    <div class="editor">
-                        <textarea data-name="@document.Name">@document.Text</textarea>
-                    </div>
-                </div>
-            }
-        </div>
-    
-        <div id="footer">
-            <div class="results">
-                <pre></pre>
-            </div>
-        
-            @{ var hasErrors = Model.Errors != null && Model.Errors.Any(); }
-        
-            <div class="status @(hasErrors ? "status-error" : "status-success")">
-                
-                <div class="loading-indicator">
-                    <span></span>
-                </div>
-                
-
-                @*
-                This should remain partially hidden most of the time. When the user hovers over it, it should appear to 
-                rise from below the browser window to display any messages it might contain.
-                
-                An indicator could also be displayed here when loading content or waiting for the result of an execution.
-                
-                The color of the status bar should change based on the status of the user's code:
-
-                    * Red - there are errors in the user's code
-                    * Green - there are no errors in the user's code
-
-                Other future possibilities include:
-
-                    * Yellow - there are warnings in the user's code 
-                *@
-            
-                <ul class="messages">
-                    @if (!hasErrors)
-                    {
-                        <li>No errors!</li>
-                    }
-                    else
-                    {
-                        foreach (var error in Model.Errors)
+<div id="sidebar">
+    <div class="inner">
+        <div class="sidebar-form">
+            <h4>References</h4>
+            <ul class="references">
+                @foreach (var reference in Model.References)
+                {
+                    <li class="reference">
+                        <span class="reference-name">
+                            @reference.Name
+                            <span class="reference-version secondary">@reference.Version</span>
+                        </span>
+                        
+                        @if (reference.IsRemovable)
                         {
-                            <li>@error.Message</li>
+                            <a class="reference-delete" href="#">&times;</a>
                         }
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="https://appharbor.com">
+                <img src="~/assets/img/appharbor.png" alt="Hosted by AppHarbor" />
+            </a>
+        </div>
+    </div>
+</div>
+
+<div id="ide">
+    <ul class="nav nav-tabs">
+        <li>
+            <a href="#" class="tab new-tab" title="New document">
+                <i class="icon-plus-sign"></i>
+            </a>
+        </li>
+
+        @for (var i = 0; i < Model.Project.Documents.Count; i++)
+        {
+            var doc = Model.Project.Documents[i];
+            var active = i == 0 ? "active" : (string)null;
+            
+            <li class="@active">
+                <span class="tab" data-toggle="tab" data-target="#document-@i">
+                    <span class="tab-name">@doc.Name</span>
+                    <span class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-chevron-down"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="js-rename-tab" href="#">
+                                    <i class="icon-pencil"></i>
+                                    Rename
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="js-delete-tab" href="#">
+                                    <i class="icon-trash"></i>
+                                    Delete
+                                </a>
+                            </li>
+                        </ul>
+                    </span>
+                </span>
+            </li>
+        }
+    </ul>
+
+    <div class="workspace">
+        <div class="columns clearfix">
+            <div class="column left">
+                <div class="editor tab-content">
+                    @for (var i = 0; i < Model.Project.Documents.Count; i++)
+                    {
+                        var active = i == 0 ? "active" : null;
+                        <div id="document-@i" class="tab-pane @active">
+                            <textarea>@(Model.Project.Documents[i].Content ?? string.Empty)</textarea>
+                        </div>
                     }
-                </ul>
+                </div>
+            </div>
+            <div class="column right">
+                <div class="execute">
+                    @Html.TextAreaFor(x => x.ConsoleText)
+                </div>
+                <div class="results">
+                    <pre>
+"Hello, stranger!"
+
+CPU Time: 00:00:00.0312002
+Bytes Allocated: 80 KB
+                    </pre>
+                </div>
             </div>
         </div>
-    }
+    </div>
+
+    <div class="status-bar">
+        <div class="inner">
+            <span>Ready</span>
+        </div>
+    </div>
 </div>

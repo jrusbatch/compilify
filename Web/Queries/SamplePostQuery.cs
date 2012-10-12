@@ -47,7 +47,7 @@ namespace Compilify.Web.Queries
 
             post.AddDocument("Content", builder.ToString());
 
-            var result = PostViewModel.Create(post);
+            var result = new PostViewModel(post);
 
             result.Errors = validator.GetCompilationErrors(post);
 

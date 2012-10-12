@@ -20,7 +20,7 @@ namespace Compilify.Web.Controllers
         public async Task Index_returns_the_Show_view()
         {
             var mockCodeValidator = new Mock<ICodeValidator>();
-            mockCodeValidator.Setup(x => x.GetCompilationErrors(It.IsAny<ICodeProject>()))
+            mockCodeValidator.Setup(x => x.GetCompilationErrors(It.IsAny<ICodeProgram>()))
                 .Returns(Enumerable.Empty<EditorError>());
 
             var mockDependencyResolver = new Mock<IDependencyResolver>();

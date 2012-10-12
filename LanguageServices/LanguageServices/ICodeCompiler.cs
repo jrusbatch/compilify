@@ -5,6 +5,6 @@ namespace Compilify.LanguageServices
 {
     public interface ICodeCompiler
     {
-        ICodeAssembly Compile(ICodeProject job);
+        ICodeAssembly Compile(ICodeProgram job);
     }
 }

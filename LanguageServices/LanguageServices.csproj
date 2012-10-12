@@ -65,11 +65,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Document.cs" />
+    <Compile Include="Models\Document.cs" />
     <Compile Include="LanguageServices\ProgramAssembly.cs" />
     <Compile Include="ICodeAssembly.cs" />
     <Compile Include="LanguageServices\ICodeCompiler.cs" />
-    <Compile Include="ICodeProject.cs" />
+    <Compile Include="ICodeProgram.cs" />
     <Compile Include="LanguageServices\ICodeExecutor.cs" />
     <Compile Include="ICodeRunResult.cs" />
     <Compile Include="LanguageServices\EditorError.cs" />
@@ -80,6 +80,7 @@
     <Compile Include="Extensions\SyntaxTreeExtensions.cs" />
     <Compile Include="LanguageServices\DocumentLineSpan.cs" />
     <Compile Include="LanguageServices\ExecutionResult.cs" />
+    <Compile Include="Models\Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LanguageServices\Sandbox.cs" />
     <Compile Include="LanguageServices\ConsoleRewriter.cs" />

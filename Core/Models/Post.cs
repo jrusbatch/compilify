@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Compilify.Models
 {
-    public class Post : ICodeProject
+    public class Post : ICodeProgram
     {
         private readonly ISet<Document> documents;
 
@@ -18,12 +18,12 @@ namespace Compilify.Models
 
         public int Version { get; set; }
 
-        string ICodeProject.Name
+        string ICodeProgram.Name
         {
             get { return "Untitled"; }
         }
 
-        TimeSpan ICodeProject.TimeoutPeriod
+        TimeSpan ICodeProgram.TimeoutPeriod
         {
             get { return TimeSpan.FromSeconds(5D); }
         }

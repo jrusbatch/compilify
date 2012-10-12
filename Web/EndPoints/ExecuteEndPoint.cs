@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Compilify.Extensions;
 using Compilify.LanguageServices;
+using Compilify.Models;
 using Compilify.Web.Models;
 using Newtonsoft.Json;
 using SignalR;

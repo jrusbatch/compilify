@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
+using Compilify.Models;
 
 namespace Compilify.LanguageServices
 {
     [Serializable]
     [DataContract]
-    public sealed class EvaluateCodeCommand : ICodeProject
+    public sealed class EvaluateCodeCommand : ICodeProgram
     {
         [DataMember(Order = 1)]
         private Guid id = Guid.NewGuid();
@@ -43,7 +44,7 @@ namespace Compilify.LanguageServices
         [DataMember(Order = 10)]
         public IList<Document> Documents { get; set; }
 
-        IEnumerable<Document> ICodeProject.Documents
+        IEnumerable<Document> ICodeProgram.Documents
         {
             get { return Documents; }
         }

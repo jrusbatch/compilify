@@ -28,14 +28,14 @@ namespace Compilify.Web.Queries
 
             var errors = GetErrorsInPost(post);
 
-            var viewModel = PostViewModel.Create(post);
+            var viewModel = new PostViewModel(post);
 
             viewModel.Errors = errors;
 
             return Task.FromResult(viewModel);
         }
 
-        private IEnumerable<EditorError> GetErrorsInPost(ICodeProject post)
+        private IEnumerable<EditorError> GetErrorsInPost(ICodeProgram post)
         {
             return validator.GetCompilationErrors(post);
         }
