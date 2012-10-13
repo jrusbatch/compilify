@@ -15,7 +15,6 @@ namespace Compilify.Models
         }
 
         public string Id { get; set; }
-        public string Title { get; set; }
         public IList<Document> Documents { get; set; }
 
         IEnumerable<Document> ICodeProgram.Documents
@@ -57,7 +56,7 @@ namespace Compilify.Models
 
         string ICodeProgram.Name
         {
-            get { return Title; }
+            get { return Id; }
         }
 
         public string Language { get; private set; }

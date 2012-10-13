@@ -1,25 +1,76 @@
 @model Compilify.Web.Models.PostViewModel
 
-<div id="sidebar">
+<script id="sidebar-template" type="text/html">
     <div class="inner">
         <div class="sidebar-form">
             <h4>References</h4>
             <ul class="references">
-                @foreach (var reference in Model.References)
-                {
-                    <li class="reference">
-                        <span class="reference-name">
-                            @reference.Name
-                            <span class="reference-version secondary">@reference.Version</span>
-                        </span>
-                        
-                        @if (reference.IsRemovable)
-                        {
-                            <a class="reference-delete" href="#">&times;</a>
-                        }
-                    </li>
-                }
+                {{ #References }}
+                
+                {{> reference-template }}
+
+                {{ /References }}
             </ul>
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="https://appharbor.com">
+                <img src="~/assets/img/appharbor.png" alt="Hosted by AppHarbor" />
+            </a>
+        </div>
+    </div>
+</script>
+
+<script id="reference-template" type="text/html">
+    <li class="reference">
+        <span class="reference-name">
+            {{ Name }}
+            <span class="reference-version secondary">{{ Version }}</span>
+        </span>
+                    
+        <a class="reference-delete" href="#">&times;</a>
+    </li>
+</script>
+
+<script id="tab-template" type="text/html">
+    <li>
+        <span class="tab" data-toggle="tab" data-target="{{ Id }}">
+            <span class="tab-name">{{ Name }}</span>
+            <span class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="icon-chevron-down"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="js-rename-tab" href="#">
+                            <i class="icon-pencil"></i>
+                            Rename
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a class="js-delete-tab" href="#">
+                            <i class="icon-trash"></i>
+                            Delete
+                        </a>
+                    </li>
+                </ul>
+            </span>
+        </span>
+    </li>
+</script>
+
+<script id="document-template" type="text/html">
+    <div id="{{ Name }}" class="tab-pane">
+        <textarea>{{ Content }}</textarea>
+    </div>
+</script>
+
+<div id="sidebar">
+    <div class="inner">
+        <div class="sidebar-form">
+            <h4>References</h4>
+            <ul class="references"></ul>
         </div>
 
         <div class="sidebar-bottom">
@@ -37,67 +88,24 @@
                 <i class="icon-plus-sign"></i>
             </a>
         </li>
-
-        @for (var i = 0; i < Model.Project.Documents.Count; i++)
-        {
-            var doc = Model.Project.Documents[i];
-            var active = i == 0 ? "active" : (string)null;
-            
-            <li class="@active">
-                <span class="tab" data-toggle="tab" data-target="#document-@i">
-                    <span class="tab-name">@doc.Name</span>
-                    <span class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown">
-                            <i class="icon-chevron-down"></i>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a class="js-rename-tab" href="#">
-                                    <i class="icon-pencil"></i>
-                                    Rename
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a class="js-delete-tab" href="#">
-                                    <i class="icon-trash"></i>
-                                    Delete
-                                </a>
-                            </li>
-                        </ul>
-                    </span>
-                </span>
-            </li>
-        }
     </ul>
-
     <div class="workspace">
+        <div class="editor tab-content">@* ------ Editors go here! ------- *@</div>
+        @*
         <div class="columns clearfix">
             <div class="column left">
-                <div class="editor tab-content">
-                    @for (var i = 0; i < Model.Project.Documents.Count; i++)
-                    {
-                        var active = i == 0 ? "active" : null;
-                        <div id="document-@i" class="tab-pane @active">
-                            <textarea>@(Model.Project.Documents[i].Content ?? string.Empty)</textarea>
-                        </div>
-                    }
-                </div>
+                
             </div>
             <div class="column right">
                 <div class="execute">
-                    @Html.TextAreaFor(x => x.ConsoleText)
+                    <textarea></textarea>
                 </div>
                 <div class="results">
-                    <pre>
-"Hello, stranger!"
-
-CPU Time: 00:00:00.0312002
-Bytes Allocated: 80 KB
-                    </pre>
+                    <pre></pre>
                 </div>
             </div>
         </div>
+        *@
     </div>
 
     <div class="status-bar">
@@ -106,3 +114,15 @@ Bytes Allocated: 80 KB
         </div>
     </div>
 </div>
+
+@section PageScripts {
+    <script id="init">
+        (function() {
+            Compilify.initializeWorkspace(@Html.Raw(Json.Encode(Model)));
+
+            // Delete this script node
+            var scriptNode = document.getElementById('init');
+            scriptNode.parentNode.removeChild(scriptNode);
+        })();
+    </script>
+}

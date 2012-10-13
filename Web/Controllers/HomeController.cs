@@ -62,7 +62,7 @@ namespace Compilify.Web.Controllers
                 CurrentProjectId = project.Id;
             }
 
-            var viewModel = new PostViewModel()
+            var viewModel = new PostViewModel
             {
                 Project = project,
                 Errors = GetErrorsInProgram(project).ToList()

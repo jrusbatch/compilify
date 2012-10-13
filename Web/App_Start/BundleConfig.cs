@@ -54,6 +54,9 @@ namespace Compilify.Web
                 "~/assets/js/vendor/underscore.js");
 
             vendorjs.Include(
+                "~/assets/js/vendor/mustache.js");
+
+            vendorjs.Include(
                 "~/assets/js/vendor/bootstrap.js",
                 "~/assets/js/vendor/codemirror.js",
                 "~/assets/js/vendor/codemirror.clike.js",
@@ -64,9 +67,10 @@ namespace Compilify.Web
 
             var js = new ScriptBundle("~/js/app") { Orderer = DefaultBundleOrderer };
             js.Transforms.Add(transform);
-            js.Include("~/assets/js/compilify.js");
-            js.Include("~/assets/js/resizer.js");
-            js.Include("~/assets/js/tabs.js");
+            //js.Include("~/assets/js/resizer.old.js");
+            js.Include("~/assets/js/app.js");
+            js.Include("~/assets/js/Editor.js");
+            js.Include("~/assets/js/Document.js");
             bundles.Add(js);
         }
     }

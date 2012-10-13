@@ -1,0 +1,523 @@
+@font-face {
+  font-family: 'Roboto Thin';
+  src: url('/assets/fonts/roboto-thin-webfont.eot');
+  src: url('/assets/fonts/roboto-thin-webfont.eot?#iefix') format('embedded-opentype'), url('/assets/fonts/roboto-thin-webfont.woff') format('woff'), url('/assets/fonts/roboto-thin-webfont.ttf') format('truetype'), url('/assets/fonts/roboto-thin-webfont.svg#RobotoThin') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-variant: normal;/* Segoe UI Light */
+}
+@font-face {
+  font-family: 'Roboto Light';
+  src: url('/assets/fonts/roboto-light-webfont.eot');
+  src: url('/assets/fonts/roboto-light-webfont.eot?#iefix') format('embedded-opentype'), url('/assets/fonts/roboto-light-webfont.woff') format('woff'), url('/assets/fonts/roboto-light-webfont.ttf') format('truetype'), url('/assets/fonts/roboto-light-webfont.svg#RobotoLight') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-variant: normal;/* Segoe UI Semilight */
+}
+@font-face {
+  font-family: 'Roboto Regular';
+  src: url('/assets/fonts/roboto-regular-webfont.eot');
+  src: url('/assets/fonts/roboto-regular-webfont.eot?#iefix') format('embedded-opentype'), url('/assets/fonts/roboto-regular-webfont.woff') format('woff'), url('/assets/fonts/roboto-regular-webfont.ttf') format('truetype'), url('/assets/fonts/roboto-regular-webfont.svg#RobotoRegular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-variant: normal;/* Segoe UI */
+}
+@font-face {
+  font-family: 'Roboto Medium';
+  src: url('/assets/fonts/roboto-medium-webfont.eot');
+  src: url('/assets/fonts/roboto-medium-webfont.eot?#iefix') format('embedded-opentype'), url('/assets/fonts/roboto-medium-webfont.woff') format('woff'), url('/assets/fonts/roboto-medium-webfont.ttf') format('truetype'), url('/assets/fonts/roboto-medium-webfont.svg#RobotoMedium') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-variant: normal;/* Segoe UI Semibold */
+}
+@font-face {
+  font-family: 'Roboto Bold';
+  src: url('/assets/fonts/roboto-bold-webfont.eot');
+  src: url('/assets/fonts/roboto-bold-webfont.eot?#iefix') format('embedded-opentype'), url('/assets/fonts/roboto-bold-webfont.woff') format('woff'), url('/assets/fonts/roboto-bold-webfont.ttf') format('truetype'), url('/assets/fonts/roboto-bold-webfont.svg#RobotoBold') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-variant: normal;/* Segoe UI Bold */
+}
+.secondary {
+  color: rgba(68, 68, 68, 0.4);
+}
+.title {
+  font-weight: 600;
+  font-family: 'Segoe UI Semibold', 'Roboto Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 11pt;
+  color: #444444;
+}
+.title.secondary {
+  font-weight: 300;
+  font-family: 'Segoe UI Semilight', 'Segoe UI', 'Roboto Light', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.navigation {
+  font-weight: 400;
+  font-family: 'Segoe UI', 'Roboto Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 11pt;
+}
+* {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+body {
+  background-color: #3c454f;
+  line-height: 142%;
+}
+p,
+body,
+strong {
+  font-weight: 300;
+  font-family: 'Segoe UI Semilight', 'Segoe UI', 'Roboto Light', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 11pt;
+  letter-spacing: 0.02em;
+  color: #444444;
+}
+h2 {
+  font-size: 16pt;
+  letter-spacing: 0.01em;
+}
+body > form {
+  margin: 0;
+}
+input,
+input:focus,
+textarea,
+textarea:focus,
+select,
+select:focus {
+  font-family: 'Calibri';
+  font-size: 9pt;
+  font-weight: normal;
+  outline: none;
+  border: 1px solid #ccc;
+  -webkit-appearance: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -o-box-shadow: none;
+  box-shadow: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+a {
+  color: #444444;
+}
+a.hover {
+  color: #5db2ff;
+}
+#content {
+  position: absolute;
+  top: 41px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+#header {
+  margin-bottom: 0;
+  width: 100%;
+  background: #e6e6e6;
+}
+#header .navbar-inner {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -o-box-shadow: none;
+  box-shadow: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  background: none;
+  filter: none;
+  padding: 0;
+}
+#header .brand {
+  color: #444444;
+  padding: 10px;
+  width: 200px;
+}
+#header .brand .brand-name {
+  font-weight: 200;
+  font-family: 'Segoe UI Light', 'Segoe UI', 'Roboto Thin', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #444444;
+  line-height: 1;
+}
+#header .brand .brand-name strong {
+  font-weight: 600;
+  font-family: 'Segoe UI Semibold', 'Roboto Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 16pt;
+  color: #444444;
+}
+#header .brand .brand-name small {
+  font-weight: 200;
+  font-family: 'Segoe UI Light', 'Segoe UI', 'Roboto Thin', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: rgba(68, 68, 68, 0.4);
+  font-size: 9pt;
+}
+#header .nav > li > a {
+  font-weight: 400;
+  font-family: 'Segoe UI', 'Roboto Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 11pt;
+  height: 41px;
+  line-height: 41px;
+  padding: 0 10px;
+}
+#header .nav > li > a:hover {
+  color: #999;
+  background-color: #cdcdcd;
+}
+#header .nav > li > a img {
+  padding-bottom: 3px;
+}
+#header .nav > li > a,
+#header .nav > li.active > a {
+  background: none;
+  text-shadow: none;
+}
+#sidebar {
+  position: absolute;
+  width: 220px;
+  left: 0;
+  background-color: #F3F3F3;
+  bottom: 0;
+  top: 0;
+}
+#sidebar .inner {
+  padding: 10px;
+}
+#sidebar h4 {
+  font-weight: 400;
+  font-family: 'Segoe UI', 'Roboto Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  cursor: default;
+  margin: 5px 0 10px;
+  text-transform: uppercase;
+  font-size: 9pt;
+  color: #999;
+}
+#sidebar .sidebar-commands {
+  font-family: 'Segoe UI', 'RobotoThin', 'Helvetica Neue', 'Segoe WP', sans-serif;
+  font-weight: 400;
+  padding: 0 10px;
+  margin: 9px 0;
+  font-size: 11pt;
+  line-height: 32px;
+  font-weight: normal;
+}
+#sidebar .sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#sidebar .sidebar-form input,
+#sidebar .sidebar-form textarea,
+#sidebar .sidebar-form select {
+  line-height: 18px;
+  width: 190px;
+  max-width: 190px;
+}
+#sidebar .sidebar-bottom {
+  position: absolute;
+  width: 200px;
+  bottom: 10px;
+  text-align: center;
+}
+#sidebar .sidebar-bottom img {
+  width: 125px;
+  height: 50px;
+}
+#sidebar .references {
+  list-style: none;
+  margin: 0;
+}
+#sidebar .references .reference {
+  font-family: 'Segoe UI';
+  font-size: 9pt;
+}
+#sidebar .references .reference .reference-name {
+  cursor: default;
+  color: #555;
+}
+#sidebar .references .reference a.reference-name {
+  cursor: pointer;
+}
+#sidebar .references .reference a.reference-name:hover {
+  text-decoration: none;
+}
+#sidebar .references .reference .reference-version {
+  color: rgba(136, 136, 136, 0.6);
+}
+#sidebar .references .reference .reference-delete {
+  float: right;
+  clear: right;
+  text-decoration: none;
+  font-weight: bold;
+}
+#ide {
+  position: relative;
+  margin-left: 220px;
+  height: 100%;
+}
+#ide .nav-tabs {
+  padding: 0;
+  margin-bottom: 0;
+  border-bottom: 2px solid #0072C6;
+  background-color: #fff;
+}
+#ide .nav-tabs .dropdown-toggle {
+  text-decoration: none;
+  margin-left: 10px;
+}
+#ide .nav-tabs .dropdown-menu {
+  min-width: 100px;
+  border: 2px solid #000;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+#ide .nav-tabs .dropdown-menu a {
+  padding: 5px 3px;
+}
+#ide .nav-tabs .dropdown-menu a:hover {
+  color: #323232;
+  background-color: #F3F3F3;
+}
+#ide .nav-tabs .dropdown-menu i {
+  padding-right: 5px;
+}
+#ide .nav-tabs > li {
+  padding-top: 10px;
+  cursor: default;
+  margin-bottom: 0;
+}
+#ide .nav-tabs > li.active .tab,
+#ide .nav-tabs > li.active .tab:hover,
+#ide .nav-tabs > li.active .tab:hover .dropdown.open .dropdown-toggle {
+  color: #fff;
+  background-color: #0072c6;
+}
+#ide .nav-tabs > li > .tab {
+  font-weight: 400;
+  font-family: 'Segoe UI', 'Roboto Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  display: block;
+  cursor: default;
+  font-size: 9pt;
+  line-height: 142%;
+  padding: 5px;
+  border: none;
+  position: relative;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+#ide .nav-tabs > li > .tab.new-tab {
+  font-size: 12px;
+  padding: 5px 8px;
+}
+#ide .nav-tabs > li > .tab:hover,
+#ide .nav-tabs > li > .tab:hover .dropdown.open .dropdown-toggle {
+  color: #fff;
+  background-color: #1c97ea;
+}
+#ide .nav-tabs > li > .tab .dropdown-toggle {
+  color: #fff;
+}
+#ide .nav-tabs > li > .tab .dropdown-toggle:hover {
+  background-color: #52B0EF;
+}
+#ide .workspace {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 39px 0 22px;
+}
+#ide .workspace .columns {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+#ide .workspace .columns .ui-resizable-handle {
+  background-color: #EFEFF2;
+}
+#ide .workspace .columns .ui-resizable-handle.ui-resizable-e {
+  width: 4px;
+  cursor: col-resize;
+}
+#ide .workspace .columns .ui-resizable-handle.ui-resizable-s {
+  height: 4px;
+  cursor: row-resize;
+}
+#ide .workspace .columns .column {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: 100% !important;
+}
+#ide .workspace .columns .column.left {
+  left: 0;
+  width: 600px;
+}
+#ide .workspace .columns .column.right {
+  right: 0;
+  width: 100%;
+  background-color: #f5f5f5;
+}
+#ide .editor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  z-index: 100;
+  background-color: #fff;
+}
+#ide .tab-pane {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+#ide .CodeMirror,
+#ide .CodeMirror-scroll {
+  height: 100%;
+  width: 100%;
+  overflow-x: auto;
+}
+#ide .CodeMirror {
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 10pt;
+  background-color: #fff;
+}
+#ide .CodeMirror * {
+  -webkit-user-select: text;
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+#ide .CodeMirror pre.CodeMirror-cursor {
+  border-left-color: #555;
+}
+#ide .CodeMirror .CodeMirror-gutter {
+  background-color: #fff;
+  border: none;
+}
+#ide .CodeMirror .CodeMirror-gutter * {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#ide .CodeMirror .CodeMirror-gutter-text pre {
+  color: rgba(43, 145, 175, 0.6);
+  cursor: default;
+}
+#ide .CodeMirror .CodeMirror-selected {
+  background: #D4EAFF;
+}
+#ide .CodeMirror .cm-keyword {
+  color: #00F;
+}
+#ide .CodeMirror ::-webkit-scrollbar-track-piece {
+  background-color: transparent;
+  padding-right: 2px;
+}
+#ide .CodeMirror ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+#ide .CodeMirror ::-webkit-scrollbar-thumb {
+  background-color: #E6E6E6;
+  border: 1px solid transparent;
+  border-top: none;
+  border-bottom: none;
+}
+#ide .CodeMirror ::-webkit-scrollbar-thumb:hover {
+  background-color: #E6E6E6;
+}
+#ide .results {
+  min-width: 400px;
+  overflow: hidden;
+}
+#ide .results pre {
+  height: 100%;
+  border-radius: 0;
+  border: none;
+  margin: 0;
+  -webkit-user-select: text;
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+#ide .execute {
+  width: 100%;
+  height: 50%;
+}
+#ide .status-bar {
+  position: absolute;
+  bottom: 0;
+  cursor: default;
+  font-size: 9pt;
+  color: #fff;
+  background-color: #0072C6;
+  width: 100%;
+}
+#ide .status-bar.loading {
+  background-color: #FF8F32;
+}
+#ide .status-bar .inner {
+  margin: 0 5px;
+}
+#about .page-header {
+  margin: 10px 0 3px;
+}
+#about ul {
+  list-style: none;
+}
+#about .disclaimer {
+  font-size: 0.8em;
+}
+#error {
+  text-align: center;
+}
+#error hgroup {
+  display: block;
+  margin: 0 auto;
+  clear: both;
+  height: auto;
+}
+#error hgroup h1,
+#error hgroup h2 {
+  margin: 10px 0;
+  text-align: center;
+}
+#error hgroup h1 {
+  font-family: Georgia;
+  font-weight: bold;
+  font-size: 200px;
+  margin: 20px 0;
+  line-height: 200px;
+}

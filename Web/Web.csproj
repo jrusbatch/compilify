@@ -225,6 +225,10 @@
     <Content Include="Assets\css\vendor\font-awesome.css" />
     <Content Include="Assets\css\vendor\jquery.ui.resizable.css" />
     <Content Include="Assets\css\vendor\jquery.ui.core.css" />
+    <TypeScriptCompile Include="Assets\js\Document.ts" />
+    <Content Include="Assets\js\Document.js">
+      <DependentUpon>Document.ts</DependentUpon>
+    </Content>
     <Content Include="Assets\fonts\fontawesome-webfont.svg" />
     <Content Include="Assets\fonts\Roboto License.txt" />
     <Content Include="Assets\fonts\Roboto-Light-webfont.svg" />
@@ -243,20 +247,36 @@
     <Content Include="Assets\img\run.png" />
     <Content Include="Assets\img\save.png" />
     <Content Include="Assets\img\twitter.png" />
-    <Content Include="Assets\js\compilify.js" />
-    <Content Include="Assets\js\resizer.js" />
-    <Content Include="Assets\js\tabs.js" />
+    <TypeScriptCompile Include="Assets\js\app.ts" />
+    <Content Include="Assets\js\app.js">
+      <DependentUpon>app.ts</DependentUpon>
+    </Content>
+    <Content Include="Assets\js\compilify.old.js" />
+    <TypeScriptCompile Include="Assets\js\Editor.ts" />
+    <Content Include="Assets\js\Editor.js">
+      <DependentUpon>Editor.ts</DependentUpon>
+    </Content>
+    <Content Include="Assets\js\resizer.old.js" />
+    <Content Include="Assets\js\tabs.old.js" />
     <Content Include="Assets\js\vendor\bootstrap.js" />
     <Content Include="Assets\js\vendor\codemirror.js" />
     <Content Include="Assets\js\vendor\codemirror.clike.js" />
+    <TypeScriptCompile Include="Assets\js\jquery.d.ts" />
+    <Content Include="Assets\js\jquery.d.js">
+      <DependentUpon>jquery.d.ts</DependentUpon>
+    </Content>
     <Content Include="Assets\js\vendor\jquery.ui.resizable.js" />
     <Content Include="Assets\js\vendor\jquery.ui.mouse.js" />
     <Content Include="Assets\js\vendor\jquery.ui.widget.js" />
     <Content Include="Assets\js\vendor\jquery.js" />
     <Content Include="Assets\js\vendor\jquery.ui.core.js" />
     <Content Include="Assets\js\vendor\json2.js" />
+    <Content Include="Assets\js\vendor\mustache.js" />
     <Content Include="Assets\js\vendor\shortcut.js" />
     <Content Include="Assets\js\vendor\underscore.js" />
+    <Content Include="Assets\less\compilify.css">
+      <DependentUpon>compilify.less</DependentUpon>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Assets\js\vendor\jquery.signalr.js" />
