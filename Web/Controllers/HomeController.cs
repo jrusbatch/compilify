@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,8 +32,19 @@ namespace Compilify.Web.Controllers
 
         protected virtual string CurrentProjectId
         {
-            get { return Request.Cookies[ProjectCookieKey] != null ? Request.Cookies[ProjectCookieKey].Value : ""; }
-            set { Response.AppendCookie(new HttpCookie(ProjectCookieKey, value)); }
+            get
+            {
+                return Request.Cookies[ProjectCookieKey] != null 
+                    ? Request.Cookies[ProjectCookieKey].Value 
+                    : string.Empty;
+            }
+            set
+            {
+                Response.AppendCookie(new HttpCookie(ProjectCookieKey, value)
+                                      {
+                                          Expires = DateTime.UtcNow.AddDays(7)
+                                      });
+            }
         }
 
         [HttpGet]
