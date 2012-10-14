@@ -256,6 +256,10 @@
     <Content Include="Assets\js\DocumentManager.js">
       <DependentUpon>DocumentManager.ts</DependentUpon>
     </Content>
+    <TypeScriptCompile Include="Assets\js\DocumentTabsView.ts" />
+    <Content Include="Assets\js\DocumentTabsView.js">
+      <DependentUpon>DocumentTabsView.ts</DependentUpon>
+    </Content>
     <Content Include="Assets\js\Editor.js">
       <DependentUpon>Editor.ts</DependentUpon>
     </Content>

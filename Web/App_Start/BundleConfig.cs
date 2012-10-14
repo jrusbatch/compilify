@@ -75,6 +75,7 @@ namespace Compilify.Web
             js.Include("~/assets/js/ProjectManager.js");
             js.Include("~/assets/js/DocumentManager.js");
             js.Include("~/assets/js/ReferenceManager.js");
+            js.Include("~/assets/js/DocumentTabsView.js");
             js.Include("~/assets/js/Sidebar.js");
             bundles.Add(js);
         }

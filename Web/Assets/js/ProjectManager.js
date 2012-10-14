@@ -2,6 +2,10 @@ var Compilify;
 (function (Compilify) {
     (function (ProjectManager) {
         var _currentProject = null;
+        function getCurrentProject() {
+            return _currentProject;
+        }
+        ProjectManager.getCurrentProject = getCurrentProject;
         function openProject(project) {
             if(_currentProject) {
                 $(ProjectManager).triggerHandler('beforeProjectClose');

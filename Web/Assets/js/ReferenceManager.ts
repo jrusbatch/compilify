@@ -46,7 +46,7 @@ module Compilify.ReferenceManager {
         }
     }
 
-    $(ProjectManager).on('projectOpen', function (event: JQueryEventObject, project: IProjectState) {
+    $(ProjectManager).on('projectOpen', function(event: JQueryEventObject, project: IProjectState) {
         addReferenceList(project.References);
     });
 }

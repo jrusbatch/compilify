@@ -4,6 +4,10 @@
 module Compilify.ProjectManager {
     var _currentProject: IProjectState = null;
 
+    export function getCurrentProject() {
+        return _currentProject;
+    }
+
     export function openProject(project: IProjectState) {
         if (_currentProject) {
             $(ProjectManager).triggerHandler('beforeProjectClose');
