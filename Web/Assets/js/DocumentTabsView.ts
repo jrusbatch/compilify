@@ -30,13 +30,13 @@ module Compilify.DocumentTabsView {
         _findTabByDocument(currentDocument).addClass('active');
     }
 
-    $(DocumentManager).on('documentAdded', function(event: JQueryEventObject, document: IDocument) {
+    Events.on('documentAdded', function(document: IDocument) {
         _onDocumentAdded(document);
     });
 
-    $(DocumentManager).on('documentAddedList', function(event: JQueryEventObject, documents: IDocument[] = []) {
+    Events.on('documentAddedList', function(documents: IDocument[] = []) {
         _onDocumentListAdded(documents);
     });
 
-    $(DocumentManager).on('currentDocumentChange', _onCurrentDocumentChange);
+    Events.on('currentDocumentChange', _onCurrentDocumentChange);
 }

@@ -1,3 +1,6 @@
+/// <reference path="app.ts" />
+/// <reference path="Document.ts" />
+/// <reference path="vendor/codemirror.d.ts" />
 var Compilify;
 (function (Compilify) {
     'use strict';
@@ -21,7 +24,7 @@ var Compilify;
             _instances.push(this);
             var codeMirror = new CodeMirror(container, editorDefaults);
             codeMirror.setOption('onChange', function (instance, changeList) {
-                $(self).triggerHandler('change', [
+                Compilify.Events.trigger('change', [
                     self, 
                     changeList
                 ]);

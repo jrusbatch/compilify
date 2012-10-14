@@ -1,3 +1,7 @@
+/// <reference path="vendor/jquery.d.ts" />
+/// <reference path="app.ts" />
+/// <reference path="DocumentManager.ts" />
+/// <reference path="TemplateManager.ts" />
 var Compilify;
 (function (Compilify) {
     (function (Sidebar) {
@@ -33,10 +37,10 @@ var Compilify;
             _container = element;
             _list = element.find('ul');
             _template = TemplateManager.getTemplateById('#reference-template');
-            $(Compilify.ReferenceManager).on('referencesAdded', function (event) {
+            Compilify.Events.on('referencesAdded', function () {
                 var references = [];
-                for (var _i = 0; _i < (arguments.length - 1); _i++) {
-                    references[_i] = arguments[_i + 1];
+                for (var _i = 0; _i < (arguments.length - 0); _i++) {
+                    references[_i] = arguments[_i + 0];
                 }
                 console.log(event, references);
                 _handleReferencesAdded(references);

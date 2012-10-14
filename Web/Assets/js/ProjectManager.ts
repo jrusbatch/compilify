@@ -10,12 +10,12 @@ module Compilify.ProjectManager {
 
     export function openProject(project: IProjectState) {
         if (_currentProject) {
-            $(ProjectManager).triggerHandler('beforeProjectClose');
+            Events.trigger('beforeProjectClose');
         }
 
         _currentProject = project;
 
-        $(ProjectManager).triggerHandler('projectOpen', project);
+        Events.trigger('projectOpen', project);
     }
 
     export function renameDocument() {

@@ -10,10 +10,10 @@ var Compilify;
         ProjectManager.getCurrentProject = getCurrentProject;
         function openProject(project) {
             if(_currentProject) {
-                $(ProjectManager).triggerHandler('beforeProjectClose');
+                Compilify.Events.trigger('beforeProjectClose');
             }
             _currentProject = project;
-            $(ProjectManager).triggerHandler('projectOpen', project);
+            Compilify.Events.trigger('projectOpen', project);
         }
         ProjectManager.openProject = openProject;
         function renameDocument() {

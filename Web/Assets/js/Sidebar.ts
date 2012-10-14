@@ -34,7 +34,7 @@ module Compilify.ReferenceListView {
         _list = element.find('ul');
         _template = TemplateManager.getTemplateById('#reference-template');
 
-        $(ReferenceManager).on('referencesAdded', function(event: string, ...references: IReferenceState[]) {
+        Events.on('referencesAdded', function(...references: IReferenceState[]) {
             console.log(event, references);
             _handleReferencesAdded(references);
         });

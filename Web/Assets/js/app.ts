@@ -1,12 +1,17 @@
 /// <reference path="vendor/jquery.d.ts" />
 /// <reference path="Editor.ts" />
 /// <reference path="ProjectManager.ts" />
+/// <reference path="Events.ts" />
 
 module Compilify {
-    var global = (new Function('return this'))(),
+    var global = (new Function('return this')()),
         $ = <JQueryStatic>global.jQuery,
         
         _isInitialized = false;
+
+    export interface IDisposable {
+        dispose(): void;
+    }
 
     export interface IProjectState {
         Id: string;
@@ -30,7 +35,7 @@ module Compilify {
         Project: IProjectState;
     }
 
-    export function initializeWorkspace(state: IWorkspaceState) {
+    export function init(state: IWorkspaceState) {
         if (_isInitialized) {
             throw new Error('Workspace has already been initialized.');
         }

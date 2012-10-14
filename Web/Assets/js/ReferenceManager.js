@@ -1,5 +1,6 @@
 /// <reference path="vendor/jquery.d.ts" />
 /// <reference path="app.ts" />
+/// <reference path="TemplateManager.ts" />
 var Compilify;
 (function (Compilify) {
     (function (ReferenceManager) {
@@ -23,7 +24,7 @@ var Compilify;
         function addReference(reference) {
             if(!_containsReference(reference)) {
                 _addReference(reference);
-                $(ReferenceManager).triggerHandler('referenceAdded', [
+                Compilify.Events.trigger('referenceAdded', [
                     reference
                 ]);
             }
@@ -40,11 +41,11 @@ var Compilify;
                 }
             }
             if(added.length > 0) {
-                $(ReferenceManager).triggerHandler('referencesAdded', added);
+                Compilify.Events.trigger('referencesAdded', added);
             }
         }
         ReferenceManager.addReferenceList = addReferenceList;
-        $(Compilify.ProjectManager).on('projectOpen', function (event, project) {
+        Compilify.Events.on('projectOpen', function (project) {
             addReferenceList(project.References);
         });
     })(Compilify.ReferenceManager || (Compilify.ReferenceManager = {}));

@@ -2,10 +2,6 @@
 /// <reference path="Document.ts" />
 /// <reference path="vendor/codemirror.d.ts" />
 
-interface IDisposable {
-    dispose(): void;
-}
-
 module Compilify {
     'use strict';
 
@@ -35,7 +31,7 @@ module Compilify {
             var codeMirror = new CodeMirror(container, editorDefaults);
 
             codeMirror.setOption('onChange', function(instance, changeList) {
-                $(self).triggerHandler('change', [self, changeList]);
+                Events.trigger('change', [self, changeList]);
             });
 
             this._codeMirror = codeMirror;

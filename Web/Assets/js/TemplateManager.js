@@ -2,7 +2,7 @@
 /// <reference path="vendor/doT.d.ts" />
 var TemplateManager;
 (function (TemplateManager) {
-    var global = (new Function('return this'))();
+    var global = (new Function('return this')());
     var doT = global.doT;
     var _templates = {
     };

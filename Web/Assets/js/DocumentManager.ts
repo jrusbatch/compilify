@@ -11,7 +11,7 @@ module Compilify.DocumentManager {
         _openDocuments.push(document);
         
         if (!suppressTrigger) {
-            $(DocumentManager).triggerHandler('documentAdded', document);
+            Events.trigger('documentAdded', document);
             setCurrentDocument(document);
         }
     }
@@ -26,7 +26,7 @@ module Compilify.DocumentManager {
             documents.push(document);
         }
 
-        $(DocumentManager).triggerHandler('documentAddedList', [documents]);
+        Events.trigger('documentAddedList', [documents]);
         setCurrentDocument(documents[0]);
 
         console.log('Done loading documents!', documents);
@@ -45,10 +45,10 @@ module Compilify.DocumentManager {
 
         _currentDocument = document;
 
-        $(DocumentManager).triggerHandler('currentDocumentChange', document, previousDocument);
+        Events.trigger('currentDocumentChange', document, previousDocument);
     }
 
-    $(ProjectManager).on('projectOpen', function(event: JQueryEventObject, project: IProjectState) {
+    Events.on('projectOpen', function(project: IProjectState) {
         _addDocumentList(project.Documents);
     });
 }

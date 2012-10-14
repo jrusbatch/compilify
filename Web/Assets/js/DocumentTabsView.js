@@ -25,14 +25,14 @@ var Compilify;
             $('#document-tabs').find('li').removeClass('active');
             _findTabByDocument(currentDocument).addClass('active');
         }
-        $(Compilify.DocumentManager).on('documentAdded', function (event, document) {
+        Compilify.Events.on('documentAdded', function (document) {
             _onDocumentAdded(document);
         });
-        $(Compilify.DocumentManager).on('documentAddedList', function (event, documents) {
+        Compilify.Events.on('documentAddedList', function (documents) {
             if (typeof documents === "undefined") { documents = []; }
             _onDocumentListAdded(documents);
         });
-        $(Compilify.DocumentManager).on('currentDocumentChange', _onCurrentDocumentChange);
+        Compilify.Events.on('currentDocumentChange', _onCurrentDocumentChange);
     })(Compilify.DocumentTabsView || (Compilify.DocumentTabsView = {}));
     var DocumentTabsView = Compilify.DocumentTabsView;
 

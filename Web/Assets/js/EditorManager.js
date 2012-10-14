@@ -26,7 +26,7 @@ var Compilify;
                 _currentEditor.setVisible(true);
                 resizeEditor();
             }
-            $(EditorManager).triggerHandler('focusedEditorChange', [
+            Compilify.Events.trigger('focusedEditorChange', [
                 current, 
                 previous
             ]);
@@ -66,13 +66,13 @@ var Compilify;
 
             _showEditor(document);
         }
-        function _onDocumentAdded(event, document) {
+        function _onDocumentAdded(document) {
             _createFullEditorForDocument(document);
         }
-        function _onDocumentAddedList(event) {
+        function _onDocumentAddedList() {
             var documents = [];
-            for (var _i = 0; _i < (arguments.length - 1); _i++) {
-                documents[_i] = arguments[_i + 1];
+            for (var _i = 0; _i < (arguments.length - 0); _i++) {
+                documents[_i] = arguments[_i + 0];
             }
             console.log('_onDocumentAddedList');
             for(var i = 0, len = documents.length; i < len; i++) {
@@ -91,13 +91,11 @@ var Compilify;
                 _currentEditor.refresh();
             }
         }
-        $(Compilify.DocumentManager).on({
-            'documentAdded': _onDocumentAdded,
-            'documentAddedList': _onDocumentAddedList,
-            'currentDocumentChange': _onCurrentDocumentChange,
-            'documentRemove': _onDocumentRemove,
-            'documentRemoveList': _onDocumentRemoveList
-        });
+        Compilify.Events.on('documentAdded', _onDocumentAdded);
+        Compilify.Events.on('documentAddedList', _onDocumentAddedList);
+        Compilify.Events.on('currentDocumentChange', _onCurrentDocumentChange);
+        Compilify.Events.on('documentRemove', _onDocumentRemove);
+        Compilify.Events.on('documentRemoveList', _onDocumentRemoveList);
     })(Compilify.EditorManager || (Compilify.EditorManager = {}));
     var EditorManager = Compilify.EditorManager;
 

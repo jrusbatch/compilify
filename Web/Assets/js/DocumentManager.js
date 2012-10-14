@@ -9,7 +9,7 @@ var Compilify;
         function _addDocument(document, suppressTrigger) {
             _openDocuments.push(document);
             if(!suppressTrigger) {
-                $(DocumentManager).triggerHandler('documentAdded', document);
+                Compilify.Events.trigger('documentAdded', document);
                 setCurrentDocument(document);
             }
         }
@@ -21,7 +21,7 @@ var Compilify;
                 _addDocument(document, true);
                 documents.push(document);
             }
-            $(DocumentManager).triggerHandler('documentAddedList', [
+            Compilify.Events.trigger('documentAddedList', [
                 documents
             ]);
             setCurrentDocument(documents[0]);
@@ -37,10 +37,10 @@ var Compilify;
             }
             var previousDocument = _currentDocument;
             _currentDocument = document;
-            $(DocumentManager).triggerHandler('currentDocumentChange', document, previousDocument);
+            Compilify.Events.trigger('currentDocumentChange', document, previousDocument);
         }
         DocumentManager.setCurrentDocument = setCurrentDocument;
-        $(Compilify.ProjectManager).on('projectOpen', function (event, project) {
+        Compilify.Events.on('projectOpen', function (project) {
             _addDocumentList(project.Documents);
         });
     })(Compilify.DocumentManager || (Compilify.DocumentManager = {}));

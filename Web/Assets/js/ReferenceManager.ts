@@ -1,5 +1,6 @@
 /// <reference path="vendor/jquery.d.ts" />
 /// <reference path="app.ts" />
+/// <reference path="TemplateManager.ts" />
 
 module Compilify.ReferenceManager {
     var _references: IReferenceState[] = [];
@@ -26,7 +27,7 @@ module Compilify.ReferenceManager {
     export function addReference(reference: IReferenceState) {
         if (!_containsReference(reference)) {
             _addReference(reference);
-            $(ReferenceManager).triggerHandler('referenceAdded', [ reference ]);
+            Events.trigger('referenceAdded', [ reference ]);
         }
     }
 
@@ -42,11 +43,11 @@ module Compilify.ReferenceManager {
         }
 
         if (added.length > 0) {
-            $(ReferenceManager).triggerHandler('referencesAdded', added);
+            Events.trigger('referencesAdded', added);
         }
     }
 
-    $(ProjectManager).on('projectOpen', function(event: JQueryEventObject, project: IProjectState) {
+    Events.on('projectOpen', function(project: IProjectState) {
         addReferenceList(project.References);
     });
 }

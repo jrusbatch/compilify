@@ -31,7 +31,7 @@ module Compilify.EditorManager {
             resizeEditor();
         }
 
-        $(EditorManager).triggerHandler('focusedEditorChange', [current, previous]);
+        Events.trigger('focusedEditorChange', [current, previous]);
     }
 
     function _doShow(document) {
@@ -77,11 +77,11 @@ module Compilify.EditorManager {
         _showEditor(document);
     }
 
-    function _onDocumentAdded(event: JQueryEventObject, document: IDocument): void {
+    function _onDocumentAdded(document: IDocument): void {
         _createFullEditorForDocument(document);
     }
 
-    function _onDocumentAddedList(event: JQueryEventObject, ...documents: IDocument[]): void { 
+    function _onDocumentAddedList(...documents: IDocument[]): void { 
         console.log('_onDocumentAddedList');
         for (var i = 0, len = documents.length; i < len; i++) {
             _createFullEditorForDocument(documents[i]);
@@ -103,11 +103,9 @@ module Compilify.EditorManager {
         }
     }
 
-    $(DocumentManager).on({
-        'documentAdded': _onDocumentAdded,
-        'documentAddedList': _onDocumentAddedList,
-        'currentDocumentChange': _onCurrentDocumentChange,
-        'documentRemove': _onDocumentRemove,
-        'documentRemoveList': _onDocumentRemoveList,
-    });
+    Events.on('documentAdded', _onDocumentAdded);
+    Events.on('documentAddedList', _onDocumentAddedList);
+    Events.on('currentDocumentChange', _onCurrentDocumentChange);
+    Events.on('documentRemove', _onDocumentRemove);
+    Events.on('documentRemoveList', _onDocumentRemoveList);
 }
