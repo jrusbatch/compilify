@@ -1,5 +1,6 @@
-/// <reference path="jquery.d.ts" />
+/// <reference path="vendor/jquery.d.ts" />
 /// <reference path="Editor.ts" />
+/// <reference path="ProjectManager.ts" />
 
 declare var CodeMirror: any;
 
@@ -28,16 +29,8 @@ interface IWorkspaceState {
 module Compilify {
     var global = (new Function('return this'))(),
         $ = <JQueryStatic>global.jQuery,
-        _ = global._,
         
         _isInitialized = false;
-
-    function _openProject(project: IProjectState) {
-        // setup sidebar
-
-        // setup tabs/editors
-        
-    }
 
     export function initializeWorkspace(state: IWorkspaceState) {
         if (_isInitialized) {
@@ -47,7 +40,7 @@ module Compilify {
         _isInitialized = true;
 
         $(function() {
-            _openProject(state.Project);
+            ProjectManager.openProject(state.Project);
         });
     }
 }

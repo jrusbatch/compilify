@@ -11,11 +11,14 @@ namespace Compilify.Models
         {
             Id = Guid.NewGuid().ToString("N");
             Documents = new List<Document>();
+            References = new List<Reference>();
             Created = DateTime.UtcNow;
         }
 
         public string Id { get; set; }
         public IList<Document> Documents { get; set; }
+
+        public IList<Reference> References { get; set; }
 
         IEnumerable<Document> ICodeProgram.Documents
         {
@@ -88,5 +91,12 @@ namespace Compilify.Models
         {
             get { return TimeSpan.FromSeconds(5D); }
         }
+    }
+
+    public class Reference
+    {
+        public string Name { get; set; }
+
+        public string Version { get; set; }
     }
 }

@@ -253,16 +253,41 @@
     </Content>
     <Content Include="Assets\js\compilify.old.js" />
     <TypeScriptCompile Include="Assets\js\Editor.ts" />
+    <TypeScriptCompile Include="Assets\js\DocumentManager.ts" />
+    <Content Include="Assets\js\DocumentManager.js">
+      <DependentUpon>DocumentManager.ts</DependentUpon>
+    </Content>
     <Content Include="Assets\js\Editor.js">
       <DependentUpon>Editor.ts</DependentUpon>
     </Content>
+    <TypeScriptCompile Include="Assets\js\ProjectManager.ts" />
+    <Content Include="Assets\js\ProjectManager.js">
+      <DependentUpon>ProjectManager.ts</DependentUpon>
+    </Content>
+    <TypeScriptCompile Include="Assets\js\ReferenceManager.ts" />
+    <Content Include="Assets\js\ReferenceManager.js">
+      <DependentUpon>ReferenceManager.ts</DependentUpon>
+    </Content>
     <Content Include="Assets\js\resizer.old.js" />
+    <TypeScriptCompile Include="Assets\js\Sidebar.ts" />
+    <Content Include="Assets\js\Sidebar.js">
+      <DependentUpon>Sidebar.ts</DependentUpon>
+    </Content>
     <Content Include="Assets\js\tabs.old.js" />
+    <TypeScriptCompile Include="Assets\js\TemplateManager.ts" />
+    <Content Include="Assets\js\TemplateManager.js">
+      <DependentUpon>TemplateManager.ts</DependentUpon>
+    </Content>
     <Content Include="Assets\js\vendor\bootstrap.js" />
     <Content Include="Assets\js\vendor\codemirror.js" />
     <Content Include="Assets\js\vendor\codemirror.clike.js" />
-    <TypeScriptCompile Include="Assets\js\jquery.d.ts" />
-    <Content Include="Assets\js\jquery.d.js">
+    <TypeScriptCompile Include="Assets\js\vendor\jquery.d.ts" />
+    <TypeScriptCompile Include="Assets\js\vendor\doT.d.ts" />
+    <Content Include="Assets\js\vendor\doT.d.js">
+      <DependentUpon>doT.d.ts</DependentUpon>
+    </Content>
+    <Content Include="Assets\js\vendor\doT.js" />
+    <Content Include="Assets\js\vendor\jquery.d.js">
       <DependentUpon>jquery.d.ts</DependentUpon>
     </Content>
     <Content Include="Assets\js\vendor\jquery.ui.resizable.js" />
@@ -271,7 +296,6 @@
     <Content Include="Assets\js\vendor\jquery.js" />
     <Content Include="Assets\js\vendor\jquery.ui.core.js" />
     <Content Include="Assets\js\vendor\json2.js" />
-    <Content Include="Assets\js\vendor\mustache.js" />
     <Content Include="Assets\js\vendor\shortcut.js" />
     <Content Include="Assets\js\vendor\underscore.js" />
     <Content Include="Assets\less\compilify.css">

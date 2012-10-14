@@ -54,7 +54,7 @@ namespace Compilify.Web
                 "~/assets/js/vendor/underscore.js");
 
             vendorjs.Include(
-                "~/assets/js/vendor/mustache.js");
+                "~/assets/js/vendor/doT.js");
 
             vendorjs.Include(
                 "~/assets/js/vendor/bootstrap.js",
@@ -71,6 +71,11 @@ namespace Compilify.Web
             js.Include("~/assets/js/app.js");
             js.Include("~/assets/js/Editor.js");
             js.Include("~/assets/js/Document.js");
+            js.Include("~/assets/js/TemplateManager.js");
+            js.Include("~/assets/js/ProjectManager.js");
+            js.Include("~/assets/js/DocumentManager.js");
+            js.Include("~/assets/js/ReferenceManager.js");
+            js.Include("~/assets/js/Sidebar.js");
             bundles.Add(js);
         }
     }

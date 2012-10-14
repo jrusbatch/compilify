@@ -1,41 +1,30 @@
 @model Compilify.Web.Models.PostViewModel
 
-<script id="sidebar-template" type="text/html">
-    <div class="inner">
-        <div class="sidebar-form">
-            <h4>References</h4>
-            <ul class="references">
-                {{ #References }}
-                
-                {{> reference-template }}
-
-                {{ /References }}
-            </ul>
-        </div>
-
-        <div class="sidebar-bottom">
-            <a href="https://appharbor.com">
-                <img src="~/assets/img/appharbor.png" alt="Hosted by AppHarbor" />
-            </a>
-        </div>
-    </div>
-</script>
+@*
+{{ }}	for evaluation
+{{= }}	for interpolation
+{{! }}	for interpolation with encoding
+{{# }}	for compile-time evaluation/includes and partials
+{{## #}}	for compile-time defines
+{{? }}	for conditionals
+{{~ }}	for array iteration
+*@
 
 <script id="reference-template" type="text/html">
     <li class="reference">
         <span class="reference-name">
-            {{ Name }}
-            <span class="reference-version secondary">{{ Version }}</span>
+            {{= it.Name }}
+            <span class="reference-version secondary">{{= it.Version }}</span>
         </span>
-                    
+
         <a class="reference-delete" href="#">&times;</a>
     </li>
 </script>
 
 <script id="tab-template" type="text/html">
     <li>
-        <span class="tab" data-toggle="tab" data-target="{{ Id }}">
-            <span class="tab-name">{{ Name }}</span>
+        <span class="tab" data-toggle="tab" data-target="{{= it.Id }}">
+            <span class="tab-name">{{= it.Name }}</span>
             <span class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown">
                     <i class="icon-chevron-down"></i>
@@ -61,16 +50,18 @@
 </script>
 
 <script id="document-template" type="text/html">
-    <div id="{{ Name }}" class="tab-pane">
-        <textarea>{{ Content }}</textarea>
+    <div id="{{= it.Name }}" class="tab-pane">
+        <textarea>{{= it.Content }}</textarea>
     </div>
 </script>
 
 <div id="sidebar">
     <div class="inner">
-        <div class="sidebar-form">
+        <div id="references">
             <h4>References</h4>
-            <ul class="references"></ul>
+            <ul>
+                @* ------ References go here! ------- *@
+            </ul>
         </div>
 
         <div class="sidebar-bottom">
@@ -89,23 +80,11 @@
             </a>
         </li>
     </ul>
+
     <div class="workspace">
-        <div class="editor tab-content">@* ------ Editors go here! ------- *@</div>
-        @*
-        <div class="columns clearfix">
-            <div class="column left">
-                
-            </div>
-            <div class="column right">
-                <div class="execute">
-                    <textarea></textarea>
-                </div>
-                <div class="results">
-                    <pre></pre>
-                </div>
-            </div>
+        <div class="editor tab-content">
+            @* ------ Editors go here! ------- *@
         </div>
-        *@
     </div>
 
     <div class="status-bar">
