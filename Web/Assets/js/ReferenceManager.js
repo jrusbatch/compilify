@@ -41,6 +41,9 @@ var Compilify;
             }
         }
         ReferenceManager.addReferenceList = addReferenceList;
+        $(Compilify.ProjectManager).on('projectOpen', function (event, project) {
+            addReferenceList(project.References);
+        });
     })(Compilify.ReferenceManager || (Compilify.ReferenceManager = {}));
     var ReferenceManager = Compilify.ReferenceManager;
 

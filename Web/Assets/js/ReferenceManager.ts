@@ -45,4 +45,8 @@ module Compilify.ReferenceManager {
             $(ReferenceManager).triggerHandler('referencesAdded', added);
         }
     }
+
+    $(ProjectManager).on('projectOpen', function (event: JQueryEventObject, project: IProjectState) {
+        addReferenceList(project.References);
+    });
 }

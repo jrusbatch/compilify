@@ -6,16 +6,16 @@ var Compilify;
             if(_currentProject) {
                 $(ProjectManager).triggerHandler('beforeProjectClose');
             }
-            console.log(project);
-            Compilify.ReferenceManager.addReferenceList(project.References);
             _currentProject = project;
+            $(ProjectManager).triggerHandler('projectOpen', project);
         }
         ProjectManager.openProject = openProject;
         function renameDocument() {
-            return null;
+            throw new Error('Not implemented');
         }
         ProjectManager.renameDocument = renameDocument;
         function createDocument() {
+            throw new Error('Not implemented');
         }
         ProjectManager.createDocument = createDocument;
     })(Compilify.ProjectManager || (Compilify.ProjectManager = {}));

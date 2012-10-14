@@ -8,16 +8,17 @@ module Compilify.ProjectManager {
         if (_currentProject) {
             $(ProjectManager).triggerHandler('beforeProjectClose');
         }
-        console.log(project);
-        ReferenceManager.addReferenceList(project.References);
 
         _currentProject = project;
 
-
+        $(ProjectManager).triggerHandler('projectOpen', project);
     }
 
-    export function renameDocument() { return null; }
+    export function renameDocument() {
+        throw new Error('Not implemented');
+    }
 
-    export function createDocument() { }
+    export function createDocument() {
+        throw new Error('Not implemented');
+    }
 }
-
