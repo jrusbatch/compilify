@@ -251,7 +251,6 @@
     <Content Include="Assets\js\app.js">
       <DependentUpon>app.ts</DependentUpon>
     </Content>
-    <Content Include="Assets\js\compilify.old.js" />
     <TypeScriptCompile Include="Assets\js\Editor.ts" />
     <TypeScriptCompile Include="Assets\js\DocumentManager.ts" />
     <Content Include="Assets\js\DocumentManager.js">
@@ -268,12 +267,10 @@
     <Content Include="Assets\js\ReferenceManager.js">
       <DependentUpon>ReferenceManager.ts</DependentUpon>
     </Content>
-    <Content Include="Assets\js\resizer.old.js" />
     <TypeScriptCompile Include="Assets\js\Sidebar.ts" />
     <Content Include="Assets\js\Sidebar.js">
       <DependentUpon>Sidebar.ts</DependentUpon>
     </Content>
-    <Content Include="Assets\js\tabs.old.js" />
     <TypeScriptCompile Include="Assets\js\TemplateManager.ts" />
     <Content Include="Assets\js\TemplateManager.js">
       <DependentUpon>TemplateManager.ts</DependentUpon>
