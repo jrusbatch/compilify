@@ -25,7 +25,6 @@ var Compilify;
                 documents
             ]);
             setCurrentDocument(documents[0]);
-            console.log('Done loading documents!', documents);
         }
         function getCurrentDocument() {
             return _currentDocument;

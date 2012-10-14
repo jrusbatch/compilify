@@ -27,9 +27,8 @@ module Compilify.DocumentManager {
         }
 
         Events.trigger('documentAddedList', [documents]);
-        setCurrentDocument(documents[0]);
 
-        console.log('Done loading documents!', documents);
+        setCurrentDocument(documents[0]);
     }
 
     export function getCurrentDocument(): IDocument {

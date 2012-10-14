@@ -37,14 +37,7 @@ var Compilify;
             _container = element;
             _list = element.find('ul');
             _template = TemplateManager.getTemplateById('#reference-template');
-            Compilify.Events.on('referencesAdded', function () {
-                var references = [];
-                for (var _i = 0; _i < (arguments.length - 0); _i++) {
-                    references[_i] = arguments[_i + 0];
-                }
-                console.log(event, references);
-                _handleReferencesAdded(references);
-            });
+            Compilify.Events.on('referencesAdded', _handleReferencesAdded);
         }
         ReferenceListView.create = create;
     })(Compilify.ReferenceListView || (Compilify.ReferenceListView = {}));

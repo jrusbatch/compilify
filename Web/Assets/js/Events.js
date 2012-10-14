@@ -111,7 +111,7 @@ var Compilify;
             args[_i] = arguments[_i + 1];
         }
         // For debugging event messages, etc...
-        console.log('Event "' + eventKey + '" was received.', args);
+        console.log('Event: "' + eventKey + '"\t\t', args);
     });
 })(Compilify || (Compilify = {}));
 

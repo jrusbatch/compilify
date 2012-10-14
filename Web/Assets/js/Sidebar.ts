@@ -7,7 +7,7 @@ module Compilify.Sidebar {
     var $sidebar: JQuery = null,
         $referencesContainer: JQuery = null;
 
-    $(function () {
+    $(function() {
         $sidebar = $('#sidebar');
         $referencesContainer = $('#references');
         ReferenceListView.create($referencesContainer);
@@ -34,9 +34,6 @@ module Compilify.ReferenceListView {
         _list = element.find('ul');
         _template = TemplateManager.getTemplateById('#reference-template');
 
-        Events.on('referencesAdded', function(...references: IReferenceState[]) {
-            console.log(event, references);
-            _handleReferencesAdded(references);
-        });
+        Events.on('referencesAdded', _handleReferencesAdded);
     }
 }

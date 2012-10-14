@@ -8,6 +8,8 @@ module Compilify.EditorManager {
     var _container: JQuery = null;
     
     function _init() {
+        _container = $('.editor.tab-content');
+
         // TODO: Initialize the status bar here?
     }
 
@@ -45,8 +47,6 @@ module Compilify.EditorManager {
     }
 
     function _createFullEditorForDocument(document: IDocument) {
-        console.log('creating editor for', document);
-
         // Create editor; make it initially invisible
         var container = _container.get(0);
         var editor = _createEditorForDocument(document, true, container);
@@ -82,7 +82,6 @@ module Compilify.EditorManager {
     }
 
     function _onDocumentAddedList(...documents: IDocument[]): void { 
-        console.log('_onDocumentAddedList');
         for (var i = 0, len = documents.length; i < len; i++) {
             _createFullEditorForDocument(documents[i]);
         }
@@ -102,6 +101,8 @@ module Compilify.EditorManager {
             _currentEditor.refresh();
         }
     }
+
+    $(_init);
 
     Events.on('documentAdded', _onDocumentAdded);
     Events.on('documentAddedList', _onDocumentAddedList);

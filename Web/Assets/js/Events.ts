@@ -101,9 +101,9 @@ module Compilify {
     }
 
     export var Events = new EventBus();
-
+    
     Events.on('all', function(eventKey: string, ...args: any[]) {
         // For debugging event messages, etc...
-        console.log('Event "' + eventKey + '" was received.', args);
+        console.log('Event: "' + eventKey + '"\t\t', args);
     });
 }

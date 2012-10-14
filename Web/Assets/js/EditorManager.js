@@ -8,6 +8,7 @@ var Compilify;
         var _currentEditorsDocument = null;
         var _container = null;
         function _init() {
+            _container = $('.editor.tab-content');
             // TODO: Initialize the status bar here?
                     }
         function _doFocusedEditorChanged(current, previous) {
@@ -40,7 +41,6 @@ var Compilify;
             return new Compilify.Editor(document, makeMasterEditor, container);
         }
         function _createFullEditorForDocument(document) {
-            console.log('creating editor for', document);
             // Create editor; make it initially invisible
             var container = _container.get(0);
             var editor = _createEditorForDocument(document, true, container);
@@ -74,7 +74,6 @@ var Compilify;
             for (var _i = 0; _i < (arguments.length - 0); _i++) {
                 documents[_i] = arguments[_i + 0];
             }
-            console.log('_onDocumentAddedList');
             for(var i = 0, len = documents.length; i < len; i++) {
                 _createFullEditorForDocument(documents[i]);
             }
@@ -91,6 +90,7 @@ var Compilify;
                 _currentEditor.refresh();
             }
         }
+        $(_init);
         Compilify.Events.on('documentAdded', _onDocumentAdded);
         Compilify.Events.on('documentAddedList', _onDocumentAddedList);
         Compilify.Events.on('currentDocumentChange', _onCurrentDocumentChange);
