@@ -57,7 +57,7 @@ namespace Compilify.Web
                 "~/assets/js/vendor/doT.js");
 
             vendorjs.Include(
-                "~/assets/js/vendor/bootstrap.js",
+                // "~/assets/js/vendor/bootstrap.js",
                 "~/assets/js/vendor/codemirror.js",
                 "~/assets/js/vendor/codemirror.clike.js",
                 "~/assets/js/vendor/shortcut.js");

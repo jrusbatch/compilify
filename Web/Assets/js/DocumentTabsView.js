@@ -1,9 +1,15 @@
 var Compilify;
 (function (Compilify) {
     (function (DocumentTabsView) {
+        function _findTabByDocument(document) {
+            return $('#document-tabs').find('[data-target="' + document.Name + '"]').parent('li');
+        }
         function _onDocumentAdded(document) {
             var template = TemplateManager.getTemplateById('#tab-template');
             var $newTab = $(template(document));
+            $newTab.on('click', function () {
+                Compilify.DocumentManager.setCurrentDocument(document);
+            });
             $('#document-tabs').append($newTab);
         }
         function _onDocumentListAdded(documents) {
@@ -11,13 +17,19 @@ var Compilify;
                 _onDocumentAdded(documents[i]);
             }
         }
+        function _onCurrentDocumentChange() {
+            var currentDocument = Compilify.DocumentManager.getCurrentDocument();
+            $('#document-tabs').find('li').removeClass('active');
+            _findTabByDocument(currentDocument).addClass('active');
+        }
         $(Compilify.DocumentManager).on('documentAdded', function (event, document) {
             _onDocumentAdded(document);
         });
         $(Compilify.DocumentManager).on('documentListAdded', function (event, documents) {
-            console.log('documentListAdded!', documents);
+            if (typeof documents === "undefined") { documents = []; }
             _onDocumentListAdded(documents);
         });
+        $(Compilify.DocumentManager).on('currentDocumentChange', _onCurrentDocumentChange);
     })(Compilify.DocumentTabsView || (Compilify.DocumentTabsView = {}));
     var DocumentTabsView = Compilify.DocumentTabsView;
 

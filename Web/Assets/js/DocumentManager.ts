@@ -2,6 +2,7 @@
 /// <reference path="ProjectManager.ts" />
 
 module Compilify.DocumentManager {
+    var _currentDocument: IDocumentState;
 
     function _addDocument(document: IDocumentState, suppressTrigger?: bool = false) {
         // Do some spectacular here
@@ -12,8 +13,6 @@ module Compilify.DocumentManager {
     }
 
     function _addDocumentList(documents: IDocumentState[]): void {
-        console.log('Adding documents', documents);
-
         for (var i = 0, len = documents.length; i < len; i++) {
             _addDocument(documents[i], true);
         }
@@ -22,11 +21,21 @@ module Compilify.DocumentManager {
     }
 
     export function getCurrentDocument(): IDocumentState {
-        return null;
+        return _currentDocument;
+    }
+
+    export function setCurrentDocument(document: IDocumentState): void {
+        if (_currentDocument === document) {
+            return;
+        }
+        var previousDocument = _currentDocument;
+
+        _currentDocument = document;
+
+        $(DocumentManager).triggerHandler('currentDocumentChange', document, previousDocument);
     }
 
     $(ProjectManager).on('projectOpen', function(event: JQueryEventObject, project: IProjectState) {
-        console.log('projectOpen event received', project);
         _addDocumentList(project.Documents);
     });
 }
