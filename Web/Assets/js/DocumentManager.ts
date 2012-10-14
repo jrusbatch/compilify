@@ -6,9 +6,10 @@ module Compilify.DocumentManager {
 
     function _addDocument(document: IDocumentState, suppressTrigger?: bool = false) {
         // Do some spectacular here
-
+        
         if (!suppressTrigger) {
             $(DocumentManager).triggerHandler('documentAdded', document);
+            setCurrentDocument(document);
         }
     }
 
@@ -18,6 +19,7 @@ module Compilify.DocumentManager {
         }
 
         $(DocumentManager).triggerHandler('documentListAdded', [documents]);
+        setCurrentDocument(documents[0]);
     }
 
     export function getCurrentDocument(): IDocumentState {

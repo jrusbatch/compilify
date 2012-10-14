@@ -6,6 +6,7 @@ var Compilify;
             if (typeof suppressTrigger === "undefined") { suppressTrigger = false; }
             if(!suppressTrigger) {
                 $(DocumentManager).triggerHandler('documentAdded', document);
+                setCurrentDocument(document);
             }
         }
         function _addDocumentList(documents) {
@@ -15,6 +16,7 @@ var Compilify;
             $(DocumentManager).triggerHandler('documentListAdded', [
                 documents
             ]);
+            setCurrentDocument(documents[0]);
         }
         function getCurrentDocument() {
             return _currentDocument;
