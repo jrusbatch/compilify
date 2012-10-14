@@ -220,13 +220,6 @@ a.hover {
   padding: 0;
   margin: 0;
 }
-#sidebar #references input,
-#sidebar #references textarea,
-#sidebar #references select {
-  line-height: 18px;
-  width: 190px;
-  max-width: 190px;
-}
 #sidebar .sidebar-bottom {
   position: absolute;
   width: 200px;
@@ -237,28 +230,28 @@ a.hover {
   width: 125px;
   height: 50px;
 }
-#sidebar #references {
+#sidebar #references ul {
   list-style: none;
   margin: 0;
 }
-#sidebar #references .reference {
+#sidebar #references ul .reference {
   font-family: 'Segoe UI';
   font-size: 9pt;
 }
-#sidebar #references .reference .reference-name {
+#sidebar #references ul .reference .reference-name {
   cursor: default;
   color: #555;
 }
-#sidebar #references .reference a.reference-name {
+#sidebar #references ul .reference a.reference-name {
   cursor: pointer;
 }
-#sidebar #references .reference a.reference-name:hover {
+#sidebar #references ul .reference a.reference-name:hover {
   text-decoration: none;
 }
-#sidebar #references .reference .reference-version {
+#sidebar #references ul .reference .reference-version {
   color: rgba(136, 136, 136, 0.6);
 }
-#sidebar #references .reference .reference-delete {
+#sidebar #references ul .reference .reference-delete {
   float: right;
   clear: right;
   text-decoration: none;
