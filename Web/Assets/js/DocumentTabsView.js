@@ -1,8 +1,11 @@
+/// <reference path="app.ts" />
+/// <reference path="DocumentManager.ts" />
+/// <reference path="TemplateManager.ts" />
 var Compilify;
 (function (Compilify) {
     (function (DocumentTabsView) {
         function _findTabByDocument(document) {
-            return $('#document-tabs').find('[data-target="' + document.Name + '"]').parent('li');
+            return $('#document-tabs').find('[data-target="' + document.getName() + '"]').parent('li');
         }
         function _onDocumentAdded(document) {
             var template = TemplateManager.getTemplateById('#tab-template');
@@ -25,7 +28,7 @@ var Compilify;
         $(Compilify.DocumentManager).on('documentAdded', function (event, document) {
             _onDocumentAdded(document);
         });
-        $(Compilify.DocumentManager).on('documentListAdded', function (event, documents) {
+        $(Compilify.DocumentManager).on('documentAddedList', function (event, documents) {
             if (typeof documents === "undefined") { documents = []; }
             _onDocumentListAdded(documents);
         });

@@ -1,3 +1,6 @@
+/// <reference path="vendor/jquery.d.ts" />
+/// <reference path="Editor.ts" />
+/// <reference path="ProjectManager.ts" />
 var Compilify;
 (function (Compilify) {
     var global = (new Function('return this'))();

@@ -1,3 +1,5 @@
+/// <reference path="vendor/jquery.d.ts" />
+/// <reference path="app.ts" />
 var Compilify;
 (function (Compilify) {
     (function (ReferenceManager) {
@@ -5,6 +7,7 @@ var Compilify;
         function _areEqual(first, second) {
             return first.Name === second.Name && first.Version === second.Version;
         }
+        // TODO: Move this into the Reference class
         function _containsReference(reference) {
             var current;
             for(var i = 0, len = _references.length; i < len; i++) {

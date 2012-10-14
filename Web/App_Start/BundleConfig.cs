@@ -67,16 +67,16 @@ namespace Compilify.Web
 
             var js = new ScriptBundle("~/js/app") { Orderer = DefaultBundleOrderer };
             js.Transforms.Add(transform);
-            //js.Include("~/assets/js/resizer.old.js");
             js.Include("~/assets/js/app.js");
-            js.Include("~/assets/js/Editor.js");
             js.Include("~/assets/js/Document.js");
-            js.Include("~/assets/js/TemplateManager.js");
-            js.Include("~/assets/js/ProjectManager.js");
             js.Include("~/assets/js/DocumentManager.js");
-            js.Include("~/assets/js/ReferenceManager.js");
             js.Include("~/assets/js/DocumentTabsView.js");
+            js.Include("~/assets/js/Editor.js");
+            js.Include("~/assets/js/EditorManager.js");
+            js.Include("~/assets/js/ProjectManager.js");
+            js.Include("~/assets/js/ReferenceManager.js");
             js.Include("~/assets/js/Sidebar.js");
+            js.Include("~/assets/js/TemplateManager.js");
             bundles.Add(js);
         }
     }

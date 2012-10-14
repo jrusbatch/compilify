@@ -1,3 +1,5 @@
+/// <reference path="vendor/jquery.d.ts" />
+/// <reference path="vendor/doT.d.ts" />
 var TemplateManager;
 (function (TemplateManager) {
     var global = (new Function('return this'))();

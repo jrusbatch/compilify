@@ -16,10 +16,10 @@ var Compilify;
     var _instances = [];
 
     var Editor = (function () {
-        function Editor(name, textarea) {
+        function Editor(document, makeMaster, container) {
             var self = this;
             _instances.push(this);
-            var codeMirror = CodeMirror.fromTextArea(textarea, editorDefaults);
+            var codeMirror = new CodeMirror(container, editorDefaults);
             codeMirror.setOption('onChange', function (instance, changeList) {
                 $(self).triggerHandler('change', [
                     self, 
@@ -28,15 +28,39 @@ var Compilify;
             });
             this._codeMirror = codeMirror;
         }
-        Editor.prototype.destroy = function () {
-            $(this._codeMirror.getRootElement()).remove();
+        Editor.prototype.getRootElement = function () {
+            return this._codeMirror.getWrapperElement();
+        };
+        Editor.prototype.setVisible = function (show) {
+            $(this._codeMirror.getWrapperElement()).toggle(show);
+            this._codeMirror.refresh();
+        };
+        Editor.prototype.getScrollerElement = function () {
+            return this._codeMirror.getScrollerElement();
+        };
+        Editor.prototype.refresh = function () {
+            this._codeMirror.refresh();
+        };
+        Editor.prototype.dispose = function () {
+            // remove the CodeMirror element
+            $(this._codeMirror.getWrapperElement()).remove();
             _instances.splice(_instances.indexOf(this), 1);
         };
         return Editor;
     })();
     Compilify.Editor = Editor;    
     function _handleTabKey(instance) {
-        var from = instance.getCursor(true);
+        // Tab key handling is done as follows:
+        // 1. If the selection is before any text and the indentation is to the left of
+        //    the proper indentation then indent it to the proper place. Otherwise,
+        //    add another tab. In either case, move the insertion point to the
+        //    beginning of the text.
+        // 2. If the selection is after the first non-space character, and is not an
+        //    insertion point, indent the entire line(s).
+        // 3. If the selection is after the first non-space character, and is an
+        //    insertion point, insert a tab character or the appropriate number
+        //    of spaces to pad to the nearest tab boundary.
+                var from = instance.getCursor(true);
         var to = instance.getCursor(false);
         var line = instance.getLine(from.line);
         var indentAuto = false;
@@ -50,6 +74,7 @@ var Compilify;
         if(indentAuto) {
             var currentLength = line.length;
             CodeMirror.commands.indentAuto(instance);
+            // If the amount of whitespace didn't change, insert another tab
             if(instance.getLine(from.line).length === currentLength) {
                 insertTab = true;
                 to.ch = 0;

@@ -264,6 +264,10 @@
       <DependentUpon>Editor.ts</DependentUpon>
     </Content>
     <TypeScriptCompile Include="Assets\js\ProjectManager.ts" />
+    <TypeScriptCompile Include="Assets\js\EditorManager.ts" />
+    <Content Include="Assets\js\EditorManager.js">
+      <DependentUpon>EditorManager.ts</DependentUpon>
+    </Content>
     <Content Include="Assets\js\ProjectManager.js">
       <DependentUpon>ProjectManager.ts</DependentUpon>
     </Content>
@@ -280,6 +284,10 @@
       <DependentUpon>TemplateManager.ts</DependentUpon>
     </Content>
     <Content Include="Assets\js\vendor\bootstrap.js" />
+    <TypeScriptCompile Include="Assets\js\vendor\codemirror.d.ts" />
+    <Content Include="Assets\js\vendor\codemirror.d.js">
+      <DependentUpon>codemirror.d.ts</DependentUpon>
+    </Content>
     <Content Include="Assets\js\vendor\codemirror.js" />
     <Content Include="Assets\js\vendor\codemirror.clike.js" />
     <TypeScriptCompile Include="Assets\js\vendor\jquery.d.ts" />

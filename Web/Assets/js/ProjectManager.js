@@ -1,3 +1,5 @@
+/// <reference path="app.ts" />
+/// <reference path="ReferenceManager.ts" />
 var Compilify;
 (function (Compilify) {
     (function (ProjectManager) {

@@ -1,11 +1,14 @@
 /// <reference path="app.ts" />
 /// <reference path="ProjectManager.ts" />
+/// <reference path="Document.ts" />
 
 module Compilify.DocumentManager {
-    var _currentDocument: IDocumentState;
+    var _currentDocument: IDocument = null;
+    var _openDocuments: IDocument[] = [];
 
-    function _addDocument(document: IDocumentState, suppressTrigger?: bool = false) {
-        // Do some spectacular here
+    function _addDocument(document: IDocument, suppressTrigger?: bool): void {
+
+        _openDocuments.push(document);
         
         if (!suppressTrigger) {
             $(DocumentManager).triggerHandler('documentAdded', document);
@@ -13,23 +16,31 @@ module Compilify.DocumentManager {
         }
     }
 
-    function _addDocumentList(documents: IDocumentState[]): void {
-        for (var i = 0, len = documents.length; i < len; i++) {
-            _addDocument(documents[i], true);
+    function _addDocumentList(documentStates: IDocumentState[]): void {
+        var documents: IDocument[] = [];
+
+        var document;
+        for (var i = 0, len = documentStates.length; i < len; i++) {
+            document = new Document(documentStates[i]);
+            _addDocument(document, true);
+            documents.push(document);
         }
 
-        $(DocumentManager).triggerHandler('documentListAdded', [documents]);
+        $(DocumentManager).triggerHandler('documentAddedList', [documents]);
         setCurrentDocument(documents[0]);
+
+        console.log('Done loading documents!', documents);
     }
 
-    export function getCurrentDocument(): IDocumentState {
+    export function getCurrentDocument(): IDocument {
         return _currentDocument;
     }
 
-    export function setCurrentDocument(document: IDocumentState): void {
+    export function setCurrentDocument(document: IDocument): void {
         if (_currentDocument === document) {
             return;
         }
+
         var previousDocument = _currentDocument;
 
         _currentDocument = document;

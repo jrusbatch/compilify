@@ -1,5 +1,10 @@
 /// <reference path="app.ts" />
 /// <reference path="Document.ts" />
+/// <reference path="vendor/codemirror.d.ts" />
+
+interface IDisposable {
+    dispose(): void;
+}
 
 module Compilify {
     'use strict';
@@ -19,15 +24,15 @@ module Compilify {
 
         _instances = [];
     
-    export class Editor {
-        private _codeMirror: any;
+    export class Editor implements IDisposable {
+        private _codeMirror: CodeMirror;
 
-        constructor(name: string, textarea: HTMLTextAreaElement) {
+        constructor(document: IDocument, makeMaster: bool, container: JQuery) {
             var self = this;
 
             _instances.push(this);
 
-            var codeMirror = CodeMirror.fromTextArea(textarea, editorDefaults);
+            var codeMirror = new CodeMirror(container, editorDefaults);
 
             codeMirror.setOption('onChange', function(instance, changeList) {
                 $(self).triggerHandler('change', [self, changeList]);
@@ -36,9 +41,26 @@ module Compilify {
             this._codeMirror = codeMirror;
         }
 
-        destroy() {
+        getRootElement(): HTMLElement {
+            return this._codeMirror.getWrapperElement();
+        }
+
+        setVisible(show: bool): void {
+            $(this._codeMirror.getWrapperElement()).toggle(show);
+            this._codeMirror.refresh();
+        }
+
+        getScrollerElement(): HTMLElement {
+            return this._codeMirror.getScrollerElement();
+        }
+
+        refresh(): void {
+            this._codeMirror.refresh();
+        }
+
+        dispose(): void {
             // remove the CodeMirror element
-            $(this._codeMirror.getRootElement()).remove();
+            $(this._codeMirror.getWrapperElement()).remove();
             _instances.splice(_instances.indexOf(this), 1);
         }
     }

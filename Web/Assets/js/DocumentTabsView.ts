@@ -3,11 +3,11 @@
 /// <reference path="TemplateManager.ts" />
 
 module Compilify.DocumentTabsView {
-    function _findTabByDocument(document: IDocumentState): JQuery {
-        return $('#document-tabs').find('[data-target="' + document.Name + '"]').parent('li');
+    function _findTabByDocument(document: IDocument): JQuery {
+        return $('#document-tabs').find('[data-target="' + document.getName() + '"]').parent('li');
     }
 
-    function _onDocumentAdded(document: IDocumentState) {
+    function _onDocumentAdded(document: IDocument) {
         var template = TemplateManager.getTemplateById('#tab-template');
         var $newTab = $(template(document));
 
@@ -18,7 +18,7 @@ module Compilify.DocumentTabsView {
         $('#document-tabs').append($newTab);
     }
 
-    function _onDocumentListAdded(documents: IDocumentState[]) {
+    function _onDocumentListAdded(documents: IDocument[]) {
         for (var i = 0, len = documents.length; i < len; i++) {
             _onDocumentAdded(documents[i]);
         }
@@ -30,11 +30,11 @@ module Compilify.DocumentTabsView {
         _findTabByDocument(currentDocument).addClass('active');
     }
 
-    $(DocumentManager).on('documentAdded', function(event: JQueryEventObject, document: IDocumentState) {
+    $(DocumentManager).on('documentAdded', function(event: JQueryEventObject, document: IDocument) {
         _onDocumentAdded(document);
     });
 
-    $(DocumentManager).on('documentListAdded', function(event: JQueryEventObject, documents: IDocumentState[] = []) {
+    $(DocumentManager).on('documentAddedList', function(event: JQueryEventObject, documents: IDocument[] = []) {
         _onDocumentListAdded(documents);
     });
 
