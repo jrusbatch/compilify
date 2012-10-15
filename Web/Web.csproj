@@ -225,10 +225,6 @@
     <Content Include="Assets\css\vendor\font-awesome.css" />
     <Content Include="Assets\css\vendor\jquery.ui.resizable.css" />
     <Content Include="Assets\css\vendor\jquery.ui.core.css" />
-    <TypeScriptCompile Include="Assets\js\Document.ts" />
-    <Content Include="Assets\js\Document.js">
-      <DependentUpon>Document.ts</DependentUpon>
-    </Content>
     <Content Include="Assets\fonts\fontawesome-webfont.svg" />
     <Content Include="Assets\fonts\Roboto License.txt" />
     <Content Include="Assets\fonts\Roboto-Light-webfont.svg" />
@@ -247,62 +243,12 @@
     <Content Include="Assets\img\run.png" />
     <Content Include="Assets\img\save.png" />
     <Content Include="Assets\img\twitter.png" />
-    <TypeScriptCompile Include="Assets\js\app.ts" />
-    <Content Include="Assets\js\app.js">
-      <DependentUpon>app.ts</DependentUpon>
-    </Content>
-    <TypeScriptCompile Include="Assets\js\Editor.ts" />
-    <TypeScriptCompile Include="Assets\js\DocumentManager.ts" />
-    <Content Include="Assets\js\DocumentManager.js">
-      <DependentUpon>DocumentManager.ts</DependentUpon>
-    </Content>
-    <TypeScriptCompile Include="Assets\js\DocumentTabsView.ts" />
-    <Content Include="Assets\js\DocumentTabsView.js">
-      <DependentUpon>DocumentTabsView.ts</DependentUpon>
-    </Content>
-    <Content Include="Assets\js\Editor.js">
-      <DependentUpon>Editor.ts</DependentUpon>
-    </Content>
-    <TypeScriptCompile Include="Assets\js\ProjectManager.ts" />
-    <TypeScriptCompile Include="Assets\js\EditorManager.ts" />
-    <Content Include="Assets\js\EditorManager.js">
-      <DependentUpon>EditorManager.ts</DependentUpon>
-    </Content>
-    <Content Include="Assets\js\Events.js">
-      <DependentUpon>Events.ts</DependentUpon>
-    </Content>
-    <Content Include="Assets\js\Events.ts" />
-    <Content Include="Assets\js\ProjectManager.js">
-      <DependentUpon>ProjectManager.ts</DependentUpon>
-    </Content>
-    <TypeScriptCompile Include="Assets\js\ReferenceManager.ts" />
-    <Content Include="Assets\js\ReferenceManager.js">
-      <DependentUpon>ReferenceManager.ts</DependentUpon>
-    </Content>
-    <TypeScriptCompile Include="Assets\js\Sidebar.ts" />
-    <Content Include="Assets\js\Sidebar.js">
-      <DependentUpon>Sidebar.ts</DependentUpon>
-    </Content>
-    <TypeScriptCompile Include="Assets\js\TemplateManager.ts" />
-    <Content Include="Assets\js\TemplateManager.js">
-      <DependentUpon>TemplateManager.ts</DependentUpon>
-    </Content>
+    <Content Include="Assets\js\compilify.js" />
+    <Content Include="Assets\js\resizer.js" />
+    <Content Include="Assets\js\tabs.js" />
     <Content Include="Assets\js\vendor\bootstrap.js" />
-    <TypeScriptCompile Include="Assets\js\vendor\codemirror.d.ts" />
-    <Content Include="Assets\js\vendor\codemirror.d.js">
-      <DependentUpon>codemirror.d.ts</DependentUpon>
-    </Content>
     <Content Include="Assets\js\vendor\codemirror.js" />
     <Content Include="Assets\js\vendor\codemirror.clike.js" />
-    <TypeScriptCompile Include="Assets\js\vendor\jquery.d.ts" />
-    <TypeScriptCompile Include="Assets\js\vendor\doT.d.ts" />
-    <Content Include="Assets\js\vendor\doT.d.js">
-      <DependentUpon>doT.d.ts</DependentUpon>
-    </Content>
-    <Content Include="Assets\js\vendor\doT.js" />
-    <Content Include="Assets\js\vendor\jquery.d.js">
-      <DependentUpon>jquery.d.ts</DependentUpon>
-    </Content>
     <Content Include="Assets\js\vendor\jquery.ui.resizable.js" />
     <Content Include="Assets\js\vendor\jquery.ui.mouse.js" />
     <Content Include="Assets\js\vendor\jquery.ui.widget.js" />
@@ -311,9 +257,6 @@
     <Content Include="Assets\js\vendor\json2.js" />
     <Content Include="Assets\js\vendor\shortcut.js" />
     <Content Include="Assets\js\vendor\underscore.js" />
-    <Content Include="Assets\less\compilify.css">
-      <DependentUpon>compilify.less</DependentUpon>
-    </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Assets\js\vendor\jquery.signalr.js" />

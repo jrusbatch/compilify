@@ -1,56 +1,24 @@
 @model Compilify.Web.Models.PostViewModel
 
-<script id="reference-template" type="text/html">
-    <li class="reference">
-        <span class="reference-name">
-            {{= it.Name }}
-            <span class="reference-version secondary">{{= it.Version }}</span>
-        </span>
-
-        <a class="reference-delete" href="#">&times;</a>
-    </li>
-</script>
-
-<script id="tab-template" type="text/html">
-    <li>
-        <span class="tab" data-toggle="tab" data-target="{{= it.Name }}">
-            <span class="tab-name">{{= it.Name }}</span>
-            <span class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown">
-                    <i class="icon-chevron-down"></i>
-                </a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a class="js-rename-tab" href="#">
-                            <i class="icon-pencil"></i>
-                            Rename
-                        </a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <a class="js-delete-tab" href="#">
-                            <i class="icon-trash"></i>
-                            Delete
-                        </a>
-                    </li>
-                </ul>
-            </span>
-        </span>
-    </li>
-</script>
-
-<script id="document-template" type="text/html">
-    <div id="{{= it.Name }}" class="tab-pane">
-        <textarea>{{= it.Content }}</textarea>
-    </div>
-</script>
-
 <div id="sidebar">
     <div class="inner">
-        <div id="references">
+        <div class="sidebar-form">
             <h4>References</h4>
-            <ul>
-                @* ------ References go here! ------- *@
+            <ul class="references">
+                @foreach (var reference in Model.References)
+                {
+                    <li class="reference">
+                        <span class="reference-name">
+                            @reference.Name
+                            <span class="reference-version secondary">@reference.Version</span>
+                        </span>
+                        
+                        @if (reference.IsRemovable)
+                        {
+                            <a class="reference-delete" href="#">&times;</a>
+                        }
+                    </li>
+                }
             </ul>
         </div>
 
@@ -63,17 +31,72 @@
 </div>
 
 <div id="ide">
-    <ul id="document-tabs" class="nav nav-tabs">
+    <ul class="nav nav-tabs">
         <li>
             <a href="#" class="tab new-tab" title="New document">
                 <i class="icon-plus-sign"></i>
             </a>
         </li>
+
+        @for (var i = 0; i < Model.Project.Documents.Count; i++)
+        {
+            var doc = Model.Project.Documents[i];
+            var active = i == 0 ? "active" : (string)null;
+            
+            <li class="@active">
+                <span class="tab" data-toggle="tab" data-target="#document-@i">
+                    <span class="tab-name">@doc.Name</span>
+                    <span class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-chevron-down"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="js-rename-tab" href="#">
+                                    <i class="icon-pencil"></i>
+                                    Rename
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a class="js-delete-tab" href="#">
+                                    <i class="icon-trash"></i>
+                                    Delete
+                                </a>
+                            </li>
+                        </ul>
+                    </span>
+                </span>
+            </li>
+        }
     </ul>
 
     <div class="workspace">
-        <div class="editor tab-content">
-            @* ------ Editors go here! ------- *@
+        <div class="columns clearfix">
+            <div class="column left">
+                <div class="editor tab-content">
+                    @for (var i = 0; i < Model.Project.Documents.Count; i++)
+                    {
+                        var active = i == 0 ? "active" : null;
+                        <div id="document-@i" class="tab-pane @active">
+                            <textarea>@(Model.Project.Documents[i].Content ?? string.Empty)</textarea>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="column right">
+                <div class="execute">
+                    @Html.TextAreaFor(x => x.ConsoleText)
+                </div>
+                <div class="results">
+                    <pre>
+"Hello, stranger!"
+
+CPU Time: 00:00:00.0312002
+Bytes Allocated: 80 KB
+                    </pre>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -83,9 +106,3 @@
         </div>
     </div>
 </div>
-
-@section PageScripts {
-    <script id="init">
-        Compilify.init(@Html.Raw(Json.Encode(Model)));
-    </script>
-}
