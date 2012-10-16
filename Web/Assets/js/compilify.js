@@ -10,6 +10,8 @@
 (function($, _, Compilify) {
     var root = this,
         connection;
+
+    // window.Compilify = Compilify;
     
     function getAllDocuments() {
         var documents = [],
@@ -87,7 +89,7 @@
                             var start = loc.StartLinePosition;
                             var end = loc.EndLinePosition;
 
-                            var editor = Compilify.GetEditorByName(file);
+                            var editor = Compilify.Editor.getEditorByName(file);
                             
                             if (editor) {
                                 var markStart = { line: start.Line, ch: start.Character };
@@ -129,13 +131,14 @@
         $('#footer .results pre').html(data);
     }
 
-    (function () {
+    Compilify.Editor = (function() {
+        var instances = [];
+
         var validateEnvironment = _.throttle(function () {
-            var documents = [],
-                editors = Compilify.Editors || [];
+            var documents = [];
             
-            for (var i = 0, len = editors.length; i < len; i++) {
-                var editor = editors[i];
+            for (var i = 0, len = instances.length; i < len; i++) {
+                var editor = instances[i];
                 documents.push({ Name: editor.name, Text: editor.getValue() });
             }
 
@@ -147,30 +150,66 @@
             lineNumbers: true,
             theme: 'neat',
             mode: 'text/x-csharp',
-            onChange: function (cm, changes) {
+            autofocus: true,
+            onChange: function() {
                 validateEnvironment();
+            },
+            keyMap: {
+                'Shift-Tab': 'indentLess',
+                'Ctrl-B': function() {
+                    $('.js-run').click();
+                },
+                'Ctrl-S': save
             }
         };
-
+        
         function Editor(name, textarea) {
-            this.name = name;
+            if (!name) {
+                throw new Error('An editor cannot be created without a name');
+            }
+
+            this._name = name;
             this._codeMirror = CodeMirror.fromTextArea(textarea, defaults);
-            this.markedErrors = [];
+            this._markedErrors = [];
 
-            this.getValue = this._codeMirror.getValue;
+            instances.push(this);
         }
-
-        Compilify.Editor = Editor;
-        Compilify.GetEditorByName = function(name) {
-            for (var i = 0, len = Compilify.Editors.length; i < len; i++) {
-                var editor = Compilify.Editors[i];
-                if (editor.name == name) {
+        
+        Editor.getEditorByName = function(name) {
+            name = (name || '').toUpperCase();
+            for (var i = 0, len = instances.length; i < len; i++) {
+                var editor = instances[i];
+                if (editor.getName().toUpperCase() === name) {
                     return editor;
                 }
             }
 
             return null;
         };
+
+        Editor.refreshAll = function() {
+            for (var i = 0, len = instances.length; i < len; i++) {
+                instances[i]._codeMirror.refresh();
+            }
+        };
+
+        Editor.prototype.getName = function() {
+            return this._name;
+        };
+
+        Editor.prototype.getText = function() {
+            return this._codeMirror.getText();
+        };
+
+        Editor.prototype.focus = function() {
+            this._codeMirror.focus();
+        };
+
+        Editor.prototype.refresh = function() {
+            this._codeMirror.refresh();
+        };
+
+        return Editor;
     }());
     
 
@@ -193,12 +232,12 @@
         //
         // Set up CodeMirror editor
         //
-
-        Compilify.Editors = [];
-        $('#editors textarea').each(function () {
+        
+        $('.tab-content textarea').each(function () {
             var $this = $(this);
-            var editor = new Compilify.Editor($this.data('name'), this);
-            Compilify.Editors.push(editor);
+            var $parent = $this.parent('.tab-pane');
+            var name = $parent.attr('id');
+            new Compilify.Editor(name, this);
         });
         
         $('.js-run').on('click', function() {
@@ -208,7 +247,7 @@
 
             for (var i = 0, len = editors.length; i < len; i++) {
                 var editor = editors[i];
-                documents.push({ Name: editor.name, Text: editor.getValue() });
+                documents.push({ Name: editor.getName(), Text: editor.getText() });
             }
 
             execute({ Documents: documents });
@@ -219,16 +258,5 @@
         });
 
         $('.js-save').on('click', save);
-        
-        //
-        // Set up key binds
-        //
-
-        shortcut.add("Ctrl+B",function() {
-            $(".js-run").click();
-        });
-        
-        shortcut.add("Ctrl+S", save);
-
     });
-}).call(window, window.jQuery, window._, window.Compilify || {});
+}).call(window, window.jQuery, window._, window.Compilify || (window.Compilify = { }));

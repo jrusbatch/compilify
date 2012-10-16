@@ -1,16 +1,5 @@
 ﻿(function($) {
 
-    var editorOptions = {
-        indentUnit: 4,
-        lineNumbers: true,
-        theme: 'neat',
-        mode: 'text/x-csharp',
-        autofocus: true
-        //onChange: function(cm, changes) {
-        //    validateEnvironment();
-        //}
-    };
-
     var dropdownHtml =
         '<span class="dropdown">' +
             '<a class="dropdown-toggle" data-toggle="dropdown">' +
@@ -35,6 +24,19 @@
     
     var count = 0;
     $(function() {
+        $('.nav-tabs').on('shown', function(e) {
+            var $tab = $(e.target);
+            var name = $tab.data('name');
+
+            var editor = Compilify.Editor.getEditorByName(name);
+            
+            if (editor) {
+                console.log('refresh claled');
+                editor.refresh();
+                editor.focus();
+            }
+        });
+
         $('.new-tab').on('click', function() {
             var $nav = $(this).parents('.nav').detach();
 
@@ -44,7 +46,7 @@
             var id = 'Untitled-' + count;
 
             var $tab = $('<li class="active">' +
-                             '<span class="tab" data-toggle="tab" data-target="#' + id + '">' +
+                             '<span class="tab" data-toggle="tab" data-target="#' + id + '" data-name="' + id + '">' +
                                   '<span class="tab-name">' + id + '</span>' +
                                   dropdownHtml + 
                              '</span>' +
@@ -61,14 +63,16 @@
 
             $tabContent.prependTo($tabContainer);
 
-            var editor = CodeMirror.fromTextArea($tabPane.children('textarea')[0], editorOptions);
-
+            // var editor = CodeMirror.fromTextArea($tabPane.children('textarea')[0], editorOptions);
+            var editor = new Compilify.Editor(id, $tabPane.children('textarea')[0]);
+            
             $('#ide').prepend($nav);
 
             $tab.tab();
 
-            $tab.on('show', function() {
-                editor.focus();
+            $tab.on('click', function() {
+                console.log('refreshed');
+                editor.refresh();
             });
         });
 

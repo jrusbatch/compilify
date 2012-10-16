@@ -44,7 +44,7 @@
             var active = i == 0 ? "active" : (string)null;
             
             <li class="@active">
-                <span class="tab" data-toggle="tab" data-target="#document-@i">
+                <span class="tab" data-toggle="tab" data-target="#@doc.Name" data-name="@doc.Name">
                     <span class="tab-name">@doc.Name</span>
                     <span class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown">
@@ -78,7 +78,7 @@
                     @for (var i = 0; i < Model.Project.Documents.Count; i++)
                     {
                         var active = i == 0 ? "active" : null;
-                        <div id="document-@i" class="tab-pane @active">
+                        <div id="@Model.Project.Documents[i].Name" class="tab-pane @active">
                             <textarea>@(Model.Project.Documents[i].Content ?? string.Empty)</textarea>
                         </div>
                     }
