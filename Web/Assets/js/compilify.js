@@ -11,30 +11,24 @@
     var root = this,
         connection;
 
-    // window.Compilify = Compilify;
+    var markedErrors = [];
     
-    function getAllDocuments() {
-        var documents = [],
-            editors = Compilify.Editors || [];
-
+    function _getAllDocuments() {
+        var editors = Compilify.Editor.getAllEditors();
+        
+        var documents = [];
         for (var i = 0, len = editors.length; i < len; i++) {
             var editor = editors[i];
-            documents.push({ Name: editor.name, Text: editor.getValue() });
+            documents.push({ Name: editor.getName(), Text: editor.getText() });
         }
 
         return documents;
     }
-
-    function save() {
-        /// <summary>
-        /// Save content.</summary>
+    
+    function _save() {
         
-        // $('form').submit();
-
-        var documents = getAllDocuments();
-
         var post = {
-            Documents: documents
+            Documents: _getAllDocuments()
         };
 
         $.ajax({
@@ -49,18 +43,21 @@
         return false;
     }
 
-    var markedErrors = [];
-    
-
-    function validate(documents) {
-        /// <summary>
-        /// Sends code to the server for validation and displays the resulting
-        /// errors, if any.</summary>
+    function _run() {
+        connection.send(JSON.stringify({ Documents: _getAllDocuments() }));
         
+        $('#footer:not(.loading)').addClass('loading');
+
+        $('.results pre').empty();
+
+        return false;
+    }
+
+    function _validate() {
         return $.ajax('/validate', {
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify({ Documents: documents }),
+            data: JSON.stringify({ Documents: _getAllDocuments() }),
             dataType: 'json',
             success: function(msg) {
                 var data = msg.data;
@@ -112,38 +109,9 @@
             }
         });
     }
-
-    function execute(documents) {
-        /// <summary>
-        /// Queues code for execution on the server.</summary>
-        
-        //if (_.isString(command) && command.length > 0) {
-            // connection.send(JSON.stringify({ 'Content': command, 'Classes': classes }));
-            connection.send(JSON.stringify(documents));
-            $('#footer:not(.loading)').addClass('loading');
-        //}
-    }
     
-    function setResult(data) {
-        /// <summary>
-        /// Sets the content displayed in the results section.</summary>
-
-        $('#footer .results pre').html(data);
-    }
-
     Compilify.Editor = (function() {
-        var instances = [];
-
-        var validateEnvironment = _.throttle(function () {
-            var documents = [];
-            
-            for (var i = 0, len = instances.length; i < len; i++) {
-                var editor = instances[i];
-                documents.push({ Name: editor.name, Text: editor.getValue() });
-            }
-
-            validate(documents);
-        }, 250);
+        var _instances = [];
 
         var defaults = {
             indentUnit: 4,
@@ -151,16 +119,7 @@
             theme: 'neat',
             mode: 'text/x-csharp',
             autofocus: true,
-            onChange: function() {
-                validateEnvironment();
-            },
-            keyMap: {
-                'Shift-Tab': 'indentLess',
-                'Ctrl-B': function() {
-                    $('.js-run').click();
-                },
-                'Ctrl-S': save
-            }
+            onChange: _validate
         };
         
         function Editor(name, textarea) {
@@ -172,13 +131,13 @@
             this._codeMirror = CodeMirror.fromTextArea(textarea, defaults);
             this._markedErrors = [];
 
-            instances.push(this);
+            _instances.push(this);
         }
         
         Editor.getEditorByName = function(name) {
             name = (name || '').toUpperCase();
-            for (var i = 0, len = instances.length; i < len; i++) {
-                var editor = instances[i];
+            for (var i = 0, len = _instances.length; i < len; i++) {
+                var editor = _instances[i];
                 if (editor.getName().toUpperCase() === name) {
                     return editor;
                 }
@@ -187,10 +146,8 @@
             return null;
         };
 
-        Editor.refreshAll = function() {
-            for (var i = 0, len = instances.length; i < len; i++) {
-                instances[i]._codeMirror.refresh();
-            }
+        Editor.getAllEditors = function() {
+            return _instances.slice();
         };
 
         Editor.prototype.getName = function() {
@@ -198,7 +155,7 @@
         };
 
         Editor.prototype.getText = function() {
-            return this._codeMirror.getText();
+            return this._codeMirror.getValue();
         };
 
         Editor.prototype.focus = function() {
@@ -207,6 +164,11 @@
 
         Editor.prototype.refresh = function() {
             this._codeMirror.refresh();
+        };
+
+        Editor.prototype.dispose = function() {
+            $(this._codeMirror.getWrapperElement()).remove();
+            _instances.splice(_instances.indexOf(this), 1);
         };
 
         return Editor;
@@ -221,7 +183,7 @@
 
         connection.received(function (msg) {
             if (msg && msg.status === "ok") {
-                setResult(msg.data);
+                $('#footer .results pre').html(msg.data);
             }
             
             $('#footer').removeClass('loading');
@@ -240,23 +202,8 @@
             new Compilify.Editor(name, this);
         });
         
-        $('.js-run').on('click', function() {
-            
-            var documents = [],
-                editors = Compilify.Editors || [];
+        $('.js-run').on('click', _run);
 
-            for (var i = 0, len = editors.length; i < len; i++) {
-                var editor = editors[i];
-                documents.push({ Name: editor.getName(), Text: editor.getText() });
-            }
-
-            execute({ Documents: documents });
-
-            $('.results pre').html('');
-            
-            return false;
-        });
-
-        $('.js-save').on('click', save);
+        $('.js-save').on('click', _save);
     });
 }).call(window, window.jQuery, window._, window.Compilify || (window.Compilify = { }));
