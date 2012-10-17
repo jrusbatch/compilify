@@ -16,10 +16,7 @@ namespace Compilify.Web
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterModule(new MongoDbModule());
-            builder.RegisterModule(new RedisModule());
-            builder.RegisterModule(new MvcModule());
-            builder.RegisterModule(new RoslynModule());
+            builder.RegisterAssemblyModules(typeof(Application).Assembly);
 
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
