@@ -35,23 +35,23 @@ namespace Compilify
             var executionId = cmd.ExecutionId;
 
             // Create an anonymous event handler to be called if and when a worker finishes executing our code
-            EventHandler<IMessage<WorkerResult>> handler = null;
-            handler = (sender, e) =>
+            EventHandler<IMessage<WorkerResult>> onJobDone = null;
+            onJobDone = (sender, e) =>
             {
                 token.ThrowIfCancellationRequested();
 
                 if (e.Body.ExecutionId == executionId)
                 {
-                    messageBus.JobDone -= handler;
+                    messageBus.JobDone -= onJobDone;
                     tcs.TrySetResult(e.Body);
                 }
             };
 
-            messageBus.JobDone += handler;
+            messageBus.JobDone += onJobDone;
 
             token.Register(() =>
             {
-                messageBus.JobDone -= handler;
+                messageBus.JobDone -= onJobDone;
                 tcs.TrySetCanceled();
             });
             
@@ -63,7 +63,7 @@ namespace Compilify
                     // If anything goes wrong, stop listening for the completion event and update the task
                     if (t.IsFaulted)
                     {
-                        messageBus.JobDone -= handler;
+                        messageBus.JobDone -= onJobDone;
                         tcs.TrySetException(t.Exception);
                     }
                     else if (t.IsCanceled)

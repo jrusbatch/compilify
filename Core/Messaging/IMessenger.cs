@@ -13,6 +13,9 @@ namespace Compilify.Messaging
 
     public class Messenger : IMessenger
     {
+        private const string JobReadyRouteKey = "job-ready";
+        private const string JobDoneRouteKey = "job-done";
+
         private static readonly Task EmptyTask = Task.FromResult<object>(null);
 
         private readonly IAdvancedBus bus;
@@ -23,15 +26,16 @@ namespace Compilify.Messaging
         {
             bus = messageBus;
 
-            var jobReadyQueue = Queue.DeclareDurable("queue:worker:job-ready");
-            jobReadyExchange = Exchange.DeclareDirect("exchange:worker:job-ready");
-            jobReadyQueue.BindTo(jobReadyExchange, "job-ready");
-
-            var jobDoneQueue = Queue.DeclareDurable("queue:worker:job-done");
-            jobDoneExchange = Exchange.DeclareFanout("exchange:worker:job-done");
-            jobDoneQueue.BindTo(jobDoneExchange, "job-done");
+            var jobReadyQueue = Queue.DeclareDurable("queue:" + JobReadyRouteKey);
+            jobReadyExchange = Exchange.DeclareDirect("exchange:" + JobReadyRouteKey);
+            jobReadyQueue.BindTo(jobReadyExchange, JobReadyRouteKey);
 
             bus.Subscribe<EvaluateCodeCommand>(jobReadyQueue, OnJobReady);
+
+            var jobDoneQueue = Queue.DeclareTransient("queue:" + JobDoneRouteKey);
+            jobDoneExchange = Exchange.DeclareFanout("exchange:" + JobDoneRouteKey);
+            jobDoneQueue.BindTo(jobDoneExchange, JobDoneRouteKey);
+
             bus.Subscribe<WorkerResult>(jobDoneQueue, OnJobDone);
         }
 
