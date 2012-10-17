@@ -8,10 +8,27 @@
 })(window);
 
 (function($, _, Compilify) {
-    var root = this,
-        connection;
+    'use strict';
 
-    var markedErrors = [];
+    var root = this,
+        connection,
+        markedErrors = [];
+    
+
+    //
+    // Set up the SignalR connection
+    //
+    connection = $.connection('/execute');
+
+    connection.received(function(msg) {
+        if (msg && msg.status === "ok") {
+            $('#footer .results pre').html(msg.data);
+        }
+
+        // $('#footer').removeClass('loading');
+    });
+
+    connection.start();
     
     function _getAllDocuments() {
         var editors = Compilify.Editor.getAllEditors();
@@ -60,54 +77,66 @@
             data: JSON.stringify({ Documents: _getAllDocuments() }),
             dataType: 'json',
             success: function(msg) {
-                var data = msg.data;
-                
-                for (var i = markedErrors.length - 1; i >= 0; i--) {
-                    markedErrors[i].clear();
-                }
-
-                markedErrors.length = 0;
-
-                if (_.isArray(data)) {
-                    var $list = $('#footer .status ul.messages').detach().empty();
-
-                    if (data.length == 0) {
-                        $('#footer .status').removeClass('status-error').addClass('status-success');
-                        $list.html("<li>No errors!</li>");
-                        
-                    } else {
-                        $('#footer .status').removeClass('status-success').addClass('status-error');
-                        for (var index in msg.data) {
-                            var error = msg.data[index];
-                            var loc = error.Location;
-
-                            var file = loc.DocumentName;
-
-                            var start = loc.StartLinePosition;
-                            var end = loc.EndLinePosition;
-
-                            var editor = Compilify.Editor.getEditorByName(file);
-                            
-                            if (editor) {
-                                var markStart = { line: start.Line, ch: start.Character };
-                                var markEnd = { line: end.Line, ch: end.Character };
-                                
-                                var mark = editor._codeMirror.markText(markStart, markEnd, 'compilation-error');
-
-                                markedErrors.push(mark);
-                            }
-                            
-                            var message = 'Line: ' + (start.Line + 1) +
-                                          ' Column: ' + start.Character + ' - ' + error.Message;
-
-                            $list.append('<li data-errorId="' + index + '">' + _.escape(message) + '</li>');
-                        }
-                    }
-
-                    $('#footer .status').append($list);
-                }
+                _onValidationCompleted(msg);
+                $(Compilify).triggerHandler('validationComplete', msg.data);
             }
         });
+    }
+    
+    function _clearMarkedErrors() {
+        for (var i = markedErrors.length - 1; i >= 0; i--) {
+            markedErrors[i].clear();
+        }
+
+        markedErrors.length = 0;
+    }
+    
+    function _onValidationCompleted(msg) {
+        var data = msg.data;
+        
+        if (!_.isArray(data)) {
+            return;
+        }
+
+        _clearMarkedErrors();
+
+        // var $list = $('#footer .status ul.messages').detach().empty();
+
+        if (data.length === 0) {
+            // $('#footer .status').removeClass('status-error').addClass('status-success');
+            // $list.html("<li>No errors!</li>");
+            return;
+        }
+
+        // $('#footer .status').removeClass('status-success').addClass('status-error');
+        for (var index in msg.data) {
+            var error = msg.data[index];
+            var loc = error.Location;
+
+            var file = loc.DocumentName;
+
+            var start = loc.StartLinePosition;
+            var end = loc.EndLinePosition;
+
+            var editor = Compilify.Editor.getEditorByName(file);
+
+            if (editor) {
+                var markStart = { line: start.Line, ch: start.Character };
+                var markEnd = { line: end.Line, ch: end.Character };
+
+                var mark = editor._codeMirror.markText(markStart, markEnd, 'compilation-error');
+
+                markedErrors.push(mark);
+            }
+
+            // var message = 'Line: ' + (start.Line + 1) +
+            //              ' Column: ' + start.Character + ' - ' + error.Message;
+
+            // $list.append('<li data-errorId="' + index + '">' + _.escape(message) + '</li>');
+        }
+
+
+        // $('#footer .status').append($list);
     }
     
     Compilify.Editor = (function() {
@@ -173,23 +202,8 @@
 
         return Editor;
     }());
-    
 
     $(function() {
-        //
-        // Set up the SignalR connection
-        //
-        connection = $.connection('/execute');
-
-        connection.received(function (msg) {
-            if (msg && msg.status === "ok") {
-                $('#footer .results pre').html(msg.data);
-            }
-            
-            $('#footer').removeClass('loading');
-        });
-
-        connection.start();
         
         //
         // Set up CodeMirror editor

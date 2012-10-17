@@ -76,14 +76,13 @@
         $tabName.text(documentName);
     }
 
-    var count = 0;
+    var createdTabsCount = 0;
     function _createTab() {
         var $nav = $(this).parents('.nav');
 
         $nav.children('li').removeClass('active');
 
-        count += 1;
-        var id = 'Untitled-' + count;
+        var id = 'Untitled-' + ++createdTabsCount;
 
         var $tab = $('<li class="active">' +
                          '<span class="tab" data-toggle="tab" data-target="#' + id + '" data-name="' + id + '">' +

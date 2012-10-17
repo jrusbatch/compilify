@@ -1,30 +1,33 @@
 ﻿(function($) {
+    'use strict';
+
+    var $columns, $left, $right;
+    
+    function _onResize() {
+        var remainingSpace = $columns.width() - $left.outerWidth();
+        var divTwoWidth = remainingSpace - ($right.outerWidth() - $right.width());
+        $right.css('width', divTwoWidth + 'px');
+    }
+
     $(function() {
+        $columns = $('.columns');
+        $left = $columns.find('.left');
+        $right = $columns.find('.right');
 
-        var $columns = $('.columns'),
-            $left = $('.columns .column.left'),
-            $right = $('.columns .column.right');
-
-        function onResize() {
-            var remainingSpace = $columns.width() - $left.outerWidth();
-            var divTwoWidth = remainingSpace - ($right.outerWidth() - $right.width());
-            $right.css('width', divTwoWidth + 'px');
-        }
-
-        $(window).resize(onResize);
-
-        $('#ide .column.left').resizable({
+        $left.resizable({
             containment: $columns,
             handles: 'e',
             minWidth: '550',
-            resize: onResize
+            resize: _onResize
         });
 
-        $('#ide .column.right .execute').resizable({
+        $right.find('.execute').resizable({
             containment: $right,
             handles: 's'
         });
 
-        onResize();
+        $(window).resize(_onResize);
+
+        _onResize();
     });
 }).call(window, jQuery);
