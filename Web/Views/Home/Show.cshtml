@@ -7,17 +7,7 @@
             <ul class="references">
                 @foreach (var reference in Model.References)
                 {
-                    <li class="reference">
-                        <span class="reference-name">
-                            @reference.Name
-                            <span class="reference-version secondary">@reference.Version</span>
-                        </span>
-                        
-                        @if (reference.IsRemovable)
-                        {
-                            <a class="reference-delete" href="#">&times;</a>
-                        }
-                    </li>
+                    @Html.Partial("_ReferenceListItem", reference)
                 }
             </ul>
         </div>
