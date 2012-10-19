@@ -21,19 +21,19 @@
 </div>
 
 <div id="ide">
-    <ul class="nav nav-tabs">
-        <li>
+    <div id="top-bar" class="container-fluid">
+        <div class="new-tab-btn">
             <a href="#" class="tab new-tab" title="New document">
                 <i class="icon-plus-sign"></i>
             </a>
-        </li>
-
-        @for (var i = 0; i < Model.Project.Documents.Count; i++)
-        {
-            var doc = Model.Project.Documents[i];
-            @Html.Partial("_DocumentTab", doc)
-        }
-    </ul>
+        </div>
+        <ul class="nav nav-tabs">
+            @for (var i = 0; i < Model.Project.Documents.Count; i++)
+            {
+                @Html.Partial("_DocumentTab", Model.Project.Documents[i])
+            }
+        </ul>
+    </div>
 
     <div class="workspace">
         <div class="columns clearfix">

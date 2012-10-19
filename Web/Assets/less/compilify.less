@@ -226,11 +226,23 @@ a {
     margin-left: 220px;
     height: 100%;
 
-    .nav-tabs {
-        padding: 0;
-        margin-bottom: 0;
+    #top-bar {
         border-bottom: 2px solid #0072C6;
         background-color: #fff;
+        padding: 10px 0 0;
+
+        .new-tab {
+        }
+
+        .new-tab-btn {
+            float: left;
+        }
+    }
+
+    .nav-tabs {
+        padding: 0;
+        margin: 0;
+        border-bottom: none;
 
         .dropdown-toggle {
             text-decoration: none;
@@ -258,7 +270,6 @@ a {
     }
 
     .nav-tabs > li {
-        padding-top: 10px;
         cursor: default;
         margin-bottom: 0;
 
@@ -272,6 +283,16 @@ a {
         }
     }
 
+    .tab {
+        text-decoration: none;
+
+        &:hover,
+        &:hover .dropdown.open .dropdown-toggle {
+            color: #fff;
+            background-color: #1c97ea;
+        }
+    }
+
     .nav-tabs > li > .tab {
         .font-regular;
         display: block;
@@ -282,17 +303,6 @@ a {
         border: none;
         position: relative;
         .border-radius(0);
-
-        &.new-tab {
-            font-size: 12px;
-            padding: 5px 8px;
-        }
-
-        &:hover,
-        &:hover .dropdown.open .dropdown-toggle {
-            color: #fff;
-            background-color: #1c97ea;
-        }
 
         .dropdown-toggle {
             color: #fff;
