@@ -188,7 +188,7 @@
             $('#footer').removeClass('loading');
         });
 
-        connection.start({ transport: 'longPolling' });
+        connection.start();
         
         //
         // Set up CodeMirror editor
