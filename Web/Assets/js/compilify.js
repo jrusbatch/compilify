@@ -1,14 +1,4 @@
 ﻿
-(function() {
-    'use strict';
-
-    if (typeof String.prototype.trim !== 'function') {
-        String.prototype.trim = function() {
-            return this.replace(/^\s+|\s+$/g, '');
-        };
-    }
-})(window);
-
 (function($, _, Compilify) {
     'use strict';
 
@@ -16,6 +6,9 @@
         connection,
         markedErrors = [];
     
+    function _htmlEncode(value) {
+        return $('<div/>').text(value).html();
+    }
 
     //
     // Set up the SignalR connection
@@ -117,6 +110,14 @@
 
         Document.prototype.getName = function() {
             return this._name;
+        };
+
+        Document.prototype.setName = function(name) {
+            if (!name || name.length === 0) {
+                throw new Error('Document name cannot be undefined, null, or an empty string');
+            }
+
+            this._name = name;
         };
         
         Document.prototype.getText = function() {
@@ -243,10 +244,15 @@
                 active._editor.setVisible(true);
             }
         }
+        
+        function _onDocumentRemoved(document) {
+            document._editor.dispose();
+        }
 
         $(Compilify)
             .on('projectLoaded', _onProjectLoaded)
             .on('documentAdded', function($e, document) { _onDocumentAdded(document); })
+            .on('documentRemoved', function($e, document) { _onDocumentRemoved(document); })
             .on('activeDocumentChanged', function($e, active, previous) { _onActiveDocumentChanged(active, previous); });
 
         $(function() {
@@ -262,7 +268,7 @@
             $referencesContainer,
             referenceTemplate;
 
-        function _init() {
+        function _initSidebar() {
             $container = $('#sidebar');
             $referencesContainer = $container.find('.references');
 
@@ -281,11 +287,11 @@
 
         $(Compilify).on('projectLoaded', _onProjectLoaded);
 
-        $(_init);
+        $(_initSidebar);
     }());
 
     var Workspace = (function() {
-        
+
         function Workspace(container, state) {
             this._$container = $(container);
             this._references = [];
@@ -379,20 +385,56 @@
             if (!document) {
                 throw new Error('There must be a document active at all times');
             }
-
+            
             if (document === this._activeDocument) {
                 return;
+            }
+            
+            if (this._documents.indexOf(document) === -1) {
+                return; // The document has recently been deleted
             }
 
             var previous = this._activeDocument;
 
             this._activeDocument = document;
-
+            
             $(Compilify).triggerHandler('activeDocumentChanged', [document, previous]);
         };
 
         Workspace.prototype.getDocuments = function() {
             return this._documents.slice(0);
+        };
+
+        Workspace.prototype.getDocumentByName = function(name) {
+            if (name && name.length > 0) {
+                name = name.toUpperCase();
+
+                var document;
+                for (var i = 0, len = this._documents.length; i < len; i++) {
+                    document = this._documents[i];
+                    if (name === document.getName().toUpperCase()) {
+                        return document;
+                    }
+                }
+            }
+
+            return null;
+        };
+
+        Workspace.prototype.renameDocument = function(document) {
+            if (!document || document.getName() === 'Main') {
+                return; // The main tab cannot be renamed
+            }
+
+            var oldName = document.getName();
+            
+            // TODO: Prompt user for a new name for this document
+            var newName = _htmlEncode(prompt('Please enter a new, unique name for this document', oldName));
+            
+            if (newName && newName.length > 0 && newName !== oldName && !this.getDocumentByName(newName)) {
+                document.setName(newName);
+                $(Compilify).triggerHandler('documentRenamed', document);
+            }
         };
 
         Workspace.prototype.removeDocument = function(document) {
@@ -401,11 +443,17 @@
             }
 
             var index = this._documents.indexOf(document);
-            
-            // TODO: Handle situations in which the document being removed is the active document
-            this._documents.splice(index, 1);
-            
-            $(Compilify).triggerHandler('documentRemoved', document);
+
+            if (index !== -1) {
+
+                this._documents.splice(index, 1);
+
+                $(Compilify).triggerHandler('documentRemoved', document);
+                
+                if (document === this._activeDocument) {
+                    this.setActiveDocument(this._documents[0]);
+                }
+            }
         };
 
 
@@ -420,12 +468,10 @@
         return Workspace;
     }());
     
-    function _init(container, state) {
+    Compilify.init = function(container, state) {
         delete Compilify.init;
         Compilify.Workspace = new Workspace($(container), state);
         Compilify.Workspace.openProject(state.Project);
-    }
-
-    Compilify.init = _init;
+    };
     
 }).call(window, window.jQuery, window._, window.Compilify || (window.Compilify = { }));

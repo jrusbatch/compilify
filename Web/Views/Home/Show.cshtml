@@ -5,12 +5,7 @@
         <div class="inner">
             <div class="sidebar-form">
                 <h4>References</h4>
-                <ul class="references">
-                    @*@foreach (var reference in Model.References)
-                    {
-                        @Html.Partial("_ReferenceListItem", reference)
-                    }*@
-                </ul>
+                <ul class="references"></ul>
             </div>
 
             <div class="sidebar-bottom">
@@ -28,26 +23,13 @@
                     <i class="icon-plus-sign"></i>
                 </a>
             </div>
-            <ul class="nav nav-tabs">
-                @*@for (var i = 0; i < Model.Project.Documents.Count; i++)
-                {
-                    @Html.Partial("_DocumentTab", Model.Project.Documents[i])
-                }*@
-            </ul>
+            <ul class="nav nav-tabs"></ul>
         </div>
 
         <div class="workspace">
             <div class="columns clearfix">
                 <div class="column left">
-                    <div class="editor tab-content">
-                        @*@for (var i = 0; i < Model.Project.Documents.Count; i++)
-                        {
-                            var active = i == 0 ? "active" : null;
-                            <div id="@Model.Project.Documents[i].Name" class="tab-pane @active">
-                                <textarea>@(Model.Project.Documents[i].Content ?? string.Empty)</textarea>
-                            </div>
-                        }*@
-                    </div>
+                    <div class="editor tab-content"></div>
                 </div>
                 <div class="column right">
                     <div class="results">
