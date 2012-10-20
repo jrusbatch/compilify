@@ -26,17 +26,18 @@ namespace Compilify.Worker
             TaskScheduler.UnobservedTaskException +=
                 (sender, e) => Logger.ErrorException("An unobserved task exception occurred", e.Exception);
 
-            Bus.Initialize(sbc =>
-            {
-                sbc.UseRabbitMq();
-                sbc.UseRabbitMqRouting();
-                sbc.ReceiveFrom(ConfigurationManager.AppSettings["CLOUDAMQP_URL"]);
-                sbc.Subscribe(subs => subs.Handler<EvaluateCodeCommand>(ProcessCommand));
-            });
+            Bus.Initialize(
+                sbc =>
+                {
+                    sbc.UseRabbitMq();
+                    sbc.UseRabbitMqRouting();
+                    sbc.ReceiveFrom(ConfigurationManager.AppSettings["CLOUDAMQP_URL"]);
+                    sbc.Subscribe(subs => subs.Handler<EvaluateCodeCommand>(ProcessCommand));
+                });
 
             Console.ReadLine();
 
-            return -1; // Return a non-zero code so AppHarbor restarts the worker
+            return -1;
         }
 
         private static void ProcessCommand(EvaluateCodeCommand cmd)
