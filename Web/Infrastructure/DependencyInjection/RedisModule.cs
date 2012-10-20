@@ -27,7 +27,7 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
                         "queue:execute"))
                 .As<IQueue<EvaluateCodeCommand>>();
 
-            // builder.RegisterType<RedisMessenger>().As<IMessenger>();
+            builder.RegisterType<RedisMessenger>().As<IMessenger>();
 
             builder.RegisterType<DefaultCodeEvaluator>()
                    .As<ICodeEvaluator>()

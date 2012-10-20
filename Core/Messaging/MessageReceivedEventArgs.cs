@@ -1,15 +1,17 @@
 using System;
-using Compilify.Models;
 
 namespace Compilify.Messaging
 {
     public class MessageReceivedEventArgs : EventArgs
     {
-        public MessageReceivedEventArgs(WorkerResult workerResult)
+        public MessageReceivedEventArgs(string eventKey, byte[] payload)
         {
-            Result = workerResult;
+            EventKey = eventKey;
+            Payload = payload;
         }
 
-        public WorkerResult Result { get; private set; }
+        public string EventKey { get; private set; }
+
+        public byte[] Payload { get; private set; }
     }
 }

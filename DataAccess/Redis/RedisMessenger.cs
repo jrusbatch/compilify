@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BookSleeve;
-using Compilify.Infrastructure;
 using Compilify.Messaging;
-using Compilify.Models;
-using Compilify.Serialization;
 
 namespace Compilify.DataAccess.Redis
 {
@@ -13,16 +10,10 @@ namespace Compilify.DataAccess.Redis
         private const string EventKey = "workers:job-done";
         private static RedisSubscriberConnection channel;
         private readonly RedisConnectionGateway gateway;
-
-        private readonly ISerializationProvider serializer;
-
+        
         public RedisMessenger(RedisConnectionGateway redisConnectionGateway)
-            : this(redisConnectionGateway, new ProtobufSerializationProvider()) { }
-
-        public RedisMessenger(RedisConnectionGateway redisConnectionGateway, ISerializationProvider serializationProvider)
         {
             gateway = redisConnectionGateway;
-            serializer = serializationProvider;
             Subscribe();
         }
         
@@ -36,9 +27,7 @@ namespace Compilify.DataAccess.Redis
         /// A JSON message.</param>
         public void OnMessageRecieved(string key, byte[] message)
         {
-            var result = serializer.Deserialize<WorkerResult>(message);
-
-            var eventArgs = new MessageReceivedEventArgs(result);
+            var eventArgs = new MessageReceivedEventArgs(key, message);
             MessageReceived(this, eventArgs);
         }
         
@@ -54,11 +43,9 @@ namespace Compilify.DataAccess.Redis
             Subscribe();
         }
 
-        public Task Publish(WorkerResult result)
+        public Task Publish(string eventKey, byte[] message)
         {
-            var message = serializer.Serialize(result);
-
-            return gateway.GetConnection().Publish(EventKey, message);
+            return gateway.GetConnection().Publish(eventKey, message);
         }
 
         private void Subscribe()

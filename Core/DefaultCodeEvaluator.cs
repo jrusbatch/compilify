@@ -5,17 +5,20 @@ using Compilify.Infrastructure;
 using Compilify.LanguageServices;
 using Compilify.Messaging;
 using Compilify.Models;
-using EasyNetQ;
 
 namespace Compilify
 {
     public sealed class DefaultCodeEvaluator : ICodeEvaluator
     {
-        private readonly Messenger messageBus;
+        private readonly ISerializationProvider serializer;
+        private readonly IQueue<EvaluateCodeCommand> commandQueue;
+        private readonly IMessenger messageBus;
 
-        public DefaultCodeEvaluator(IMessenger messenger)
+        public DefaultCodeEvaluator(IMessenger messenger, IQueue<EvaluateCodeCommand> messageQueue, ISerializationProvider serializationProvider)
         {
-            messageBus = messenger as Messenger;
+            serializer = serializationProvider;
+            commandQueue = messageQueue;
+            messageBus = messenger;
         }
 
         public Task<ICodeRunResult> EvaluateAsync(ICodeProject command, CancellationToken token = default(CancellationToken))
@@ -35,35 +38,39 @@ namespace Compilify
             var executionId = cmd.ExecutionId;
 
             // Create an anonymous event handler to be called if and when a worker finishes executing our code
-            EventHandler<IMessage<WorkerResult>> onJobDone = null;
-            onJobDone = (sender, e) =>
+            EventHandler<MessageReceivedEventArgs> handler = null;
+            handler = (sender, e) =>
             {
                 token.ThrowIfCancellationRequested();
 
-                if (e.Body.ExecutionId == executionId)
+                var result = serializer.Deserialize<WorkerResult>(e.Payload);
+                if (result.ExecutionId == executionId)
                 {
-                    messageBus.JobDone -= onJobDone;
-                    tcs.TrySetResult(e.Body);
+                    messageBus.MessageReceived -= handler;
+                    tcs.TrySetResult(result);
                 }
             };
 
-            messageBus.JobDone += onJobDone;
+            messageBus.MessageReceived += handler;
 
             token.Register(() =>
             {
-                messageBus.JobDone -= onJobDone;
+                messageBus.MessageReceived -= handler;
                 tcs.TrySetCanceled();
             });
             
             // Queue the command for processing
-            var task = messageBus.Enqueue(cmd);
+            var task = commandQueue.EnqueueAsync(cmd);
+
             task.ContinueWith(
                 t =>
                 {
+                    token.ThrowIfCancellationRequested();
+
                     // If anything goes wrong, stop listening for the completion event and update the task
                     if (t.IsFaulted)
                     {
-                        messageBus.JobDone -= onJobDone;
+                        messageBus.MessageReceived -= handler;
                         tcs.TrySetException(t.Exception);
                     }
                     else if (t.IsCanceled)
