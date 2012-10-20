@@ -13,7 +13,7 @@ namespace Compilify.Web
     {
         public static void ConfigureServiceBus()
         {
-            var connectionString = ConfigurationManager.AppSettings["CLOUDAMQP_URL"];
+            var connectionString = ConfigurationManager.AppSettings["CLOUDAMQP_URL"].Replace("amqp://", "rabbitmq://");
             var queueName = ConfigurationManager.AppSettings["Compilify.WebMessagingQueue"];
 
             var endpointAddress = string.Format("{0}/{1}", connectionString, queueName);
