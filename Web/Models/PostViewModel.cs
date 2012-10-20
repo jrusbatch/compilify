@@ -9,7 +9,6 @@ namespace Compilify.Web.Models
     {
         public PostViewModel()
         {
-            References = new List<ReferenceViewModel>();
             Errors = new List<EditorError>();
             Project = new Project();
         }
@@ -35,8 +34,6 @@ namespace Compilify.Web.Models
         public Guid? AuthorId { get; set; }
 
         public string ConsoleText { get; set; }
-
-        public IList<ReferenceViewModel> References { get; private set; }
 
         public IEnumerable<EditorError> Errors { get; set; }
 

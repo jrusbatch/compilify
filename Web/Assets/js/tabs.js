@@ -1,40 +1,19 @@
-﻿(function($) {
-
-    var dropdownHtml =
-        '<span class="dropdown">' +
-            '<a class="dropdown-toggle" data-toggle="dropdown">' +
-                '<i class="icon-chevron-down"></i>' +
-            '</a>' +
-            '<ul class="dropdown-menu">' +
-                '<li>' +
-                    '<a class="js-rename-tab" href="#">' +
-                        '<i class="icon-pencil"></i>' +
-                        'Rename' +
-                    '</a>' +    
-                '</li>' +
-                '<li class="divider"></li>' +
-                '<li>' +
-                    '<a class="js-delete-tab" href="#">' +
-                        '<i class="icon-trash"></i>' +
-                        'Delete' +  
-                    '</a>' +
-                '</li>' +
-            '</ul>' +
-        '</span>';
+﻿(function($, Compilify) {
+    'use strict';
     
-    function _getEditorForTab($tab) {
-        var name = $tab.data('name');
-        return Compilify.Editor.getEditorByName(name);
+    if (!Compilify) {
+        throw new Error('Compilify has not yet been declared. Check the order in which the scripts were loaded.');
     }
-    
-    function _onTabShown(e) {
-        var $tab = $(e.target),
-            editor = _getEditorForTab($tab);
 
-        if (editor) {
-            editor.refresh();
-            editor.focus();
+    var $container,
+        $tabTemplate;
+    
+    function _getTabForDocument(document) {
+        if (!document) {
+            return null;
         }
+        
+        return $('.tab[data-documentId="' + document.getId() + '"]');
     }
     
     function _deleteTab() {
@@ -58,12 +37,6 @@
             $nextTabItem.add(nextTargetSelector).addClass('active');
         }
 
-        var editor = _getEditorForTab($tab);
-        
-        if (editor) {
-            editor.dispose();
-        }
-
         $tabItem.add(targetSelector).remove();
     }
 
@@ -76,44 +49,48 @@
         $tabName.text(documentName);
     }
 
-    var createdTabsCount = 0;
-    function _createTab() {
-        var $nav = $(this).parents('.nav');
+    function _onDocumentAdded(doc) {
+        var $tab = $tabTemplate({ id: doc.getId(), name: doc.getName() });
 
-        $nav.children('li').removeClass('active');
+        $tab.on('click', function() {
+            Compilify.Workspace.setActiveDocument(doc);
+        });
 
-        var id = 'Untitled-' + ++createdTabsCount;
-
-        var $tab = $('<li class="active">' +
-                         '<span class="tab" data-toggle="tab" data-target="#' + id + '" data-name="' + id + '">' +
-                              '<span class="tab-name">' + id + '</span>' +
-                              dropdownHtml + 
-                         '</span>' +
-                     '</li>');
-
-        $tab.insertAfter($(this).parent('li'));
-
-        var $tabPane = $('<div id="' + id + '" class="tab-pane active"><textarea></textarea></div>'),
-            $tabContainer = $('.tab-content').parent(),
-            $tabContent = $('.tab-content').detach();
-            
-        $tabContent.find('.tab-pane').removeClass('active');
-        $tabContent.prepend($tabPane);
-
-        $tabContent.prependTo($tabContainer);
-
-        // var editor = CodeMirror.fromTextArea($tabPane.children('textarea')[0], editorOptions);
-        var editor = new Compilify.Editor(id, $tabPane.children('textarea')[0]);
-        
-        $tab.tab();
+        $container.find('.nav-tabs').prepend($tab);
     }
     
+    function _onProjectLoaded() {
+        var documents = Compilify.Workspace.getDocuments();
+        documents.forEach(_onDocumentAdded);
+    }
+    
+    function _onActiveDocumentChanged(active, previous) {
+        $container.find('.nav li.active').removeClass('active');
+        
+        var $tab = _getTabForDocument(active);
+        $tab.parent('li').addClass('active');
+    }
+
+    $(Compilify)
+        .on('projectLoaded', function($event) { _onProjectLoaded(); })
+        .on('documentAdded', function($event, document) { _onDocumentAdded(document); })
+        .on('activeDocumentChanged', function($event, current, previous) { _onActiveDocumentChanged(current, previous); })
+        .on('documentRenamed', function($event, document) { throw new Error('Not implemented'); })
+        .on('documentRemoved', function($event) { throw new Error('Not implemented'); });
+    
     $(function() {
-        $('.nav')
-            .on('shown', _onTabShown)
-            .on('click', '.new-tab', _createTab)
+        var template = doT.template($('#tab-template').html());
+
+        $tabTemplate = function(obj) {
+            return $(template(obj));
+        };
+
+        $container = $('#top-bar');
+
+        $container
+            .on('click', '#new-document', function() { Compilify.Workspace.addDocument(); })
             .on('click', '.js-delete-tab', _deleteTab)
             .on('click', '.js-rename-tab', _renameTab);
     });
 
-}).call(window, jQuery);
+}).call(window, jQuery, Compilify);

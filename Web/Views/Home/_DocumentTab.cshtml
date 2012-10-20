@@ -1,8 +1,6 @@
-﻿@model Compilify.Models.Document
-
-<li>
-    <span class="tab" data-toggle="tab" data-target="#@Model.Name" data-name="@Model.Name">
-        <span class="tab-name">@Model.Name</span>
+﻿<li>
+    <span class="tab" data-documentId="{{= it.id }}">
+        <span class="tab-name">{{= it.name }}</span>
         <span class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown">
                 <i class="icon-chevron-down"></i>

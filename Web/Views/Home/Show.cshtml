@@ -1,64 +1,66 @@
 @model Compilify.Web.Models.PostViewModel
 
-<div id="sidebar">
-    <div class="inner">
-        <div class="sidebar-form">
-            <h4>References</h4>
-            <ul class="references">
-                @*@foreach (var reference in Model.References)
+<div id="content">
+    <div id="sidebar">
+        <div class="inner">
+            <div class="sidebar-form">
+                <h4>References</h4>
+                <ul class="references">
+                    @*@foreach (var reference in Model.References)
+                    {
+                        @Html.Partial("_ReferenceListItem", reference)
+                    }*@
+                </ul>
+            </div>
+
+            <div class="sidebar-bottom">
+                <a href="https://appharbor.com">
+                    <img src="~/assets/img/appharbor.png" alt="Hosted by AppHarbor" />
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="ide">
+        <div id="top-bar" class="container-fluid">
+            <div id="new-document" class="new-tab-btn">
+                <a href="#" class="tab new-tab" title="New document">
+                    <i class="icon-plus-sign"></i>
+                </a>
+            </div>
+            <ul class="nav nav-tabs">
+                @*@for (var i = 0; i < Model.Project.Documents.Count; i++)
                 {
-                    @Html.Partial("_ReferenceListItem", reference)
+                    @Html.Partial("_DocumentTab", Model.Project.Documents[i])
                 }*@
             </ul>
         </div>
 
-        <div class="sidebar-bottom">
-            <a href="https://appharbor.com">
-                <img src="~/assets/img/appharbor.png" alt="Hosted by AppHarbor" />
-            </a>
-        </div>
-    </div>
-</div>
-
-<div id="ide">
-    <div id="top-bar" class="container-fluid">
-        <div id="new-document" class="new-tab-btn">
-            <a href="#" class="tab new-tab" title="New document">
-                <i class="icon-plus-sign"></i>
-            </a>
-        </div>
-        <ul class="nav nav-tabs">
-            @*@for (var i = 0; i < Model.Project.Documents.Count; i++)
-            {
-                @Html.Partial("_DocumentTab", Model.Project.Documents[i])
-            }*@
-        </ul>
-    </div>
-
-    <div class="workspace">
-        <div class="columns clearfix">
-            <div class="column left">
-                <div class="editor tab-content">
-                    @for (var i = 0; i < Model.Project.Documents.Count; i++)
-                    {
-                        var active = i == 0 ? "active" : null;
-                        <div id="@Model.Project.Documents[i].Name" class="tab-pane @active">
-                            <textarea>@(Model.Project.Documents[i].Content ?? string.Empty)</textarea>
-                        </div>
-                    }
+        <div class="workspace">
+            <div class="columns clearfix">
+                <div class="column left">
+                    <div class="editor tab-content">
+                        @*@for (var i = 0; i < Model.Project.Documents.Count; i++)
+                        {
+                            var active = i == 0 ? "active" : null;
+                            <div id="@Model.Project.Documents[i].Name" class="tab-pane @active">
+                                <textarea>@(Model.Project.Documents[i].Content ?? string.Empty)</textarea>
+                            </div>
+                        }*@
+                    </div>
                 </div>
-            </div>
-            <div class="column right">
-                <div class="results">
-                    <pre>Press "Run" to execute your code.</pre>
+                <div class="column right">
+                    <div class="results">
+                        <pre>Press "Run" to execute your code.</pre>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div id="statusbar">
-        <div class="inner">
-            <span>Ready</span>
+        <div id="statusbar">
+            <div class="inner">
+                <span>Ready</span>
+            </div>
         </div>
     </div>
 </div>
@@ -70,3 +72,11 @@
 <script id="reference-template" type="text/html">
     @Html.Partial("_ReferenceListItem")
 </script>
+
+@section PageScripts {
+    <script>
+        $(function() {
+            Compilify.init($('#content'), @Html.Raw(Json.Encode(Model)));
+        });
+    </script>
+}

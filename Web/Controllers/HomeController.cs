@@ -58,6 +58,8 @@ namespace Compilify.Web.Controllers
                     .AddOrUpdate(new Document { Name = "Main", Content = "return new Person(\"stranger\").Greet();" })
                     .AddOrUpdate(BuildSampleDocument());
 
+                project.References.Add(new Reference { AssemblyName = "mscorlib", Version = "4.0.0.0" });
+
                 session.Store(project);
                 CurrentProjectId = project.Id;
             }

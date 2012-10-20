@@ -1,13 +1,6 @@
-﻿@model Compilify.Web.Models.ReferenceViewModel
-
-<li class="reference">
+﻿<li class="reference">
     <span class="reference-name">
-        @Model.Name
-        <span class="reference-version secondary">@Model.Version</span>
+        {{= it.AssemblyName }}
+        <span class="reference-version secondary">{{= it.Version }}</span>
     </span>
-
-    @if (Model.IsRemovable)
-    {
-        <a class="reference-delete" href="#">&times;</a>
-    }
 </li>
