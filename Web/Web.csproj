@@ -203,6 +203,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\DependencyInjection\AutofacDepenedencyResolverForSignalR.cs" />
+    <Compile Include="Infrastructure\DependencyInjection\MessagingModule.cs" />
     <Compile Include="Infrastructure\DependencyInjection\MongoDbModule.cs" />
     <Compile Include="Infrastructure\DependencyInjection\MvcModule.cs" />
     <Compile Include="Infrastructure\DependencyInjection\RedisModule.cs" />
