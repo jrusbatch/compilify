@@ -191,6 +191,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\DbInitializer.cs" />
     <Compile Include="App_Start\DependencyInjection.cs" />
+    <Compile Include="App_Start\MessagingConfig.cs" />
     <Compile Include="App_Start\ViewEngineConfig.cs" />
     <Compile Include="Commands\SavePostCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
