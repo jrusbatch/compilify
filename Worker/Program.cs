@@ -26,12 +26,17 @@ namespace Compilify.Worker
             TaskScheduler.UnobservedTaskException +=
                 (sender, e) => Logger.ErrorException("An unobserved task exception occurred", e.Exception);
 
+            var connectionString = ConfigurationManager.AppSettings["CLOUDAMQP_URL"];
+            var queueName = ConfigurationManager.AppSettings["Compilify.WorkerMessagingQueue"];
+
+            var endpointAddress = string.Format("{0}/{1}", connectionString, queueName);
+
             Bus.Initialize(
                 sbc =>
                 {
                     sbc.UseRabbitMq();
                     sbc.UseRabbitMqRouting();
-                    sbc.ReceiveFrom(ConfigurationManager.AppSettings["CLOUDAMQP_URL"]);
+                    sbc.ReceiveFrom(endpointAddress);
                     sbc.Subscribe(subs => subs.Handler<EvaluateCodeCommand>(ProcessCommand));
                 });
 

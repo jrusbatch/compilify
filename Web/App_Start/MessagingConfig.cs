@@ -13,11 +13,16 @@ namespace Compilify.Web
     {
         public static void ConfigureServiceBus()
         {
+            var connectionString = ConfigurationManager.AppSettings["CLOUDAMQP_URL"];
+            var queueName = ConfigurationManager.AppSettings["Compilify.WebMessagingQueue"];
+
+            var endpointAddress = string.Format("{0}/{1}", connectionString, queueName);
+
             Bus.Initialize(sbc =>
             {
                 sbc.UseRabbitMq();
                 sbc.UseRabbitMqRouting();
-                sbc.ReceiveFrom(ConfigurationManager.AppSettings["CLOUDAMQP_URL"]);
+                sbc.ReceiveFrom(endpointAddress);
             });
 
             Bus.Instance.SubscribeHandler<WorkerResult>(x =>
