@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Compilify.LanguageServices;
 using Compilify.Models;
@@ -14,6 +15,8 @@ namespace Compilify.Worker
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly ICodeCompiler Compiler = new CSharpCompiler();
+
+        private static readonly ManualResetEvent ResetEvent = new ManualResetEvent(false);
 
         public static int Main(string[] args)
         {
@@ -40,7 +43,7 @@ namespace Compilify.Worker
                     sbc.Subscribe(subs => subs.Handler<EvaluateCodeCommand>(ProcessCommand));
                 });
 
-            Console.ReadLine();
+            ResetEvent.WaitOne();
 
             return -1;
         }
