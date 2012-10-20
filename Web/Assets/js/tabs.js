@@ -22,7 +22,8 @@
         // TODO: Clicking on the dropdown toggle should not set make the tab active.
         $tab.on('click', '.js-rename-document', function() { Compilify.Workspace.renameDocument(doc); })
             .on('click', '.js-delete-document', function() { Compilify.Workspace.removeDocument(doc); })
-            .on('click', ':not(.dropdown-toggle)', function() { Compilify.Workspace.setActiveDocument(doc); });
+            .on('dblclick', function() { Compilify.Workspace.renameDocument(doc); })
+            .on('click', function() { Compilify.Workspace.setActiveDocument(doc); });
 
         $container.find('.nav-tabs').prepend($tab);
     }

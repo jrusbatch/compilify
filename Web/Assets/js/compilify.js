@@ -429,11 +429,15 @@
             var oldName = document.getName();
             
             // TODO: Prompt user for a new name for this document
-            var newName = _htmlEncode(prompt('Please enter a new, unique name for this document', oldName));
+            var newName = prompt('Please enter a new, unique name for this document', oldName);
             
-            if (newName && newName.length > 0 && newName !== oldName && !this.getDocumentByName(newName)) {
-                document.setName(newName);
-                $(Compilify).triggerHandler('documentRenamed', document);
+            if (newName && newName.length > 0 && newName !== oldName) {
+                var encodedName = _htmlEncode(newName);
+                
+                if (encodedName !== oldName && !this.getDocumentByName(encodedName)) {
+                    document.setName(newName);
+                    $(Compilify).triggerHandler('documentRenamed', document);
+                }
             }
         };
 
