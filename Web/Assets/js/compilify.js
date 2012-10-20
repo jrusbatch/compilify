@@ -2,8 +2,7 @@
 (function($, _, Compilify) {
     'use strict';
 
-    var root = this,
-        connection,
+    var connection,
         markedErrors = [];
     
     function _htmlEncode(value) {
@@ -25,62 +24,6 @@
 
     connection.start();
     
-    function _clearMarkedErrors() {
-        for (var i = markedErrors.length - 1; i >= 0; i--) {
-            markedErrors[i].clear();
-        }
-
-        markedErrors.length = 0;
-    }
-    
-    function _onValidationCompleted(msg) {
-        var data = msg.data;
-        
-        if (!_.isArray(data)) {
-            return;
-        }
-
-        _clearMarkedErrors();
-
-        // var $list = $('#footer .status ul.messages').detach().empty();
-
-        if (data.length === 0) {
-            // $('#footer .status').removeClass('status-error').addClass('status-success');
-            // $list.html("<li>No errors!</li>");
-            return;
-        }
-
-        // $('#footer .status').removeClass('status-success').addClass('status-error');
-        for (var index in msg.data) {
-            var error = msg.data[index];
-            var loc = error.Location;
-
-            var file = loc.DocumentName;
-
-            var start = loc.StartLinePosition;
-            var end = loc.EndLinePosition;
-
-            var editor = Compilify.Editor.getEditorByName(file);
-
-            if (editor) {
-                var markStart = { line: start.Line, ch: start.Character };
-                var markEnd = { line: end.Line, ch: end.Character };
-
-                var mark = editor._codeMirror.markText(markStart, markEnd, 'compilation-error');
-
-                markedErrors.push(mark);
-            }
-
-            // var message = 'Line: ' + (start.Line + 1) +
-            //              ' Column: ' + start.Character + ' - ' + error.Message;
-
-            // $list.append('<li data-errorId="' + index + '">' + _.escape(message) + '</li>');
-        }
-
-
-        // $('#footer .status').append($list);
-    }
-
     var Document = (function() {
 
         var counter = 0;
@@ -129,6 +72,10 @@
             return this._text;
         };
 
+        Document.prototype.getEditor = function() {
+            return this._editor;
+        };
+
         Document.prototype.getState = function() {
             return {
                 Name: this._name,
@@ -149,6 +96,9 @@
             theme: 'neat',
             mode: 'text/x-csharp',
             // autofocus: true
+            onChange: function() {
+                Compilify.Workspace.validateProject();
+            }
         };
         
         function Editor(doc) {
@@ -179,18 +129,6 @@
         Editor.prototype._codeMirror = null;
         Editor.prototype._markedErrors = null;
         
-        Editor.getEditorByName = function(name) {
-            name = (name || '').toUpperCase();
-            for (var i = 0, len = instances.length; i < len; i++) {
-                var editor = instances[i];
-                if (editor.getName().toUpperCase() === name) {
-                    return editor;
-                }
-            }
-
-            return null;
-        };
-
         Editor.getAllEditors = function() {
             return instances.slice();
         };
@@ -310,6 +248,10 @@
             });
         };
 
+        Workspace.prototype._getState = function() {
+
+        };
+
         Workspace.prototype.openProject = function(project) {
             var documents = project.Documents || [],
                 references = project.References || [];
@@ -364,8 +306,6 @@
             var documents = this._getDocumentStates();
 
             connection.send(JSON.stringify({ Documents: documents }));
-
-            $('#footer:not(.loading)').addClass('loading');
 
             $('.results pre').empty();
         };
@@ -468,9 +408,57 @@
 
         Workspace.prototype.removeReference = function() { throw new Error('Not implemented'); };
 
+
         return Workspace;
     }());
     
+
+    function _clearMarkedErrors() {
+        for (var i = markedErrors.length - 1; i >= 0; i--) {
+            markedErrors[i].clear();
+        }
+
+        markedErrors.length = 0;
+    }
+
+    function _onValidationCompleted(msg) {
+        var data = msg.data;
+
+        if (!_.isArray(data)) {
+            throw new Error('argument should be an array');
+        }
+
+        _clearMarkedErrors();
+
+        if (data.length === 0) {
+            return;
+        }
+
+        for (var index in msg.data) {
+            var error = msg.data[index];
+            var loc = error.Location;
+
+            var file = loc.DocumentName;
+
+            var start = loc.StartLinePosition;
+            var end = loc.EndLinePosition;
+
+            var document = Compilify.Workspace.getDocumentByName(file);
+
+            if (document) {
+                var markStart = { line: start.Line, ch: start.Character };
+                var markEnd = { line: end.Line, ch: end.Character };
+
+                var mark = document.getEditor()._codeMirror.markText(markStart, markEnd, 'compilation-error');
+
+                markedErrors.push(mark);
+            } else {
+                console.error('Document not found', file);
+            }
+        }
+    }
+
+
     Compilify.init = function(container, state) {
         delete Compilify.init;
         Compilify.Workspace = new Workspace($(container), state);
