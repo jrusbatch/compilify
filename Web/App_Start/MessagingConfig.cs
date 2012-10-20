@@ -11,7 +11,7 @@ namespace Compilify.Web
 {
     public static class MessagingConfig
     {
-        public static void ConfigureServiceBus(IServiceBus bus)
+        public static void ConfigureServiceBus()
         {
             Bus.Initialize(sbc =>
             {

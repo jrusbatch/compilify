@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Mvc;
-using Compilify.Extensions;
 using Compilify.LanguageServices;
 using Compilify.Web.Models;
 using MassTransit;
@@ -22,8 +18,6 @@ namespace Compilify.Web.EndPoints
 
         private static readonly Task EmptyTask = Task.FromResult<object>(null);
 
-        private readonly IServiceBus bus;
-
         static ExecuteEndPoint()
         {
             int timeout;
@@ -33,11 +27,6 @@ namespace Compilify.Web.EndPoints
             }
 
             ExecutionTimeout = TimeSpan.FromSeconds(timeout);
-        }
-
-        public ExecuteEndPoint(IServiceBus serviceBus)
-        {
-            bus = serviceBus;
         }
 
         protected override Task OnReceivedAsync(IRequest request, string connectionId, string data)
@@ -55,7 +44,7 @@ namespace Compilify.Web.EndPoints
                               TimeoutPeriod = ExecutionTimeout
                           };
 
-            bus.Publish(command);
+            Bus.Instance.Publish(command);
 
             return EmptyTask;
         }
