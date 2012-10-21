@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Compilify.LanguageServices;
+using Compilify.Messaging;
 using Compilify.Models;
 using MassTransit;
 using NLog;

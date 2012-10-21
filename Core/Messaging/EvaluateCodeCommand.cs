@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.Serialization;
 using Compilify.Models;
 
-namespace Compilify.LanguageServices
+namespace Compilify.Messaging
 {
     [Serializable]
     [DataContract]

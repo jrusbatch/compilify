@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Threading.Tasks;
-using Compilify.LanguageServices;
+using Compilify.Messaging;
 using Compilify.Models;
 using Compilify.Web.Models;
+using Compilify.Utilities;
 using MassTransit;
 using Newtonsoft.Json;
 using SignalR;
@@ -16,8 +17,6 @@ namespace Compilify.Web.EndPoints
     {
         private const int DefaultExecutionTimeout = 30;
         private static readonly TimeSpan ExecutionTimeout;
-
-        private static readonly Task EmptyTask = Task.FromResult<object>(null);
 
         static ExecuteEndPoint()
         {
@@ -45,7 +44,7 @@ namespace Compilify.Web.EndPoints
 
             Bus.Instance.Publish(command);
 
-            return EmptyTask;
+            return TaskAsyncHelper.Empty;
         }
     }
 }
