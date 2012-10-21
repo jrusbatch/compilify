@@ -6,7 +6,7 @@ using Compilify.LanguageServices;
 using Compilify.Models;
 using Compilify.Web.Models;
 using MassTransit;
-using Raven.Imports.Newtonsoft.Json;
+using Newtonsoft.Json;
 using SignalR;
 using IRequest = SignalR.IRequest;
 
@@ -32,12 +32,11 @@ namespace Compilify.Web.EndPoints
 
         protected override Task OnReceivedAsync(IRequest request, string connectionId, string data)
         {
-            var viewModel = JsonConvert.DeserializeObject<PostViewModel>(data);
-            var model = viewModel.ToPost();
+            var viewModel = JsonConvert.DeserializeObject<WorkspaceState>(data);
 
             var command = new EvaluateCodeCommand
                           {
-                              Documents = new List<Document>(model.Documents),
+                              Documents = new List<Document>(viewModel.Project.Documents),
 
                               ClientId = connectionId,
                               Submitted = DateTime.UtcNow,

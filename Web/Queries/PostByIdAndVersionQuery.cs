@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Compilify.LanguageServices;
+using Compilify.Models;
 using Compilify.Web.Models;
 using Raven.Client;
 
@@ -18,7 +19,7 @@ namespace Compilify.Web.Queries
             validator = codeValidator;
         }
 
-        public Task<PostViewModel> Execute(string slug, int version)
+        public Task<Project> Execute(string id)
         {
             throw new NotImplementedException();
             //var post = posts.GetVersion(slug, version);

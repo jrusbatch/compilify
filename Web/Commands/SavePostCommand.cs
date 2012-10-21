@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Compilify.Models;
-using Compilify.Web.Models;
 using Raven.Client;
 
 namespace Compilify.Web.Commands
 {
     public class SavePostCommand : ICommand
     {
-        private readonly IDocumentSession posts;
+        private readonly IDocumentSession session;
 
-        public SavePostCommand(IDocumentSession postRepository)
+        public SavePostCommand(IDocumentSession documentSession)
         {
-            posts = postRepository;
+            session = documentSession;
         }
 
-        public Task<Post> Execute(string slug, PostViewModel postViewModel)
+        public Task<Project> Execute(string slug, Project postViewModel)
         {
             throw new NotImplementedException();
 

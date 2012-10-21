@@ -15,9 +15,9 @@ namespace Compilify.Web.Queries
             validator = codeValidator;
         }
 
-        public Task<PostViewModel> Execute()
+        public Task<Project> Execute()
         {
-            var post = new Post();
+            var project = new Project();
             var builder = new StringBuilder();
 
             builder.AppendLine("class Person")
@@ -38,20 +38,20 @@ namespace Compilify.Web.Queries
                 .AppendLine("    }")
                 .AppendLine("}");
 
-            post.AddDocument("Classes", builder.ToString());
+            project.AddOrUpdate(new Document("Classes", builder.ToString()));
 
             builder.Clear()
                 .AppendLine("var person = new Person(name: null);")
                 .AppendLine()
                 .AppendLine("return person.Greet();");
 
-            post.AddDocument("Content", builder.ToString());
+            project.AddOrUpdate(new Document("Content", builder.ToString()));
 
-            var result = new PostViewModel(post);
+            // var result = new PostViewModel(post);
 
-            result.Errors = validator.GetCompilationErrors(post);
+            // result.Errors = validator.GetCompilationErrors(post);
 
-            return Task.FromResult(result);
+            return Task.FromResult(project);
         }
     }
 }

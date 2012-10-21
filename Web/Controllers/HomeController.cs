@@ -64,13 +64,7 @@ namespace Compilify.Web.Controllers
                 CurrentProjectId = project.Id;
             }
 
-            var viewModel = new PostViewModel()
-            {
-                Project = project,
-                Errors = GetErrorsInProgram(project).ToList()
-            };
-
-            return View("Show", viewModel);
+            return View("Show", new WorkspaceState { Project = project });
         }
 
         [HttpGet]
@@ -80,74 +74,27 @@ namespace Compilify.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Show(string slug, int? version)
+        public Task<ActionResult> Show(string id)
         {
-            if (version <= 1)
-            {
-                // Redirect the user to /:slug instead of /:slug/1
-                return RedirectToActionPermanent("Show", "Home", new { slug, version = (int?)null });
-            }
-
-            var result = await Resolve<PostByIdAndVersionQuery>().Execute(slug, version ?? 1);
-
-            if (result == null)
-            {
-                return PostNotFound();
-            }
-
-            if (Request.IsAjaxRequest())
-            {
-                return Json(new { status = "ok", data = result }, JsonRequestBehavior.AllowGet);
-            }
-            
-            return View("Show", result);
-        }
-
-        [HttpGet]
-        public async Task<ActionResult> Latest(string slug)
-        {
-            var version = await Resolve<LatestVersionOfPostQuery>().Execute(slug);
-
-            if (version < 1)
-            {
-                return PostNotFound();
-            }
-
-            // There should only be one URL to represent a given resource, this is just a shortcut for the 
-            // user to locate the URL representing the latest version of a given post
-            return RedirectToAction("Show", "Home", BuildRouteParametersForPost(slug, version));
+            // var result = await Resolve<PostByIdAndVersionQuery>().Execute(id);
+            return ProjectNotFound();
         }
 
         [HttpPost]
         [ValidateInput(false)]
-        public async Task<ActionResult> Save(string slug, PostViewModel postViewModel)
+        public async Task<ActionResult> Save(string slug, Project project)
         {
-            var result = await Resolve<SavePostCommand>().Execute(slug, postViewModel);
+            var result = await Resolve<SavePostCommand>().Execute(slug, project);
 
-            return RedirectToAction("Show", BuildRouteParametersForPost(result.Slug, result.Version));
+            return RedirectToAction("Show", new { id = result.Id });
         }
 
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult Validate(PostViewModel postViewModel)
+        public ActionResult Validate(Project postViewModel)
         {
-            var errors = Resolve<ErrorsInPostQuery>().Execute(postViewModel.ToPost());
+            var errors = Resolve<ErrorsInPostQuery>().Execute(postViewModel);
             return Json(new { status = "ok", data = errors });
-        }
-
-        private static RouteValueDictionary BuildRouteParametersForPost(string slug, int? version)
-        {
-            var routeValues = new RouteValueDictionary
-                              {
-                                  { "slug", slug }
-                              };
-
-            if (version.HasValue && version > 1)
-            {
-                routeValues.Add("version", version);
-            }
-
-            return routeValues;
         }
 
         private static Document BuildSampleDocument()
@@ -184,13 +131,14 @@ namespace Compilify.Web.Controllers
             return validator.GetCompilationErrors(project);
         }
 
-        private ActionResult PostNotFound()
+        private Task<ActionResult> ProjectNotFound()
         {
             Response.StatusCode = 404;
 
             // TODO: Remove dependency on ViewBag
             ViewBag.Message = string.Format("sorry, we couldn't find that...");
-            return View("Error");
+
+            return Task.FromResult<ActionResult>(View("Error"));
         }
     }
 }
