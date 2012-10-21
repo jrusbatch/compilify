@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.WebPages;
 using Compilify.LanguageServices;
@@ -10,10 +11,10 @@ namespace Compilify.Web.Queries
 {
     public class PostByIdAndVersionQuery : IQuery
     {
-        private readonly IPostRepository posts;
+        private readonly IDocumentSession posts;
         private readonly ICodeValidator validator;
 
-        public PostByIdAndVersionQuery(IPostRepository postRepository, ICodeValidator codeValidator)
+        public PostByIdAndVersionQuery(IDocumentSession postRepository, ICodeValidator codeValidator)
         {
             posts = postRepository;
             validator = codeValidator;
@@ -21,20 +22,21 @@ namespace Compilify.Web.Queries
 
         public Task<PostViewModel> Execute(string slug, int version)
         {
-            var post = posts.GetVersion(slug, version);
+            throw new NotImplementedException();
+            //var post = posts.GetVersion(slug, version);
 
-            if (post == null)
-            {
-                return Task.FromResult<PostViewModel>(null);
-            }
+            //if (post == null)
+            //{
+            //    return Task.FromResult<PostViewModel>(null);
+            //}
 
-            var errors = GetErrorsInPost(post);
+            //var errors = GetErrorsInPost(post);
 
-            var viewModel = new PostViewModel(post);
+            //var viewModel = new PostViewModel(post);
 
-            viewModel.Errors = errors;
+            //viewModel.Errors = errors;
 
-            return Task.FromResult(viewModel);
+            //return Task.FromResult(viewModel);
         }
 
         private IEnumerable<EditorError> GetErrorsInPost(ICodeProgram post)

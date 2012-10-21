@@ -203,7 +203,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Start\DbInitializer.cs" />
     <Compile Include="App_Start\DependencyInjection.cs" />
     <Compile Include="App_Start\MessagingConfig.cs" />
     <Compile Include="App_Start\ViewEngineConfig.cs" />
@@ -218,7 +217,6 @@
     </Compile>
     <Compile Include="Infrastructure\DependencyInjection\AutofacDepenedencyResolverForSignalR.cs" />
     <Compile Include="Infrastructure\DependencyInjection\MessagingModule.cs" />
-    <Compile Include="Infrastructure\DependencyInjection\MongoDbModule.cs" />
     <Compile Include="Infrastructure\DependencyInjection\MvcModule.cs" />
     <Compile Include="Infrastructure\DependencyInjection\RavenDbModule.cs" />
     <Compile Include="Infrastructure\DependencyInjection\RoslynModule.cs" />
@@ -318,10 +316,6 @@
     <ProjectReference Include="..\LanguageServices\LanguageServices.csproj">
       <Project>{8f2ea92a-1519-482e-9808-dacb2ca67503}</Project>
       <Name>LanguageServices</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
-      <Project>{519279f3-53c1-41ff-8f49-553cfa43fc8a}</Project>
-      <Name>DataAccess</Name>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{67a4a77f-7d7d-4a37-bcc1-a7e018ccd6c8}</Project>

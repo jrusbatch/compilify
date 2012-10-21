@@ -1,21 +1,21 @@
+using System;
 using System.Threading.Tasks;
-using Compilify.Models;
+using Raven.Client;
 
 namespace Compilify.Web.Queries
 {
     public class LatestVersionOfPostQuery : IQuery
     {
-        private readonly IPostRepository posts;
+        private readonly IDocumentSession session;
 
-        public LatestVersionOfPostQuery(IPostRepository postRepository)
+        public LatestVersionOfPostQuery(IDocumentSession documentSession)
         {
-            posts = postRepository;
+            session = documentSession;
         }
 
         public Task<int> Execute(string slug)
         {
-            var version = posts.GetLatestVersion(slug);
-            return Task.FromResult(version);
+            throw new NotImplementedException();
         }
     }
 }
