@@ -229,7 +229,7 @@
     <Compile Include="Queries\ErrorsInPostQuery.cs" />
     <Compile Include="Queries\LatestVersionOfPostQuery.cs" />
     <Compile Include="Queries\IQuery.cs" />
-    <Compile Include="Queries\PostByIdAndVersionQuery.cs" />
+    <Compile Include="Queries\ProjectByIdQuery.cs" />
     <Compile Include="Queries\SamplePostQuery.cs" />
   </ItemGroup>
   <ItemGroup>

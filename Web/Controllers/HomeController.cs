@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
 using System.Web.WebPages;
 using Compilify.LanguageServices;
 using Compilify.Models;
@@ -74,10 +72,16 @@ namespace Compilify.Web.Controllers
         }
 
         [HttpGet]
-        public Task<ActionResult> Show(string id)
+        public async Task<ActionResult> Show(string id)
         {
-            // var result = await Resolve<PostByIdAndVersionQuery>().Execute(id);
-            return ProjectNotFound();
+            var project = await Resolve<ProjectByIdQuery>().Execute(id);
+
+            if (project == null)
+            {
+                return ProjectNotFound();
+            }
+
+            return View("Show", new WorkspaceState { Project = project });
         }
 
         [HttpPost]
@@ -131,14 +135,14 @@ namespace Compilify.Web.Controllers
             return validator.GetCompilationErrors(project);
         }
 
-        private Task<ActionResult> ProjectNotFound()
+        private ActionResult ProjectNotFound()
         {
             Response.StatusCode = 404;
 
             // TODO: Remove dependency on ViewBag
             ViewBag.Message = string.Format("sorry, we couldn't find that...");
 
-            return Task.FromResult<ActionResult>(View("Error"));
+            return View("Error");
         }
     }
 }

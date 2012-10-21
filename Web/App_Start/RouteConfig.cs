@@ -29,11 +29,11 @@ namespace Compilify.Web
                 "about",
                 new { controller = "Home", action = "About" });
 
-            //routes.MapRoute(
-            //    name: "validate",
-            //    url: "validate",
-            //    defaults: new { controller = "Home", action = "Validate" },
-            //    constraints: new { httpMethod = new HttpMethodConstraint("POST") });
+            routes.MapRoute(
+                "validate",
+                "validate",
+                new { controller = "Home", action = "Validate" },
+                new { httpMethod = new HttpMethodConstraint("POST") });
 
             routes.MapRoute(
                 "Update",
