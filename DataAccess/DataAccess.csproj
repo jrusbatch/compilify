@@ -35,9 +35,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BookSleeve">
-      <HintPath>..\packages\BookSleeve.1.1.0.8\lib\BookSleeve.dll</HintPath>
-    </Reference>
     <Reference Include="MongoDB.Bson">
       <HintPath>..\packages\mongocsharpdriver.1.5\lib\net35\MongoDB.Bson.dll</HintPath>
     </Reference>
@@ -57,10 +54,6 @@
     <Compile Include="MongoDB\MongoDbInitializer.cs" />
     <Compile Include="MongoDB\MongoDbPostRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Redis\RedisConnectionException.cs" />
-    <Compile Include="Redis\RedisConnectionGateway.cs" />
-    <Compile Include="Redis\RedisExecutionQueue.cs" />
-    <Compile Include="Redis\RedisMessenger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
