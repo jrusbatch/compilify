@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Linq;
 using Compilify.Models;
 
 namespace Compilify.Messaging
@@ -11,6 +11,13 @@ namespace Compilify.Messaging
         public EvaluateCodeCommand()
         {
             Documents = new List<Document>();
+            References = new List<Reference>();
+        }
+
+        public EvaluateCodeCommand(IEnumerable<Document> documents, IEnumerable<Reference> references)
+        {
+            Documents = new List<Document>(documents ?? Enumerable.Empty<Document>());
+            References = new List<Reference>(references ?? Enumerable.Empty<Reference>());
         }
 
         public string Name { get; set; }
@@ -29,12 +36,12 @@ namespace Compilify.Messaging
 
         IEnumerable<Document> ICodeProgram.Documents
         {
-            get { return new ReadOnlyCollection<Document>(Documents); }
+            get { return Documents; }
         }
 
         IEnumerable<Reference> ICodeProgram.References
         {
-            get { return new ReadOnlyCollection<Reference>(References); }
+            get { return References; }
         }
     }
 }

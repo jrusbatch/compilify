@@ -15,8 +15,9 @@
     connection = $.connection('/execute');
 
     connection.received(function(msg) {
+        console.log(msg);
         if (msg && msg.status === "ok") {
-            $('#footer .results pre').html(msg.data);
+            $('.results pre').html(msg.data);
         }
 
         // $('#footer').removeClass('loading');
@@ -78,8 +79,8 @@
 
         Document.prototype.getState = function() {
             return {
-                Name: this._name,
-                Content: this._content
+                Name: this.getName(),
+                Content: this.getText()
             };
         };
 
@@ -302,8 +303,9 @@
 
         Workspace.prototype.executeProject = function() {
             var documents = this._getDocumentStates();
+            var references = this.getReferences();
 
-            connection.send(JSON.stringify({ Documents: documents }));
+            connection.send(JSON.stringify({ Project: { Documents: documents, References: references } }));
 
             $('.results pre').empty();
         };

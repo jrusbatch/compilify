@@ -6,14 +6,16 @@ namespace Compilify.Models
     {
         public Document()
         {
+            Name = string.Empty;
+            Content = string.Empty;
             LastEdited = DateTimeOffset.UtcNow;
         }
 
         public Document(string name, string content)
             : this()
         {
-            Name = name;
-            Content = content;
+            Name = name ?? string.Empty;
+            Content = content ?? string.Empty;
         }
 
         public string Name { get; set; }

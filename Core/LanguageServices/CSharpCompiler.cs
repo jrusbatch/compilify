@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using Compilify.Extensions;
 using Roslyn.Compilers;
 using Roslyn.Compilers.Common;
@@ -22,7 +23,7 @@ namespace Compilify.LanguageServices
                   }
               }";
 
-        private const string Console = "public static readonly StringWriter __Console = new StringWriter();";
+        private const string Console = "public static readonly System.IO.StringWriter __Console = new System.IO.StringWriter();";
 
         private static readonly IEnumerable<string> DefaultNamespaces =
             new[]
@@ -45,17 +46,16 @@ namespace Compilify.LanguageServices
             };
 
         private static readonly ParseOptions DefaultParseOptions = 
-            ParseOptions.Default.WithKind(SourceCodeKind.Script);
+            ParseOptions.Default.WithKind(SourceCodeKind.Interactive);
 
         private static readonly CompilationOptions DefaultCompilationOptions =
             new CompilationOptions(OutputKind.DynamicallyLinkedLibrary)
-                    .WithOverflowChecks(true)
-                    .WithOptimizations(true)
                     .WithUsings(DefaultNamespaces);
 
         public ICodeAssembly Compile(ICodeProgram program)
         {
             var compilation = RoslynCompile(program);
+
             var assembly = new ProgramAssembly
                            {
                                EntryPointClassName = "Script+EntryPoint",
@@ -85,10 +85,10 @@ namespace Compilify.LanguageServices
             }
 
             var compilation =
-                Compilation.Create(codeProgram.Name)
+                Compilation.Create(codeProgram.Name ?? "Untitled")
                            .WithReferences(DefaultReferences)
                            .WithOptions(DefaultCompilationOptions)
-                           .AddSyntaxTrees(SyntaxTree.ParseText(Console), SyntaxTree.ParseText(EntryPoint));
+                           .AddSyntaxTrees(SyntaxTree.ParseText(Console, options: DefaultParseOptions), SyntaxTree.ParseText(EntryPoint, options: DefaultParseOptions));
 
             foreach (var document in codeProgram.Documents)
             {

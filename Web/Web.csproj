@@ -230,7 +230,6 @@
     <Compile Include="Queries\LatestVersionOfPostQuery.cs" />
     <Compile Include="Queries\IQuery.cs" />
     <Compile Include="Queries\ProjectByIdQuery.cs" />
-    <Compile Include="Queries\SamplePostQuery.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />

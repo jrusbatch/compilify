@@ -40,7 +40,7 @@ namespace Compilify.Web.EndPoints
 
                               ClientId = connectionId,
                               Submitted = now,
-                              Expires = now + ExecutionTimeout
+                              Expires = now + TimeSpan.FromSeconds(5)
                           };
 
             Bus.Instance.Publish(command);
