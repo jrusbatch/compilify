@@ -463,6 +463,9 @@
         delete Compilify.init;
         Compilify.Workspace = new Workspace($(container), state);
         Compilify.Workspace.openProject(state.Project);
+
+        $('.js-save').on('click', function() { Compilify.Workspace.saveProject(); });
+        $('.js-run').on('click', function() { Compilify.Workspace.executeProject(); });
     };
     
 }).call(window, window.jQuery, window._, window.Compilify || (window.Compilify = { }));
