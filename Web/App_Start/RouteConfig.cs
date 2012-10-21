@@ -37,9 +37,9 @@ namespace Compilify.Web
 
             routes.MapRoute(
                 "Update",
-                "{id}",
+                string.Empty,
                 new { controller = "Home", action = "Save" },
-                new { httpMethod = new HttpMethodConstraint("POST"), id = ProjectIdentifier });
+                new { httpMethod = new HttpMethodConstraint("POST") });
 
             routes.MapRoute(
                 "Show",

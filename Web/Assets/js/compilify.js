@@ -252,6 +252,7 @@
 
         };
 
+
         Workspace.prototype.openProject = function(project) {
             var documents = project.Documents || [],
                 references = project.References || [];
@@ -271,21 +272,18 @@
 
         Workspace.prototype.saveProject = function() {
 
-            var documents = this._getDocumentStates();
-
             var project = {
-                Documents: documents,
+                Documents: this._getDocumentStates(),
                 References: this.getReferences()
             };
 
-            var request = $.ajax({
+            $.ajax({
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(project)
-            });
-
-            request.done(function() {
-                console.log('project saved.', arguments);
+                data: JSON.stringify(project),
+                success: function() {
+                    $(Compilify).triggerHandler('projectSaved');
+                }
             });
         };
 

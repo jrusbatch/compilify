@@ -1,7 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Autofac;
 using Autofac.Integration.Mvc;
+using Compilify.Web.Commands;
+using Compilify.Web.Queries;
 
 namespace Compilify.Web.Infrastructure.DependencyInjection
 {
@@ -19,7 +20,9 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
                 ThisAssembly
                     .GetTypes()
                     .Where(x => x.Namespace != null)
-                    .Where(x => x.Namespace.StartsWith("Compilify.Web.Queries", StringComparison.Ordinal));
+                    .Where(x => x.Namespace != null && 
+                               (x.Namespace == typeof(IQuery).Namespace ||
+                                x.Namespace == typeof(ICommand).Namespace));
 
             foreach (var query in queries)
             {

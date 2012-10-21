@@ -86,9 +86,9 @@ namespace Compilify.Web.Controllers
 
         [HttpPost]
         [ValidateInput(false)]
-        public async Task<ActionResult> Save(string slug, Project project)
+        public async Task<ActionResult> Save(Project project)
         {
-            var result = await Resolve<SavePostCommand>().Execute(slug, project);
+            var result = await Resolve<SavePostCommand>().Execute(project);
 
             return RedirectToAction("Show", new { id = result.Id });
         }
