@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web.WebPages;
 using Compilify.LanguageServices;
-using Compilify.Models;
 using Compilify.Web.Models;
 using Raven.Client;
 
@@ -11,12 +9,12 @@ namespace Compilify.Web.Queries
 {
     public class PostByIdAndVersionQuery : IQuery
     {
-        private readonly IDocumentSession posts;
+        private readonly IDocumentSession session;
         private readonly ICodeValidator validator;
 
-        public PostByIdAndVersionQuery(IDocumentSession postRepository, ICodeValidator codeValidator)
+        public PostByIdAndVersionQuery(IDocumentSession documentSession, ICodeValidator codeValidator)
         {
-            posts = postRepository;
+            session = documentSession;
             validator = codeValidator;
         }
 

@@ -78,10 +78,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\LanguageServices\LanguageServices.csproj">
-      <Project>{8f2ea92a-1519-482e-9808-dacb2ca67503}</Project>
-      <Name>LanguageServices</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Web\Web.csproj">
       <Project>{20e5716b-461e-417c-b36e-00eba1ced703}</Project>
       <Name>Web</Name>
