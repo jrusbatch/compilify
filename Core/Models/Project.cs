@@ -12,7 +12,7 @@ namespace Compilify.Models
             Id = Guid.NewGuid().ToString("N");
             Documents = new List<Document>();
             References = new List<Reference>();
-            Created = DateTime.UtcNow;
+            Created = DateTimeOffset.UtcNow;
         }
 
         public string Id { get; set; }
@@ -20,32 +20,42 @@ namespace Compilify.Models
         public IList<Document> Documents { get; set; }
         public IList<Reference> References { get; set; }
 
+        string ICodeProgram.Name
+        {
+            get { return Id; }
+        }
+
         IEnumerable<Document> ICodeProgram.Documents
         {
             get { return Documents; }
+        }
+
+        IEnumerable<Reference> ICodeProgram.References
+        {
+            get { return References; }
         } 
 
-        public DateTime Created { get; set; }
+        public DateTimeOffset Created { get; set; }
 
         public Project AddOrUpdate(Document document)
         {
-            if (document == null)
-                return this;
-
-            if (Documents.Any(x => x.Name == document.Name))
+            if (document != null)
             {
-                var existing = Documents.First(x => x.Name == document.Name);
-
-                // update only if the edit is newer
-                if (document.LastEdited > existing.LastEdited)
+                if (Documents.Any(x => x.Name == document.Name))
                 {
-                    existing.Content = document.Content;
-                    existing.LastEdited = document.LastEdited;
+                    var existing = Documents.First(x => x.Name == document.Name);
+
+                    // update only if the edit is newer
+                    if (document.LastEdited > existing.LastEdited)
+                    {
+                        existing.Content = document.Content;
+                        existing.LastEdited = document.LastEdited;
+                    }
                 }
-            }
-            else
-            {
-                Documents.Add(document);
+                else
+                {
+                    Documents.Add(document);
+                }
             }
 
             return this;
@@ -57,19 +67,12 @@ namespace Compilify.Models
             return this;
         }
 
-        string ICodeProgram.Name
-        {
-            get { return Title; }
-        }
-
-        public string Language { get; private set; }
-
         public string Content
         {
             get
             {
                 var main = Documents.FirstOrDefault(x => x.IsEntryPoint);
-                return main == null ? "" : main.Content;
+                return main == null ? string.Empty : main.Content;
             }
         }
 
@@ -83,13 +86,9 @@ namespace Compilify.Models
                     sb.AppendLine(document.Content);
                     sb.AppendLine();
                 }
+
                 return sb.ToString();
             }
-        }
-
-        TimeSpan ICodeProgram.TimeoutPeriod
-        {
-            get { return TimeSpan.FromSeconds(5D); }
         }
     }
 }

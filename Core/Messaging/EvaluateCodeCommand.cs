@@ -25,9 +25,6 @@ namespace Compilify.Messaging
         [DataMember(Order = 2)]
         public string Name { get; set; }
 
-        [DataMember(Order = 3)]
-        public string Language { get; set; }
-
         [DataMember(Order = 4)]
         public string ClientId { get; set; }
 
@@ -43,9 +40,22 @@ namespace Compilify.Messaging
         [DataMember(Order = 10)]
         public IList<Document> Documents { get; set; }
 
+        [DataMember(Order = 10)]
+        public IList<Reference> References { get; set; }
+
+        string ICodeProgram.Name
+        {
+            get { return Name; }
+        }
+
         IEnumerable<Document> ICodeProgram.Documents
         {
             get { return Documents; }
+        }
+
+        IEnumerable<Reference> ICodeProgram.References
+        {
+            get { return References; }
         }
     }
 }

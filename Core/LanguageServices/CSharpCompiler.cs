@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Compilify.Extensions;
 using Roslyn.Compilers;
 using Roslyn.Compilers.Common;
 using Roslyn.Compilers.CSharp;
-using Roslyn.Services;
 
 namespace Compilify.LanguageServices
 {
@@ -44,7 +44,7 @@ namespace Compilify.LanguageServices
                 MetadataReference.CreateAssemblyReference("System.Core")
             };
 
-        private static readonly CommonParseOptions DefaultParseOptions = 
+        private static readonly ParseOptions DefaultParseOptions = 
             ParseOptions.Default.WithKind(SourceCodeKind.Script);
 
         private static readonly CompilationOptions DefaultCompilationOptions =
@@ -77,23 +77,6 @@ namespace Compilify.LanguageServices
             return assembly;
         }
 
-        private static ISolution CreateSolution(ICodeProgram codeProgram, out ProjectId projectId)
-        {
-            DocumentId entryPointDocumentId;
-            DocumentId consoleDocumentId;
-
-            var solutionId = SolutionId.CreateNewId();
-
-            return
-                Solution.Create(solutionId)
-                    .AddCSharpProject(codeProgram.Name ?? "Untitled", codeProgram.Name ?? "Untitled", out projectId)
-                    .AddMetadataReferences(projectId, DefaultReferences)
-                    .UpdateCompilationOptions(projectId, DefaultCompilationOptions)
-                    .UpdateParseOptions(projectId, DefaultParseOptions)
-                    .AddDocument(projectId, "EntryPoint", EntryPoint, out entryPointDocumentId)
-                    .AddDocument(projectId, "Console", Console, out consoleDocumentId);
-        }
-
         public CommonCompilation RoslynCompile(ICodeProgram codeProgram)
         {
             if (codeProgram == null)
@@ -101,38 +84,26 @@ namespace Compilify.LanguageServices
                 throw new ArgumentNullException("codeProgram");
             }
 
-            ProjectId projectId;
-            var solution = CreateSolution(codeProgram, out projectId);
-
-            var documentIds = new Dictionary<string, DocumentId>();
+            var compilation =
+                Compilation.Create(codeProgram.Name)
+                           .WithReferences(DefaultReferences)
+                           .WithOptions(DefaultCompilationOptions)
+                           .AddSyntaxTrees(SyntaxTree.ParseText(Console), SyntaxTree.ParseText(EntryPoint));
 
             foreach (var document in codeProgram.Documents)
             {
-                var documentId = DocumentId.CreateNewId(projectId, document.Name);
+                var text = document.IsEntryPoint ? BuildScript(document.Content) : document.Content;
 
-                var text = document.Content;
-                if (string.Equals(document.Name, "Content"))
-                {
-                    // This smells terrible.
-                    text = BuildScript(text);
-                }
+                var tree = SyntaxTree.ParseText(text, document.Name, DefaultParseOptions);
+                
+                compilation = compilation.AddSyntaxTrees(tree);
 
-                solution = solution.AddDocument(documentId, document.Name, new StringText(text));
-                documentIds.Add(document.Name, documentId);
+                var rewriter = new ConsoleRewriter("__Console", compilation.GetSemanticModel(tree));
+
+                compilation = compilation.ReplaceSyntaxTree(tree, tree.RewriteWith(rewriter));
             }
 
-            foreach (var documentId in solution.GetProject(projectId).DocumentIds)
-            {
-                var document = solution.GetDocument(documentId);
-                var root = document.GetSyntaxRoot();
-                var semanticModel = document.GetSemanticModel();
-
-                var rewriter = new ConsoleRewriter("__Console", semanticModel);
-
-                solution = solution.UpdateDocument(documentId, rewriter.Visit((SyntaxNode)root));
-            }
-
-            return solution.GetProject(projectId).GetCompilation();
+            return compilation;
         }
 
         private static string BuildScript(string content)

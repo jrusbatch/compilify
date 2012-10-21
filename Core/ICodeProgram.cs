@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Compilify.Models;
 
@@ -8,10 +7,8 @@ namespace Compilify
     {
         string Name { get; }
 
-        string Language { get; }
-
+        IEnumerable<Reference> References { get; }
+        
         IEnumerable<Document> Documents { get; }
-
-        TimeSpan TimeoutPeriod { get; }
     }
 }
