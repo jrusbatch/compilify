@@ -4,9 +4,9 @@ namespace Compilify
 {
     public interface ICodeRunResult
     {
-        DateTime StartTime { get; set; }
+        DateTimeOffset StartTime { get; set; }
 
-        DateTime StopTime { get; set; }
+        DateTimeOffset StopTime { get; set; }
 
         TimeSpan RunDuration { get; set; }
 

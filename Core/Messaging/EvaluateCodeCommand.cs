@@ -1,61 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
+using System.Collections.ObjectModel;
 using Compilify.Models;
 
 namespace Compilify.Messaging
 {
     [Serializable]
-    [DataContract]
     public sealed class EvaluateCodeCommand : ICodeProgram
     {
-        [DataMember(Order = 1)]
-        private Guid id = Guid.NewGuid();
-
         public EvaluateCodeCommand()
         {
             Documents = new List<Document>();
         }
 
-        public Guid ExecutionId
-        {
-            get { return id; }
-        }
-
-        [DataMember(Order = 2)]
         public string Name { get; set; }
 
-        [DataMember(Order = 4)]
         public string ClientId { get; set; }
 
-        [DataMember(Order = 7)]
         public string Result { get; set; }
 
-        [DataMember(Order = 8)]
-        public DateTime Submitted { get; set; }
+        public DateTimeOffset Submitted { get; set; }
 
-        [DataMember(Order = 9)]
-        public TimeSpan TimeoutPeriod { get; set; }
+        public DateTimeOffset Expires { get; set; }
 
-        [DataMember(Order = 10)]
         public IList<Document> Documents { get; set; }
 
-        [DataMember(Order = 10)]
         public IList<Reference> References { get; set; }
-
-        string ICodeProgram.Name
-        {
-            get { return Name; }
-        }
 
         IEnumerable<Document> ICodeProgram.Documents
         {
-            get { return Documents; }
+            get { return new ReadOnlyCollection<Document>(Documents); }
         }
 
         IEnumerable<Reference> ICodeProgram.References
         {
-            get { return References; }
+            get { return new ReadOnlyCollection<Reference>(References); }
         }
     }
 }

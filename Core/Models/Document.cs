@@ -6,7 +6,7 @@ namespace Compilify.Models
     {
         public Document()
         {
-            LastEdited = DateTime.UtcNow;
+            LastEdited = DateTimeOffset.UtcNow;
         }
 
         public Document(string name, string content)
@@ -18,7 +18,7 @@ namespace Compilify.Models
 
         public string Name { get; set; }
         public string Content { get; set; }
-        public DateTime LastEdited { get; set; }
+        public DateTimeOffset LastEdited { get; set; }
 
         public bool IsEntryPoint
         {

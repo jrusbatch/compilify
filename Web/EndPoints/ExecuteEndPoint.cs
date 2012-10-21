@@ -32,14 +32,15 @@ namespace Compilify.Web.EndPoints
         protected override Task OnReceivedAsync(IRequest request, string connectionId, string data)
         {
             var viewModel = JsonConvert.DeserializeObject<WorkspaceState>(data);
-
+            var now = DateTimeOffset.UtcNow;
             var command = new EvaluateCodeCommand
                           {
                               Documents = new List<Document>(viewModel.Project.Documents),
+                              References = new List<Reference>(viewModel.Project.References),
 
                               ClientId = connectionId,
-                              Submitted = DateTime.UtcNow,
-                              TimeoutPeriod = ExecutionTimeout
+                              Submitted = now,
+                              Expires = now + ExecutionTimeout
                           };
 
             Bus.Instance.Publish(command);

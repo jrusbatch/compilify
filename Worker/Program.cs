@@ -55,17 +55,18 @@ namespace Compilify.Worker
                 return;
             }
 
-            var timeInQueue = DateTime.UtcNow - cmd.Submitted;
+            var now = DateTimeOffset.UtcNow;
+            var timeInQueue = now - cmd.Submitted;
 
             Logger.Info("Job received after {0:N3} seconds in queue.", timeInQueue.TotalSeconds);
 
-            if (timeInQueue > cmd.TimeoutPeriod)
+            if (now > cmd.Expires)
             {
-                Logger.Warn("Job was in queue for longer than {0} seconds, skipping!", cmd.TimeoutPeriod.Seconds);
+                Logger.Warn("Job was in queue for longer than {0} seconds, skipping!", (cmd.Expires - cmd.Submitted).Seconds);
                 return;
             }
 
-            var startedOn = DateTime.UtcNow;
+            var startedOn = DateTimeOffset.UtcNow;
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 
@@ -83,7 +84,7 @@ namespace Compilify.Worker
             {
                 using (var executor = new Sandbox())
                 {
-                    result = executor.Execute(assembly, cmd.TimeoutPeriod);
+                    result = executor.Execute(assembly, TimeSpan.FromSeconds(5));
                 }
             }
 
@@ -94,7 +95,6 @@ namespace Compilify.Worker
 
             var response = new WorkerResult
             {
-                ExecutionId = cmd.ExecutionId,
                 ClientId = cmd.ClientId,
                 StartTime = startedOn,
                 StopTime = stoppedOn,
