@@ -96,7 +96,6 @@
             lineNumbers: true,
             theme: 'neat',
             mode: 'text/x-csharp',
-            // autofocus: true
             onChange: function() {
                 Compilify.Workspace.validateProject();
             }
@@ -110,13 +109,8 @@
             var options = _.defaults(defaults, { value: doc.getText() });
 
             var $tabPane = $('<div data-documentId="' + doc.getId() + '" class="tab-pane"><textarea>' + doc.getText() + '</textarea></div>').hide();
-            // $tabContainer = $('.tab-content').parent(),
-            // $tabContent = $('.tab-content').detach();
-
-            //$tabContent.find('.tab-pane').removeClass('active');
+            
             $container.append($tabPane);
-
-            //$tabContent.prependTo($tabContainer);
 
             this._codeMirror = CodeMirror.fromTextArea($tabPane.children('textarea')[0], options);
             this._markedErrors = [];
@@ -188,11 +182,12 @@
             document._editor.dispose();
         }
 
-        $(Compilify)
-            .on('projectLoaded', _onProjectLoaded)
-            .on('documentAdded', function($e, document) { _onDocumentAdded(document); })
-            .on('documentRemoved', function($e, document) { _onDocumentRemoved(document); })
-            .on('activeDocumentChanged', function($e, active, previous) { _onActiveDocumentChanged(active, previous); });
+        $(Compilify).on({
+            'projectLoaded': _onProjectLoaded,
+            'documentAdded': function($e, document) { _onDocumentAdded(document); },
+            'documentRemoved': function($e, document) { _onDocumentRemoved(document); },
+            'activeDocumentChanged': function($e, active, previous) { _onActiveDocumentChanged(active, previous); }
+        });
 
         $(function() {
             $container = $('.tab-content');
@@ -250,7 +245,10 @@
         };
 
         Workspace.prototype._getState = function() {
-
+            return {
+                Documents: this._getDocumentStates(),
+                References: this.getReferences()
+            };
         };
 
 
@@ -273,10 +271,7 @@
 
         Workspace.prototype.saveProject = function() {
 
-            var project = {
-                Documents: this._getDocumentStates(),
-                References: this.getReferences()
-            };
+            var project = this._getState();
 
             $.ajax({
                 type: 'POST',
@@ -289,14 +284,18 @@
         };
 
         Workspace.prototype.validateProject = function() {
+
+            var project = this._getState();
+
             return $.ajax('/validate', {
                 type: 'POST',
                 contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify({ Documents: this._getDocumentStates() }),
+                data: JSON.stringify(project),
                 dataType: 'json',
                 success: function(msg) {
-                    _onValidationCompleted(msg);
-                    $(Compilify).triggerHandler('validationComplete', msg.data);
+                    if (msg && msg.status === 'ok') {
+                        $(Compilify).triggerHandler('validationCompleted', [msg.data]);
+                    }
                 }
             });
         };
@@ -421,21 +420,15 @@
         markedErrors.length = 0;
     }
 
-    function _onValidationCompleted(msg) {
-        var data = msg.data;
-
-        if (!_.isArray(data)) {
-            throw new Error('argument should be an array');
-        }
-
+    function _onValidationCompleted($e, data) {
         _clearMarkedErrors();
 
         if (data.length === 0) {
             return;
         }
 
-        for (var index in msg.data) {
-            var error = msg.data[index];
+        for (var index in data) {
+            var error = data[index];
             var loc = error.Location;
 
             var file = loc.DocumentName;
@@ -444,7 +437,7 @@
             var end = loc.EndLinePosition;
 
             var document = Compilify.Workspace.getDocumentByName(file);
-
+            console.log(file, document);
             if (document) {
                 var markStart = { line: start.Line, ch: start.Character };
                 var markEnd = { line: end.Line, ch: end.Character };
@@ -458,7 +451,6 @@
         }
     }
 
-
     Compilify.init = function(container, state) {
         delete Compilify.init;
         Compilify.Workspace = new Workspace($(container), state);
@@ -466,6 +458,8 @@
 
         $('.js-save').on('click', function() { Compilify.Workspace.saveProject(); });
         $('.js-run').on('click', function() { Compilify.Workspace.executeProject(); });
+
+        $(Compilify).on('validationCompleted', _onValidationCompleted);
     };
     
 }).call(window, window.jQuery, window._, window.Compilify || (window.Compilify = { }));
