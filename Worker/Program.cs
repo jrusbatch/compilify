@@ -44,7 +44,6 @@ namespace Compilify.Worker
                 sbc =>
                 {
                     sbc.UseRabbitMq();
-                    sbc.UseRabbitMqRouting();
                     sbc.ReceiveFrom(endpointAddress);
                     sbc.Subscribe(subs => subs.Handler<EvaluateCodeCommand>(ProcessCommand));
                 });

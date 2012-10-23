@@ -2,7 +2,6 @@
 using System.Configuration;
 using System.Text;
 using Compilify.Extensions;
-using Compilify.LanguageServices;
 using Compilify.Messaging;
 using Compilify.Web.EndPoints;
 using MassTransit;
@@ -22,7 +21,6 @@ namespace Compilify.Web
             Bus.Initialize(sbc =>
             {
                 sbc.UseRabbitMq();
-                sbc.UseRabbitMqRouting();
                 sbc.ReceiveFrom(endpointAddress);
             });
 
