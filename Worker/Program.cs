@@ -27,7 +27,13 @@ namespace Compilify.Worker
             // Log the exception, but do not mark it as observed. The process will be terminated and restarted 
             // automatically by AppHarbor
             TaskScheduler.UnobservedTaskException +=
-                (sender, e) => Logger.ErrorException("An unobserved task exception occurred", e.Exception);
+                (sender, e) =>
+                {
+                    Bus.Shutdown();
+                    ResetEvent.Set();
+
+                    Logger.ErrorException("An unobserved task exception occurred", e.Exception);
+                };
 
             var connectionString = ConfigurationManager.AppSettings["CLOUDAMQP_URL"].Replace("amqp://", "rabbitmq://");
             var queueName = ConfigurationManager.AppSettings["Compilify.WorkerMessagingQueue"];
@@ -44,6 +50,8 @@ namespace Compilify.Worker
                 });
 
             ResetEvent.WaitOne();
+
+            Bus.Shutdown();
 
             return -1;
         }
@@ -129,6 +137,9 @@ namespace Compilify.Worker
             {
                 Logger.ErrorException("An unhandled exception occurred in the worker process.", exception);
             }
+
+            Bus.Shutdown();
+            ResetEvent.Set();
         }
     }
 }
