@@ -414,6 +414,8 @@
                 this._documents.splice(index, 1);
 
                 $(Compilify).triggerHandler('documentRemoved', document);
+
+                this.validateProject();
                 
                 if (document === this._activeDocument) {
                     this.setActiveDocument(this._documents[0]);
