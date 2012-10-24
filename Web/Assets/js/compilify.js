@@ -300,8 +300,8 @@
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(project),
-                success: function() {
-                    $(Compilify).triggerHandler('projectSaved');
+                success: function(msg) {
+                    window.location = msg.location;
                 }
             });
         };

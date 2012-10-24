@@ -88,6 +88,11 @@ namespace Compilify.Web.Controllers
         {
             var result = await Resolve<SavePostCommand>().Execute(project);
 
+            if (Request.IsAjaxRequest())
+            {
+                return Json(new { id = result.Id, location = @Url.RouteUrl("Show", new { id = result.Id }, Request.Url.Scheme) });
+            }
+
             return RedirectToAction("Show", new { id = result.Id });
         }
 
