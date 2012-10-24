@@ -384,7 +384,7 @@
         };
 
         Workspace.prototype.renameDocument = function(document) {
-            if (!document || document.getName() === 'Main') {
+            if (!document || document.isPrimary()) {
                 return; // The main tab cannot be renamed
             }
 
@@ -403,7 +403,7 @@
         };
 
         Workspace.prototype.removeDocument = function(document) {
-            if (document.getName() === 'Main') {
+            if (!document || document.isPrimary()) {
                 return; // The Main document cannot be removed
             }
 
