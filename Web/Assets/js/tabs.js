@@ -17,7 +17,7 @@
     }
     
     function _onDocumentAdded(doc) {
-        var $tab = $tabTemplate({ id: doc.getId(), name: doc.getName() });
+        var $tab = $tabTemplate({ id: doc.getId(), name: doc.getName(), isPrimary: doc.isPrimary() });
 
         // TODO: Clicking on the dropdown toggle should not set make the tab active.
         $tab.on('click', '.js-rename-document', function() { Compilify.Workspace.renameDocument(doc); })

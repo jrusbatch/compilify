@@ -84,6 +84,10 @@
             };
         };
 
+        Document.prototype.isPrimary = function() {
+            return this._name.toUpperCase() === 'MAIN';
+        };
+
         return Document;
     }());
 
