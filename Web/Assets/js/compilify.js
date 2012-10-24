@@ -256,10 +256,12 @@
             this._activeDocument = null;
         }
 
+
         Workspace.prototype._$container = null;
         Workspace.prototype._references = null;
         Workspace.prototype._documents = null;
         Workspace.prototype._activeDocument = null;
+
 
         Workspace.prototype._getDocumentStates = function() {
             return this._documents.map(function(document) {
@@ -410,7 +412,6 @@
             var index = this._documents.indexOf(document);
 
             if (index !== -1) {
-
                 this._documents.splice(index, 1);
 
                 $(Compilify).triggerHandler('documentRemoved', document);

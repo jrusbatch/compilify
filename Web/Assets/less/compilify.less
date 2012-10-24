@@ -3,9 +3,11 @@
 @import 'mixins.less';
 @import 'typography.less';
 
-* { .selectable(none); }
+* {
+    .selectable(none);
+}
 
-html, 
+html,
 body {
     width: 100%;
     height: 100%;
@@ -38,14 +40,11 @@ input, input:focus,
 textarea, textarea:focus,
 select, select:focus {
     font-family: 'Calibri';
-
     font-size: 9pt;
     font-weight: normal;
     outline: none;
     border: 1px solid #ccc;
-
     -webkit-appearance: none;
-
     .box-shadow(none);
     .border-radius(0);
 }
@@ -83,7 +82,7 @@ a {
         color: @linkColor;
         padding: 10px;
         width: 200px;
-        
+
         .brand-name {
             .header;
             line-height: 1;
@@ -108,7 +107,7 @@ a {
             height: 41px;
             line-height: 41px;
             padding: 0 10px;
-             
+
             &:hover {
                 color: #999;
                 background-color: #cdcdcd;
@@ -122,6 +121,7 @@ a {
         > a,
         &.active > a {
             background: none;
+            -webkit-text-shadow: none;
             text-shadow: none;
         }
     }
@@ -265,19 +265,19 @@ a {
         }
     }
 
-    .nav-tabs > li {
-        cursor: default;
-        margin-bottom: 0;
+        .nav-tabs > li {
+            cursor: default;
+            margin-bottom: 0;
 
-        &.active {
-            .tab,
-            .tab:hover,
-            .tab:hover .dropdown.open .dropdown-toggle {
-                color: #fff;
-                background-color: #0072c6;
+            &.active {
+                .tab,
+                .tab:hover,
+                .tab:hover .dropdown.open .dropdown-toggle {
+                    color: #fff;
+                    background-color: #0072c6;
+                }
             }
         }
-    }
 
     .tab {
         text-decoration: none;
@@ -315,7 +315,7 @@ a {
         left: 0;
         right: 0;
         bottom: 0;
-        margin: 39px 0 22px;
+        margin: 39px 0 21px;
 
         .columns {
             position: absolute;
@@ -380,8 +380,8 @@ a {
     .compilation-error {
         background-color: rgba(229,20,0,.3);
         -webkit-box-shadow: 0 0 0 1px rgba(179,10,10,1);
-        -moz-box-shadow: 0 0 px rgba(179,10,10,1)0 0 px rgba(179,10,10,1);
-        box-shadow: 0 0 0 1px rgba(179,10,10,1);
+           -moz-box-shadow: 0 0 0 1px rgba(179,10,10,1);
+                box-shadow: 0 0 0 1px rgba(179,10,10,1);
     }
 
     .CodeMirror,
@@ -458,6 +458,8 @@ a {
 
         pre {
             height: 100%;
+            -moz-border-radius: 0;
+            -webkit-border-radius: 0;
             border-radius: 0;
             border: none;
             margin: 0;
