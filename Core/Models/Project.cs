@@ -7,11 +7,19 @@ namespace Compilify.Models
 {
     public class Project : ICodeProgram
     {
+        public static readonly IEnumerable<Reference> DefaultReferences =
+            new List<Reference>
+            {
+                new Reference { AssemblyName = "mscorlib", Version = "4.0.0.0" },
+                new Reference { AssemblyName = "System", Version = "4.0.0.0" },
+                new Reference { AssemblyName = "System.Core", Version = "4.0.0.0" }
+            };
+
         public Project()
         {
             Id = Guid.NewGuid().ToString("N");
             Documents = new List<Document>();
-            References = new List<Reference>();
+            References = new List<Reference>(DefaultReferences);
             Created = DateTimeOffset.UtcNow;
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Compilify.Extensions;
@@ -84,11 +85,16 @@ namespace Compilify.LanguageServices
                 throw new ArgumentNullException("codeProgram");
             }
 
+            var references =
+                codeProgram.References.Select(x => MetadataReference.CreateAssemblyReference(x.AssemblyName));
+
             var compilation =
                 Compilation.Create(codeProgram.Name ?? "Untitled")
-                           .WithReferences(DefaultReferences)
+                           .WithReferences(references)
                            .WithOptions(DefaultCompilationOptions)
-                           .AddSyntaxTrees(SyntaxTree.ParseText(Console, options: DefaultParseOptions), SyntaxTree.ParseText(EntryPoint, options: DefaultParseOptions));
+                           .AddSyntaxTrees(
+                               SyntaxTree.ParseText(Console, options: DefaultParseOptions),
+                               SyntaxTree.ParseText(EntryPoint, options: DefaultParseOptions));
 
             foreach (var document in codeProgram.Documents)
             {
