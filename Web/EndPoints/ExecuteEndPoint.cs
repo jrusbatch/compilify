@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Threading.Tasks;
-using Compilify.LanguageServices;
+using Compilify.Messaging;
+using Compilify.Models;
 using Compilify.Web.Models;
+using Compilify.Utilities;
 using MassTransit;
 using Newtonsoft.Json;
 using SignalR;
@@ -15,8 +17,6 @@ namespace Compilify.Web.EndPoints
     {
         private const int DefaultExecutionTimeout = 30;
         private static readonly TimeSpan ExecutionTimeout;
-
-        private static readonly Task EmptyTask = Task.FromResult<object>(null);
 
         static ExecuteEndPoint()
         {
@@ -31,22 +31,21 @@ namespace Compilify.Web.EndPoints
 
         protected override Task OnReceivedAsync(IRequest request, string connectionId, string data)
         {
-            var viewModel = JsonConvert.DeserializeObject<PostViewModel>(data);
-
-            var model = viewModel.ToPost();
-
+            var viewModel = JsonConvert.DeserializeObject<WorkspaceState>(data);
+            var now = DateTimeOffset.UtcNow;
             var command = new EvaluateCodeCommand
                           {
-                              Documents = new List<Document>(model.Documents),
+                              Documents = new List<Document>(viewModel.Project.Documents),
+                              References = new List<Reference>(viewModel.Project.References),
 
                               ClientId = connectionId,
-                              Submitted = DateTime.UtcNow,
-                              TimeoutPeriod = ExecutionTimeout
+                              Submitted = now,
+                              Expires = now + TimeSpan.FromSeconds(5)
                           };
 
             Bus.Instance.Publish(command);
 
-            return EmptyTask;
+            return TaskAsyncHelper.Empty;
         }
     }
 }

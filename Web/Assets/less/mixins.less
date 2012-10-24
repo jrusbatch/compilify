@@ -1,0 +1,36 @@
+.selectable(none) {
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: -moz-none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+.selectable(@selectable) {
+    -webkit-user-select: @selectable;
+     -khtml-user-select: @selectable;
+       -moz-user-select: @selectable;
+        -ms-user-select: @selectable;
+            user-select: @selectable;
+}
+
+.box-shadow(@shadow) {
+    -webkit-box-shadow: @shadow;
+       -moz-box-shadow: @shadow;
+         -o-box-shadow: @shadow;
+            box-shadow: @shadow;
+}
+
+.border-radius(@radius) {
+    -webkit-border-radius: @radius;
+       -moz-border-radius: @radius;
+            border-radius: @radius;
+}
+
+.transition(@property, @timeSpan) {
+    -webkit-transition: @property @timeSpan;
+       -moz-transition: @property @timeSpan;
+        -ms-transition: @property @timeSpan;
+         -o-transition: @property @timeSpan;
+            transition: @property @timeSpan;
+}

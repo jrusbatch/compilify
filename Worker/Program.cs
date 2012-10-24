@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Compilify.LanguageServices;
+using Compilify.Messaging;
 using Compilify.Models;
 using MassTransit;
-using Newtonsoft.Json;
 using NLog;
 
 namespace Compilify.Worker
@@ -44,7 +44,6 @@ namespace Compilify.Worker
                 sbc =>
                 {
                     sbc.UseRabbitMq();
-                    sbc.UseRabbitMqRouting();
                     sbc.ReceiveFrom(endpointAddress);
                     sbc.Subscribe(subs => subs.Handler<EvaluateCodeCommand>(ProcessCommand));
                 });
@@ -63,17 +62,18 @@ namespace Compilify.Worker
                 return;
             }
 
-            var timeInQueue = DateTime.UtcNow - cmd.Submitted;
+            var now = DateTimeOffset.UtcNow;
+            var timeInQueue = now - cmd.Submitted;
 
             Logger.Info("Job received after {0:N3} seconds in queue.", timeInQueue.TotalSeconds);
 
-            if (timeInQueue > cmd.TimeoutPeriod)
+            if (now > cmd.Expires)
             {
-                Logger.Warn("Job was in queue for longer than {0} seconds, skipping!", cmd.TimeoutPeriod.Seconds);
+                Logger.Warn("Job was in queue for longer than {0} seconds, skipping!", (cmd.Expires - cmd.Submitted).Seconds);
                 return;
             }
 
-            var startedOn = DateTime.UtcNow;
+            var startedOn = DateTimeOffset.UtcNow;
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 
@@ -91,7 +91,7 @@ namespace Compilify.Worker
             {
                 using (var executor = new Sandbox())
                 {
-                    result = executor.Execute(assembly, cmd.TimeoutPeriod);
+                    result = executor.Execute(assembly, TimeSpan.FromSeconds(5));
                 }
             }
 
@@ -100,27 +100,19 @@ namespace Compilify.Worker
 
             Logger.Info("Work completed in {0} milliseconds.", stopWatch.ElapsedMilliseconds);
 
-            try
+            var response = new WorkerResult
             {
-                var response = new WorkerResult
-                {
-                    ExecutionId = cmd.ExecutionId,
-                    ClientId = cmd.ClientId,
-                    StartTime = startedOn,
-                    StopTime = stoppedOn,
-                    RunDuration = stopWatch.Elapsed,
-                    ProcessorTime = result.ProcessorTime,
-                    TotalMemoryAllocated = result.TotalMemoryAllocated,
-                    ConsoleOutput = result.ConsoleOutput,
-                    Result = result.Result
-                };
+                ClientId = cmd.ClientId,
+                StartTime = startedOn,
+                StopTime = stoppedOn,
+                RunDuration = stopWatch.Elapsed,
+                ProcessorTime = result.ProcessorTime,
+                TotalMemoryAllocated = result.TotalMemoryAllocated,
+                ConsoleOutput = result.ConsoleOutput,
+                Result = result.Result
+            };
 
-                Bus.Instance.Publish(response);
-            }
-            catch (JsonSerializationException ex)
-            {
-                Logger.ErrorException("An error occurred while attempting to serialize the JSON result.", ex);
-            }
+            Bus.Instance.Publish(response);
 
             stopWatch.Reset();
         }

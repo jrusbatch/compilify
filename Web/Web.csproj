@@ -16,8 +16,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MvcBuildViews>true</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort>
-    </IISExpressSSLPort>
+    <IISExpressSSLPort>44300</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>
     </IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>
@@ -49,9 +48,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Antlr3.Runtime, Version=3.3.1.7705, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\WebGrease.1.1.0\lib\Antlr3.Runtime.dll</HintPath>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>..\packages\WebGrease.1.3.0\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Autofac">
       <HintPath>..\packages\Autofac.2.6.3.862\lib\NET40\Autofac.dll</HintPath>
@@ -59,8 +57,18 @@
     <Reference Include="Autofac.Configuration">
       <HintPath>..\packages\Autofac.2.6.3.862\lib\NET40\Autofac.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="Autofac.Integration.Mvc">
-      <HintPath>..\packages\Autofac.Mvc4.2.6.2.859\lib\NET40\Autofac.Integration.Mvc.dll</HintPath>
+    <Reference Include="Autofac.Integration.Mvc, Version=2.6.3.862, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Autofac.Mvc4.2.6.3.862-beta\lib\NET40\Autofac.Integration.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="BundleTransformer.Core">
+      <HintPath>..\packages\BundleTransformer.Core.1.6.6\lib\net40\BundleTransformer.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="BundleTransformer.LessLite">
+      <HintPath>..\packages\BundleTransformer.LessLite.1.6.6\lib\net40\BundleTransformer.LessLite.dll</HintPath>
+    </Reference>
+    <Reference Include="dotless.ClientOnly">
+      <HintPath>..\packages\DotlessClientOnly.1.3.1.0\lib\dotless.ClientOnly.dll</HintPath>
     </Reference>
     <Reference Include="Magnum, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -79,13 +87,18 @@
       <HintPath>..\packages\MassTransit.RabbitMQ.2.6.4-prerelease\lib\net40\MassTransit.Transports.RabbitMq.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.5.10\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RabbitMQ.Client, Version=2.8.7.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RabbitMQ.Client.2.8.7\lib\net30\RabbitMQ.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Abstractions">
+      <HintPath>..\packages\RavenDB.Client.1.2.2111-Unstable\lib\net40\Raven.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Client.Lightweight">
+      <HintPath>..\packages\RavenDB.Client.1.2.2111-Unstable\lib\net40\Raven.Client.Lightweight.dll</HintPath>
     </Reference>
     <Reference Include="Roslyn.Compilers, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -120,6 +133,7 @@
       <HintPath>..\packages\SignalR.Hosting.Common.0.5.3\lib\net40\SignalR.Hosting.Common.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
@@ -182,20 +196,18 @@
     <Reference Include="WebActivator">
       <HintPath>..\packages\WebActivator.1.5.1\lib\net40\WebActivator.dll</HintPath>
     </Reference>
-    <Reference Include="WebGrease, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\WebGrease.1.1.0\lib\WebGrease.dll</HintPath>
+    <Reference Include="WebGrease">
+      <HintPath>..\packages\WebGrease.1.3.0\lib\WebGrease.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Start\DbInitializer.cs" />
     <Compile Include="App_Start\DependencyInjection.cs" />
     <Compile Include="App_Start\MessagingConfig.cs" />
     <Compile Include="App_Start\ViewEngineConfig.cs" />
     <Compile Include="Commands\SavePostCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
-    <Compile Include="Controllers\CompilifyController.cs" />
+    <Compile Include="Controllers\BaseMvcController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="EndPoints\ExecuteEndPoint.cs" />
@@ -204,32 +216,34 @@
     </Compile>
     <Compile Include="Infrastructure\DependencyInjection\AutofacDepenedencyResolverForSignalR.cs" />
     <Compile Include="Infrastructure\DependencyInjection\MessagingModule.cs" />
-    <Compile Include="Infrastructure\DependencyInjection\MongoDbModule.cs" />
     <Compile Include="Infrastructure\DependencyInjection\MvcModule.cs" />
+    <Compile Include="Infrastructure\DependencyInjection\RavenDbModule.cs" />
     <Compile Include="Infrastructure\DependencyInjection\RoslynModule.cs" />
     <Compile Include="Infrastructure\Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Infrastructure\RequireHttpsOnAppHarborAttribute.cs" />
     <Compile Include="Infrastructure\ServiceNotFoundException.cs" />
     <Compile Include="Models\DocumentModel.cs" />
-    <Compile Include="Models\PostViewModel.cs" />
+    <Compile Include="Models\WorkspaceState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queries\ErrorsInPostQuery.cs" />
     <Compile Include="Queries\LatestVersionOfPostQuery.cs" />
     <Compile Include="Queries\IQuery.cs" />
-    <Compile Include="Queries\PostByIdAndVersionQuery.cs" />
-    <Compile Include="Queries\SamplePostQuery.cs" />
+    <Compile Include="Queries\ProjectByIdQuery.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Content Include="Assets\css\compilify.css" />
     <Content Include="Assets\css\vendor\bootstrap.css" />
     <Content Include="Assets\css\vendor\codemirror.css" />
     <Content Include="Assets\css\vendor\codemirror-neat.css" />
     <Content Include="Assets\css\vendor\font-awesome.css" />
+    <Content Include="Assets\css\vendor\jquery.ui.resizable.css" />
+    <Content Include="Assets\css\vendor\jquery.ui.core.css" />
     <Content Include="Assets\fonts\fontawesome-webfont.svg" />
     <Content Include="Assets\fonts\Roboto License.txt" />
-    <Content Include="Assets\fonts\roboto-light-webfont.svg" />
+    <Content Include="Assets\fonts\Roboto-Light-webfont.svg" />
+    <Content Include="Assets\fonts\Roboto-Medium-webfont.svg" />
+    <Content Include="Assets\fonts\Roboto-Regular-webfont.svg" />
     <Content Include="Assets\fonts\roboto-thin-webfont.svg" />
     <Content Include="Assets\img\appharbor.png" />
     <Content Include="Assets\img\appharbor_small.png" />
@@ -237,24 +251,33 @@
     <Content Include="Assets\img\execute.png" />
     <Content Include="Assets\img\glyphicons-halflings-white.png" />
     <Content Include="Assets\img\glyphicons-halflings.png" />
+    <Content Include="Assets\img\new.png" />
     <Content Include="Assets\img\observe.png" />
     <Content Include="Assets\img\octocat.png" />
+    <Content Include="Assets\img\run.png" />
+    <Content Include="Assets\img\save.png" />
     <Content Include="Assets\img\twitter.png" />
     <Content Include="Assets\js\compilify.js" />
+    <Content Include="Assets\js\resizer.js" />
+    <Content Include="Assets\js\tabs.js" />
     <Content Include="Assets\js\vendor\bootstrap.js" />
     <Content Include="Assets\js\vendor\codemirror.js" />
-    <Content Include="Assets\js\vendor\codemirror-clike.js" />
+    <Content Include="Assets\js\vendor\codemirror.clike.js" />
+    <Content Include="Assets\js\vendor\dot.js" />
+    <Content Include="Assets\js\vendor\jquery.ui.resizable.js" />
+    <Content Include="Assets\js\vendor\jquery.ui.mouse.js" />
+    <Content Include="Assets\js\vendor\jquery.ui.widget.js" />
     <Content Include="Assets\js\vendor\jquery.js" />
-    <Content Include="Assets\js\vendor\jquery.validate.js" />
-    <Content Include="Assets\js\vendor\jquery.validate-hooks.js" />
-    <Content Include="Assets\js\vendor\jquery.validate.unobtrusive.js" />
+    <Content Include="Assets\js\vendor\jquery.ui.core.js" />
     <Content Include="Assets\js\vendor\json2.js" />
     <Content Include="Assets\js\vendor\shortcut.js" />
     <Content Include="Assets\js\vendor\underscore.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Assets\js\vendor\jquery.signalr.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -263,7 +286,11 @@
     </Content>
     <Content Include="Views\Web.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="BundleTransformer.Configuration.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
@@ -272,12 +299,6 @@
     <Content Include="Assets\fonts\fontawesome-webfont.svgz" />
     <Content Include="Assets\fonts\fontawesome-webfont.ttf" />
     <Content Include="Assets\fonts\fontawesome-webfont.woff" />
-    <Content Include="Assets\fonts\roboto-light-webfont.eot" />
-    <Content Include="Assets\fonts\roboto-light-webfont.ttf" />
-    <Content Include="Assets\fonts\roboto-light-webfont.woff" />
-    <Content Include="Assets\fonts\roboto-thin-webfont.eot" />
-    <Content Include="Assets\fonts\roboto-thin-webfont.ttf" />
-    <Content Include="Assets\fonts\roboto-thin-webfont.woff" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -290,18 +311,35 @@
     <Content Include="Views\Shared\_Share.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LanguageServices\LanguageServices.csproj">
-      <Project>{8f2ea92a-1519-482e-9808-dacb2ca67503}</Project>
-      <Name>LanguageServices</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
-      <Project>{519279f3-53c1-41ff-8f49-553cfa43fc8a}</Project>
-      <Name>DataAccess</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{67a4a77f-7d7d-4a37-bcc1-a7e018ccd6c8}</Project>
       <Name>Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\fonts\Roboto-Light-webfont.eot" />
+    <Content Include="Assets\fonts\Roboto-Light-webfont.ttf" />
+    <Content Include="Assets\fonts\Roboto-Light-webfont.woff" />
+    <Content Include="Assets\fonts\Roboto-Medium-webfont.eot" />
+    <Content Include="Assets\fonts\Roboto-Medium-webfont.ttf" />
+    <Content Include="Assets\fonts\Roboto-Medium-webfont.woff" />
+    <Content Include="Assets\fonts\Roboto-Regular-webfont.eot" />
+    <Content Include="Assets\fonts\Roboto-Regular-webfont.ttf" />
+    <Content Include="Assets\fonts\Roboto-Regular-webfont.woff" />
+    <Content Include="Assets\fonts\roboto-thin-webfont.eot" />
+    <Content Include="Assets\fonts\roboto-thin-webfont.ttf" />
+    <Content Include="Assets\fonts\roboto-thin-webfont.woff" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\less\compilify.less" />
+    <Content Include="Assets\less\fonts.less" />
+    <Content Include="Assets\less\mixins.less" />
+    <Content Include="Assets\less\typography.less" />
+    <Content Include="Assets\less\variables.less" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\_ReferenceListItem.cshtml" />
+    <Content Include="Views\Home\_DocumentTab.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

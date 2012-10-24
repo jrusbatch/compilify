@@ -1,23 +1,23 @@
 ﻿using System.Threading.Tasks;
 using Compilify.Models;
-using Compilify.Web.Models;
+using Raven.Client;
 
 namespace Compilify.Web.Commands
 {
     public class SavePostCommand : ICommand
     {
-        private readonly IPostRepository posts;
+        private readonly IAsyncDocumentSession session;
 
-        public SavePostCommand(IPostRepository postRepository)
+        public SavePostCommand(IAsyncDocumentSession documentSession)
         {
-            posts = postRepository;
+            session = documentSession;
         }
 
-        public Task<Post> Execute(string slug, PostViewModel postViewModel)
+        public async Task<Project> Execute(Project project)
         {
-            var result = posts.Save(slug, postViewModel.ToPost());
-
-            return Task.FromResult(result);
+            session.Store(project);
+            await session.SaveChangesAsync();
+            return project;
         }
     }
 }

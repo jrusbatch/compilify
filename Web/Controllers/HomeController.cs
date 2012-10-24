@@ -1,20 +1,61 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
+using System.Web.WebPages;
+using Compilify.Models;
 using Compilify.Web.Commands;
 using Compilify.Web.Models;
 using Compilify.Web.Queries;
+using Raven.Client;
 
 namespace Compilify.Web.Controllers
 {
-    public class HomeController : CompilifyController
+    public class HomeController : BaseMvcController
     {
-        [HttpGet]
-        public async Task<ActionResult> Index()
-        {
-            var model = await Resolve<SamplePostQuery>().Execute();
+        private const string ProjectCookieKey = "compilify.currentproject";
 
-            return View("Show", model);
+        private readonly IDocumentSession session;
+
+        public HomeController(IDocumentSession documentSession)
+        {
+            session = documentSession;
+        }
+
+        protected virtual string CurrentProjectId
+        {
+            get
+            {
+                return Request.Cookies[ProjectCookieKey] != null 
+                    ? Request.Cookies[ProjectCookieKey].Value 
+                    : string.Empty;
+            }
+            set
+            {
+                Response.AppendCookie(new HttpCookie(ProjectCookieKey, value)
+                                      {
+                                          Expires = DateTime.UtcNow.AddDays(7)
+                                      });
+            }
+        }
+
+        [HttpGet]
+        public ActionResult Index()
+        {
+            Project project;
+
+            if (CurrentProjectId.IsEmpty() || (project = session.Load<Project>(CurrentProjectId)) == null)
+            {
+                project = new Project()
+                    .AddOrUpdate(new Document { Name = "Main", Content = "return new Person(\"stranger\").Greet();" })
+                    .AddOrUpdate(BuildSampleDocument());
+
+                session.Store(project);
+                CurrentProjectId = project.Id;
+            }
+
+            return View("Show", new WorkspaceState { Project = project });
         }
 
         [HttpGet]
@@ -24,82 +65,76 @@ namespace Compilify.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Show(string slug, int? version)
+        public async Task<ActionResult> Show(string id)
         {
-            if (version <= 1)
+            var project = await Resolve<ProjectByIdQuery>().Execute(id);
+
+            if (project == null)
             {
-                // Redirect the user to /:slug instead of /:slug/1
-                return RedirectToActionPermanent("Show", "Home", new { slug, version = (int?)null });
+                return ProjectNotFound();
             }
 
-            var result = await Resolve<PostByIdAndVersionQuery>().Execute(slug, version ?? 1);
+            return View("Show", new WorkspaceState { Project = project });
+        }
 
-            if (result == null)
-            {
-                return PostNotFound();
-            }
+        [HttpPost]
+        [ValidateInput(false)]
+        public async Task<ActionResult> Save(Project project)
+        {
+            var result = await Resolve<SavePostCommand>().Execute(project);
 
             if (Request.IsAjaxRequest())
             {
-                return Json(new { status = "ok", data = result }, JsonRequestBehavior.AllowGet);
-            }
-            
-            return View("Show", result);
-        }
-
-        [HttpGet]
-        public async Task<ActionResult> Latest(string slug)
-        {
-            var version = await Resolve<LatestVersionOfPostQuery>().Execute(slug);
-
-            if (version < 1)
-            {
-                return PostNotFound();
+                return Json(new { id = result.Id, location = @Url.RouteUrl("Show", new { id = result.Id }, Request.Url.Scheme) });
             }
 
-            // There should only be one URL to represent a given resource, this is just a shortcut for the 
-            // user to locate the URL representing the latest version of a given post
-            return RedirectToAction("Show", "Home", BuildRouteParametersForPost(slug, version));
+            return RedirectToAction("Show", new { id = result.Id });
         }
 
         [HttpPost]
         [ValidateInput(false)]
-        public async Task<ActionResult> Save(string slug, PostViewModel postViewModel)
+        public ActionResult Validate(Project postViewModel)
         {
-            var result = await Resolve<SavePostCommand>().Execute(slug, postViewModel);
-
-            return RedirectToAction("Show", BuildRouteParametersForPost(result.Slug, result.Version));
-        }
-
-        [HttpPost]
-        [ValidateInput(false)]
-        public ActionResult Validate(PostViewModel postViewModel)
-        {
-            var errors = Resolve<ErrorsInPostQuery>().Execute(postViewModel.ToPost());
+            var errors = Resolve<ErrorsInPostQuery>().Execute(postViewModel);
             return Json(new { status = "ok", data = errors });
         }
 
-        private static RouteValueDictionary BuildRouteParametersForPost(string slug, int? version)
+        private static Document BuildSampleDocument()
         {
-            var routeValues = new RouteValueDictionary
-                              {
-                                  { "slug", slug }
-                              };
+            var post = new Document { Name = "Person" };
 
-            if (version.HasValue && version > 1)
-            {
-                routeValues.Add("version", version);
-            }
+            var builder = new StringBuilder();
+            post.Content = builder.AppendLine("public class Person")
+                                  .AppendLine("{")
+                                  .AppendLine("    public Person(string name)")
+                                  .AppendLine("    {")
+                                  .AppendLine("        Name = name;")
+                                  .AppendLine("    }")
+                                  .AppendLine()
+                                  .AppendLine("    public string Name { get; private set; }")
+                                  .AppendLine()
+                                  .AppendLine("    public string Greet()")
+                                  .AppendLine("    {")
+                                  .AppendLine("        if (string.IsNullOrEmpty(Name))")
+                                  .AppendLine("        {")
+                                  .AppendLine("            return \"Hello, stranger!\";")
+                                  .AppendLine("        }")
+                                  .AppendLine()
+                                  .AppendLine("        return string.Format(\"Hello, {0}!\", Name);")
+                                  .AppendLine("    }")
+                                  .AppendLine("}")
+                                  .ToString();
 
-            return routeValues;
+            return post;
         }
 
-        private ActionResult PostNotFound()
+        private ActionResult ProjectNotFound()
         {
             Response.StatusCode = 404;
 
             // TODO: Remove dependency on ViewBag
             ViewBag.Message = string.Format("sorry, we couldn't find that...");
+
             return View("Error");
         }
     }

@@ -1,0 +1,48 @@
+.font-light() {
+    font-weight: 200;
+    font-family: @fontLight;
+}
+
+.font-semilight() {
+    font-weight: 300;
+    font-family: @fontSemilight;
+}
+
+.font-regular() {
+    font-weight: 400;
+    font-family: @fontRegular;
+}
+
+.font-semibold() {
+    font-weight: 600;
+    font-family: @fontSemibold;
+}
+
+.font-bold() {
+    font-weight: 700;
+    font-family: @fontBold;
+}
+
+.secondary {
+    color: @baseFontSecondaryColor;
+}
+
+.header() {
+    .font-light;
+    color: @baseFontColor;
+}
+
+.title {
+    .font-semibold;
+    font-size: @baseFontSize;
+    color: @baseFontColor;
+
+    &.secondary {
+        .font-semilight;
+    }
+}
+
+.navigation {
+    .font-regular;
+    font-size: @baseFontSize;
+}

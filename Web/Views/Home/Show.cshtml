@@ -1,69 +1,64 @@
-@model Compilify.Web.Models.PostViewModel
+@model Compilify.Web.Models.WorkspaceState
 
-<div id="ide">
-    @using (Html.BeginForm())
-    {
-        <div id="commands">
-            <a class="js-new" href="/">new</a>
-            <a class="js-save" href="#">save</a>
-            <a class="js-run" href="#">run</a>
+<div id="content">
+    <div id="sidebar">
+        <div class="inner">
+            <div class="sidebar-form">
+                <h4>References</h4>
+                <ul class="references"></ul>
+            </div>
+
+            <div class="sidebar-bottom">
+                <a href="https://appharbor.com">
+                    <img src="~/assets/img/appharbor.png" alt="Hosted by AppHarbor" />
+                </a>
+            </div>
         </div>
-    
-        <div id="editors">
-            @foreach(var document in Model.Documents)
-            {
-                <div class="editor-container">
-                    <div class="editor">
-                        <textarea data-name="@document.Name">@document.Text</textarea>
+    </div>
+
+    <div id="ide">
+        <div id="top-bar" class="container-fluid">
+            <div id="new-document" class="new-tab-btn">
+                <a href="#" class="tab new-tab" title="New document">
+                    <i class="icon-plus-sign"></i>
+                </a>
+            </div>
+            <ul class="nav nav-tabs"></ul>
+        </div>
+
+        <div class="workspace">
+            <div class="columns clearfix">
+                <div class="column left">
+                    <div class="editor tab-content"></div>
+                </div>
+                <div class="column right">
+                    <div class="results">
+                        <pre>Press "Run" to execute your code.</pre>
                     </div>
                 </div>
-            }
-        </div>
-    
-        <div id="footer">
-            <div class="results">
-                <pre></pre>
-            </div>
-        
-            @{ var hasErrors = Model.Errors != null && Model.Errors.Any(); }
-        
-            <div class="status @(hasErrors ? "status-error" : "status-success")">
-                
-                <div class="loading-indicator">
-                    <span></span>
-                </div>
-                
-
-                @*
-                This should remain partially hidden most of the time. When the user hovers over it, it should appear to 
-                rise from below the browser window to display any messages it might contain.
-                
-                An indicator could also be displayed here when loading content or waiting for the result of an execution.
-                
-                The color of the status bar should change based on the status of the user's code:
-
-                    * Red - there are errors in the user's code
-                    * Green - there are no errors in the user's code
-
-                Other future possibilities include:
-
-                    * Yellow - there are warnings in the user's code 
-                *@
-            
-                <ul class="messages">
-                    @if (!hasErrors)
-                    {
-                        <li>No errors!</li>
-                    }
-                    else
-                    {
-                        foreach (var error in Model.Errors)
-                        {
-                            <li>@error.Message</li>
-                        }
-                    }
-                </ul>
             </div>
         </div>
-    }
+
+        <div id="statusbar">
+            <div class="inner">
+                <span>Ready</span>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script id="tab-template" type="text/html">
+    @Html.Partial("_DocumentTab")
+</script>
+
+<script id="reference-template" type="text/html">
+    @Html.Partial("_ReferenceListItem")
+</script>
+
+@section PageScripts {
+    <script>
+        $(function() {
+            Compilify.init($('#content'), @Html.Raw(Json.Encode(Model)));
+        });
+    </script>
+}

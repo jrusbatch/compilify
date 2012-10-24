@@ -13,9 +13,9 @@ namespace Compilify.Web.Queries
             validator = codeValidator;
         }
 
-        public IEnumerable<EditorError> Execute(Post post)
+        public IEnumerable<EditorError> Execute(Project project)
         {
-            return validator.GetCompilationErrors(post);
+            return validator.GetCompilationErrors(project);
         }
     }
 }

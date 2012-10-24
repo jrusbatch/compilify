@@ -17,3 +17,4 @@ packages/
 UpgradeLog*.xml
 _Upgrade*
 TestResults/
+Web/assets/less/*.css

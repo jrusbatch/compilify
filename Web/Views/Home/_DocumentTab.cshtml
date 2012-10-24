@@ -1,0 +1,28 @@
+﻿<li>
+    <span class="tab" data-documentId="{{= it.id }}">
+        <span class="tab-name">{{= it.name }}</span>
+        
+        {{ if (!it.isPrimary) { }}
+        <span class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown">
+                <i class="icon-chevron-down"></i>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="js-rename-document" href="#">
+                        <i class="icon-pencil"></i>
+                        Rename
+                    </a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a class="js-delete-document" href="#">
+                        <i class="icon-trash"></i>
+                        Delete
+                    </a>
+                </li>
+            </ul>
+        </span>
+        {{ } }}
+    </span>
+</li>
