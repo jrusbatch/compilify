@@ -6,7 +6,7 @@ Based on a [blog post](https://github.com/fekberg/Roslyn-Hosted-Execution) by Fi
 
 ## Running Compilify locally
 
-Debugging this project requires that [MongoDB](http://www.mongodb.org/display/DOCS/Home) and [RabbitMQ](http://www.rabbitmq.com/) be running locally.
+Debugging this project requires that [RavenDB](http://ravendb.net/) and [RabbitMQ](http://www.rabbitmq.com/) be running locally.
 
 Nuget packages will be missing the first time the solution is opened. They will be retrieved from Nuget the first time you attempt to build. 
 
