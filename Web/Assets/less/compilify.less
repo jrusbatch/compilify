@@ -485,14 +485,19 @@ a {
         color: #fff;
         background-color: #0072C6;
         width: 100%;
-
-        &.loading {
-            background-color: #FF8F32;
-        }
+        -webkit-transition: background-color 200ms linear;
+        -moz-transition: background-color 200ms linear;
+        -o-transition: background-color 200ms linear;
+        -ms-transition: background-color 200ms linear;
+        transition: background-color 200ms linear;
 
         .inner {
             margin: 0 5px;
         }
+    }
+
+    &.executing #statusbar {
+        background-color: #FF8F32;
     }
 }
 

@@ -2,29 +2,48 @@
 (function($, _, Compilify) {
     'use strict';
 
-    var connection,
+    var // connection,
         markedErrors = [];
     
     function _htmlEncode(value) {
         return $('<div/>').text(value).html();
     }
 
-    //
-    // Set up the SignalR connection
-    //
-    connection = $.connection('/execute');
+    var MessageBus = (function() {
+        var outstandingMessageCount = 0,
+            connection = $.connection('/execute'); // TODO: Don't hardcode this
 
-    connection.received(function(msg) {
-        console.log(msg);
-        if (msg && msg.status === "ok") {
-            $('.results pre').html(msg.data);
+        function _send(data) {
+            connection.send(data);
+            
+            if (outstandingMessageCount === 0) {
+                $('#ide').addClass('executing');
+            }
+
+            outstandingMessageCount += 1;
         }
 
-        // $('#footer').removeClass('loading');
-    });
+        function _onMessageReceived(msg) {
+            outstandingMessageCount -= 1;
+            
+            if (msg && msg.status === "ok") {
+                $('.results pre').html(msg.data);
+            }
+            
+            if (outstandingMessageCount === 0) {
+                $('#ide').removeClass('executing');
+            }
+        }
 
-    connection.start();
-    
+        connection.received(_onMessageReceived);
+
+        connection.start({ waitForPageLoad: false });
+
+        return {
+            send: _send
+        };
+    }());
+
     var Document = (function() {
 
         var counter = 0;
@@ -308,7 +327,7 @@
             var documents = this._getDocumentStates();
             var references = this.getReferences();
 
-            connection.send(JSON.stringify({ Project: { Documents: documents, References: references } }));
+            MessageBus.send(JSON.stringify({ Project: { Documents: documents, References: references } }));
 
             $('.results pre').empty();
         };
