@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.WebPages;
-using Compilify.LanguageServices;
 using Compilify.Models;
 using Compilify.Web.Commands;
 using Compilify.Web.Models;
@@ -20,12 +18,9 @@ namespace Compilify.Web.Controllers
 
         private readonly IDocumentSession session;
 
-        private readonly ICodeValidator validator;
-
-        public HomeController(IDocumentSession documentSession, ICodeValidator codeValidator)
+        public HomeController(IDocumentSession documentSession)
         {
             session = documentSession;
-            validator = codeValidator;
         }
 
         protected virtual string CurrentProjectId
@@ -131,11 +126,6 @@ namespace Compilify.Web.Controllers
                                   .ToString();
 
             return post;
-        }
-
-        private IEnumerable<EditorError> GetErrorsInProgram(ICodeProgram project)
-        {
-            return validator.GetCompilationErrors(project);
         }
 
         private ActionResult ProjectNotFound()

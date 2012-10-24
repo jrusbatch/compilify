@@ -21,11 +21,6 @@
             resize: _onResize
         });
 
-        $right.find('.execute').resizable({
-            containment: $right,
-            handles: 's'
-        });
-
         $(window).resize(_onResize);
 
         _onResize();
