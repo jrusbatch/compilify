@@ -85,7 +85,7 @@ namespace Compilify.Web.Controllers
 
             if (Request.IsAjaxRequest())
             {
-                return Json(new { id = result.Id, location = @Url.RouteUrl("Show", new { id = result.Id }, Request.Url.Scheme) });
+                return Json(new { id = result.Id, location = @Url.RouteUrl("Show", new { id = result.Id }) });
             }
 
             return RedirectToAction("Show", new { id = result.Id });
