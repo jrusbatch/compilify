@@ -298,7 +298,7 @@
 
             var project = this._getState();
 
-            $.ajax({
+            $.ajax('/', {
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(project),
