@@ -326,10 +326,21 @@ a {
             overflow: hidden;
 
             .ui-resizable-handle {
-                background-color: #EFEFF2;
+                background: #efeff2;
+                background: -moz-linear-gradient(top,  #efeff2 0, #caccd8 50%, #efeff2 100%);
+                background: -webkit-gradient(linear, left top, left bottom, color-stop(0,#efeff2), color-stop(50%,#caccd8), color-stop(100%,#efeff2));
+                background: -webkit-linear-gradient(top,  #efeff2 0,#caccd8 50%,#efeff2 100%);
+                background: -o-linear-gradient(top,  #efeff2 0,#caccd8 50%,#efeff2 100%);
+                background: -ms-linear-gradient(top,  #efeff2 0,#caccd8 50%,#efeff2 100%);
+                background: linear-gradient(to bottom,  #efeff2 0,#caccd8 50%,#efeff2 100%);
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#efeff2', endColorstr='#efeff2',GradientType=0 );
+
 
                 &.ui-resizable-e {
-                    width: 4px;
+                    width: 2px;
+                    border: 2px solid #efeff2;
+                    border-top: none;
+                    border-bottom: none;
                     cursor: col-resize;
                 }
 
