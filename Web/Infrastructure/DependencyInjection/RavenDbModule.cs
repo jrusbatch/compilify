@@ -9,7 +9,7 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(c => new DocumentStore { ConnectionStringName = "RAVENHQ_CONNECTION_STRING" }.Initialize())
+            builder.Register(c => new DocumentStore { ConnectionStringName = "RavenDB" }.Initialize())
                    .As<IDocumentStore>()
                    .SingleInstance();
 
