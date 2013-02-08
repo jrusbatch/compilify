@@ -27,8 +27,6 @@
         /// <summary>
         /// Save content.</summary>
         
-        // $('form').submit();
-
         var documents = getAllDocuments();
 
         var post = {
@@ -40,7 +38,7 @@
             contentType: 'application/json',
             data: JSON.stringify(post),
             success: function(msg) {
-                console.log(msg);
+                location.href = msg.location;
             }
         });
 

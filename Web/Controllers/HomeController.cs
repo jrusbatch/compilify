@@ -68,7 +68,14 @@ namespace Compilify.Web.Controllers
         {
             var result = await Resolve<SavePostCommand>().Execute(slug, postViewModel);
 
-            return RedirectToAction("Show", BuildRouteParametersForPost(result.Slug, result.Version));
+            var routeParameters = BuildRouteParametersForPost(result.Slug, result.Version);
+
+            if (Request.IsAjaxRequest())
+            {
+                return Json(new { status = "ok", location = Url.Action("Show", routeParameters) });
+            }
+
+            return RedirectToAction("Show", routeParameters);
         }
 
         [HttpPost]
