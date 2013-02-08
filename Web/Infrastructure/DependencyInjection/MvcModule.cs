@@ -19,8 +19,9 @@ namespace Compilify.Web.Infrastructure.DependencyInjection
             var queries =
                 ThisAssembly
                     .GetTypes()
-                    .Where(x => x.Namespace != null)
-                    .Where(x => x.Namespace.StartsWith("Compilify.Web.Queries", StringComparison.Ordinal));
+                    .Where(x => x.Namespace != null &&
+                                (x.Namespace.StartsWith("Compilify.Web.Queries", StringComparison.Ordinal) ||
+                                 x.Namespace.StartsWith("Compilify.Web.Commands", StringComparison.Ordinal)));
 
             foreach (var query in queries)
             {
