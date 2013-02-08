@@ -21,7 +21,6 @@ namespace Compilify.Web
             Bus.Initialize(sbc =>
             {
                 sbc.UseRabbitMq();
-                sbc.UseRabbitMqRouting();
                 sbc.ReceiveFrom(endpointAddress);
             });
 
