@@ -9,6 +9,8 @@ namespace Compilify.DataAccess.MongoDB
     {
         public static void Initialize()
         {
+            BsonClassMap.RegisterClassMap<Document>();
+
             BsonClassMap.RegisterClassMap<Post>(x =>
             {
                 x.AutoMap();

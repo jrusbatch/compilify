@@ -64,7 +64,7 @@ namespace Compilify.DataAccess.MongoDB
 
             content.Version = isNew ? 1 : GetLatestVersion(slug) + 1;
 
-            db.GetCollection<Post>("posts").Save(content, SafeMode.True);
+            db.GetCollection<Post>("posts").Save(content, WriteConcern.Acknowledged);
 
             return content;
         }

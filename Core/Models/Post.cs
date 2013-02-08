@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Compilify.Models
 {
     public class Post : ICodeProject
     {
-        private readonly ISet<Document> documents;
+        private ICollection<Document> documents;
 
         public Post()
         {
@@ -44,6 +45,7 @@ namespace Compilify.Models
         public IEnumerable<Document> Documents
         {
             get { return documents; }
+            set { documents = new HashSet<Document>(value ?? Enumerable.Empty<Document>()); }
         }
 
         public void AddDocument(string name, string text)
