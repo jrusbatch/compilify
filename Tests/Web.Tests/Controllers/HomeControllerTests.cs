@@ -197,7 +197,7 @@ namespace Compilify.Web.Controllers
             mockDependencyResolver.Setup(x => x.GetService(typeof(SavePostCommand)))
                 .Returns(new SavePostCommand(mockRepository.Object));
 
-            var controller = CreateTarget(mockDependencyResolver.Object);
+            var controller = CreateTarget(mockDependencyResolver.Object).WithContext(false);
 
             var result = await controller.Save(null, postViewModel) as RedirectToRouteResult;
 
