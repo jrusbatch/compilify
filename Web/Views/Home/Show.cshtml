@@ -10,14 +10,18 @@
         </div>
     
         <div id="editors">
-            @foreach(var document in Model.Documents)
-            {
-                <div class="editor-container">
-                    <div class="editor">
-                        <textarea data-name="@document.Name">@document.Text</textarea>
-                    </div>
+            <div class="editor-container">
+                <div id="define" class="editor">
+                    @{ var classes = Model.Documents.FirstOrDefault(x => x.Name == "Classes"); }
+                    <textarea data-name="@classes.Name">@classes.Text</textarea>
                 </div>
-            }
+            </div>
+            <div class="editor-container">
+                <div id="execute" class="editor">
+                    @{ var content = Model.Documents.FirstOrDefault(x => x.Name == "Content"); }
+                    <textarea data-name="@content.Name">@content.Text</textarea>
+                </div>
+            </div>
         </div>
     
         <div id="footer">

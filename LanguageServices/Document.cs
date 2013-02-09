@@ -13,10 +13,10 @@ namespace Compilify
         }
 
         [DataMember(Order = 1)]
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         [DataMember(Order = 2)]
-        public string Text { get; private set; }
+        public string Text { get; set; }
 
         public string GetText()
         {

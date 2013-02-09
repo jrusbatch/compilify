@@ -38,14 +38,14 @@ namespace Compilify.Web.Queries
                 .AppendLine("    }")
                 .AppendLine("}");
 
-            post.AddDocument("Classes", builder.ToString());
+            post.Classes = builder.ToString();
 
             builder.Clear()
                 .AppendLine("var person = new Person(name: null);")
                 .AppendLine()
                 .AppendLine("return person.Greet();");
 
-            post.AddDocument("Content", builder.ToString());
+            post.Content = builder.ToString();
 
             var result = PostViewModel.Create(post);
 

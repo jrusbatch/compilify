@@ -38,7 +38,7 @@ namespace Compilify.Web.Models
         public string Slug { get; set; }
         
         public int Version { get; set; }
-        
+
         public Guid? AuthorId { get; set; }
 
         public IEnumerable<DocumentModel> Documents { get; set; }
@@ -55,7 +55,7 @@ namespace Compilify.Web.Models
 
             foreach (var doc in Documents)
             {
-                post.AddDocument(doc.Name, doc.Text);
+                post.AddOrUpdateDocument(doc.Name, doc.Text);
             }
             
             return post;
