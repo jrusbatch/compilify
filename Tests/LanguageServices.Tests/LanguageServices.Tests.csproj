@@ -33,7 +33,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="LanguageServices\CSharpCompilerTests.cs" />
-    <Compile Include="LanguageServices\EvaluateCodeCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
