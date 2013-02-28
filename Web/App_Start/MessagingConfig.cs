@@ -21,10 +21,17 @@ namespace Compilify.Web
 
             var userInfo = connectionUri.UserInfo;
 
-            var queueUri = connectionUri.ToString().Replace(userInfo + "@", string.Empty);
-            var credentials = userInfo.Split(new[] { ':' });
-            var username = credentials[0];
-            var password = credentials[1];
+            var queueUri = connectionUri.ToString();
+            string username = null;
+            string password = null;
+
+            if (!string.IsNullOrEmpty(userInfo))
+            {
+                queueUri = queueUri.Replace(userInfo + "@", string.Empty);
+                var credentials = userInfo.Split(new[] { ':' });
+                username = credentials[0];
+                password = credentials[1];
+            }
 
             var endpointAddress = string.Format("{0}/{1}", connectionString, queueName);
 
@@ -34,8 +41,15 @@ namespace Compilify.Web
             {
                 sbc.UseRabbitMq(x => x.ConfigureHost(new Uri(queueUri), y =>
                                                                         {
-                                                                            y.SetUsername(username);
-                                                                            y.SetPassword(password);
+                                                                            if (!string.IsNullOrEmpty(username))
+                                                                            {
+                                                                                y.SetUsername(username);
+                                                                            }
+                                                                                
+                                                                            if (!string.IsNullOrEmpty(password))
+                                                                            {
+                                                                                y.SetPassword(password);
+                                                                            }
                                                                         }));
                 sbc.ReceiveFrom(endpointAddress);
 
