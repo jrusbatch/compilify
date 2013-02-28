@@ -35,24 +35,42 @@ namespace Compilify.Worker
                     Logger.ErrorException("An unobserved task exception occurred", e.Exception);
                 };
 
-            var connectionString = ConfigurationManager.AppSettings["CLOUDAMQP_URL"].Replace("amqp://", "rabbitmq://");
-            var queueName = ConfigurationManager.AppSettings["Compilify.WorkerMessagingQueue"];
-
-            var endpointAddress = string.Format("{0}/{1}", connectionString, queueName);
-
-            Bus.Initialize(
-                sbc =>
-                {
-                    sbc.UseRabbitMq();
-                    sbc.ReceiveFrom(endpointAddress);
-                    sbc.Subscribe(subs => subs.Handler<EvaluateCodeCommand>(ProcessCommand));
-                });
+            ConfigureServiceBus();
 
             ResetEvent.WaitOne();
 
             Bus.Shutdown();
 
             return -1;
+        }
+
+        private static void ConfigureServiceBus()
+        {
+            var connectionString = ConfigurationManager.AppSettings["CLOUDAMQP_URL"].Replace("amqp://", "rabbitmq://");
+            var queueName = ConfigurationManager.AppSettings["Compilify.WorkerMessagingQueue"];
+
+            var connectionUri = new Uri(connectionString + "/" + queueName);
+
+            var userInfo = connectionUri.UserInfo;
+
+            var queueUri = connectionUri.ToString().Replace(userInfo + "@", string.Empty);
+            var credentials = userInfo.Split(new[] { ':' });
+            var username = credentials[0];
+            var password = credentials[1];
+
+            var endpointAddress = string.Format("{0}/{1}", connectionString, queueName);
+
+            Bus.Initialize(
+                sbc =>
+                {
+                    sbc.UseRabbitMq(x => x.ConfigureHost(new Uri(queueUri), y =>
+                                                                            {
+                                                                                y.SetUsername(username);
+                                                                                y.SetPassword(password);
+                                                                            }));
+                    sbc.ReceiveFrom(endpointAddress);
+                    sbc.Subscribe(subs => subs.Handler<EvaluateCodeCommand>(ProcessCommand));
+                });
         }
 
         private static void ProcessCommand(EvaluateCodeCommand cmd)

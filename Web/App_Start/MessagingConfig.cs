@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.Text;
 using Compilify.Extensions;
 using Compilify.Models;
@@ -16,12 +17,28 @@ namespace Compilify.Web
             var connectionString = ConfigurationManager.AppSettings["CLOUDAMQP_URL"].Replace("amqp://", "rabbitmq://");
             var queueName = ConfigurationManager.AppSettings["Compilify.WebMessagingQueue"];
 
+            var connectionUri = new Uri(connectionString + "/" + queueName);
+
+            var userInfo = connectionUri.UserInfo;
+
+            var queueUri = connectionUri.ToString().Replace(userInfo + "@", string.Empty);
+            var credentials = userInfo.Split(new[] { ':' });
+            var username = credentials[0];
+            var password = credentials[1];
+
             var endpointAddress = string.Format("{0}/{1}", connectionString, queueName);
 
+            Trace.WriteLine("queueUri: " + queueUri);
+            Trace.WriteLine("EndpointAddress: " + endpointAddress);
             Bus.Initialize(sbc =>
             {
-                sbc.UseRabbitMq();
+                sbc.UseRabbitMq(x => x.ConfigureHost(new Uri(queueUri), y =>
+                                                                        {
+                                                                            y.SetUsername(username);
+                                                                            y.SetPassword(password);
+                                                                        }));
                 sbc.ReceiveFrom(endpointAddress);
+
             });
 
             Bus.Instance.SubscribeHandler<WorkerResult>(x =>
