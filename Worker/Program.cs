@@ -65,7 +65,6 @@ namespace Compilify.Worker
                 password = credentials[1];
             }
             
-
             var endpointAddress = string.Format("{0}/{1}", connectionString, queueName);
 
             Bus.Initialize(
@@ -73,6 +72,8 @@ namespace Compilify.Worker
                 {
                     sbc.UseRabbitMq(x => x.ConfigureHost(new Uri(queueUri), y =>
                                                                             {
+                                                                                y.SetRequestedHeartbeat(30);
+
                                                                                 if (!string.IsNullOrEmpty(username))
                                                                                 {
                                                                                     y.SetUsername(username);
@@ -83,6 +84,7 @@ namespace Compilify.Worker
                                                                                     y.SetPassword(password);
                                                                                 }
                                                                             }));
+                    sbc.SetCreateMissingQueues(true);
                     sbc.ReceiveFrom(endpointAddress);
                     sbc.Subscribe(subs => subs.Handler<EvaluateCodeCommand>(ProcessCommand));
                 });

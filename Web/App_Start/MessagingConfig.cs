@@ -41,16 +41,19 @@ namespace Compilify.Web
             {
                 sbc.UseRabbitMq(x => x.ConfigureHost(new Uri(queueUri), y =>
                                                                         {
+                                                                            y.SetRequestedHeartbeat(30);
+
                                                                             if (!string.IsNullOrEmpty(username))
                                                                             {
                                                                                 y.SetUsername(username);
                                                                             }
-                                                                                
+
                                                                             if (!string.IsNullOrEmpty(password))
                                                                             {
                                                                                 y.SetPassword(password);
                                                                             }
                                                                         }));
+                sbc.SetCreateMissingQueues(true);
                 sbc.ReceiveFrom(endpointAddress);
 
             });
