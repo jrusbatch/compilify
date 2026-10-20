@@ -4,6 +4,14 @@ Compilify makes the .NET compiler completely portable and accessible through a f
 
 Based on a [blog post](https://github.com/fekberg/Roslyn-Hosted-Execution) by Filip Ekberg.
 
+## For Future Visitors
+
+Thanks to everyone who took interest in this repository. The code here helped introduce me to problems that I had never experienced before. I learned a lot from this project. I met a lot of amazing people because of this project. And in so many ways I became a better me because of this project.
+
+If you have an idea: Build it. Publicize it early and frequently. Learn from it as fast and as frequently as you can.
+
+You can't be wrong, you can only be better.
+
 ## Running Compilify locally
 
 Debugging this project requires that [MongoDB](http://www.mongodb.org/display/DOCS/Home) and [RabbitMQ](http://www.rabbitmq.com/) be running locally.
